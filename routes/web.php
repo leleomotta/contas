@@ -36,11 +36,16 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('contas/novo',[ContaController::class, 'new'])->name('contas.new');
     Route::post('contas/salvar',[ContaController::class, 'store'])->name('contas.store');
 
+
     Route::get('receitas',[ReceitaController::class, 'showAll'])->name('receitas.showAll');
     Route::get('receitas/novo',[ReceitaController::class, 'new'])->name('receitas.new');
     Route::post('receitas/salvar',[ReceitaController::class, 'store'])->name('receitas.store');
     Route::get('filter',[ReceitaController::class, 'filter'])->name('receitas.filter');
-//gitbunda
+    Route::delete('receitas/apagar/{ID_Receita}',[ReceitaController::class, 'destroy'])->name('receitas.destroy');
+    //Route::put('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'efetiva'])->name('receitas.efetiva');
+    Route::get('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'bosta'])->name('receitas.efetiva');
+    Route::get('receitas/editar/{ID_Receita}',[ReceitaController::class, 'edit'])->name('receitas.edit');
+
     Route::get('categorias',[CategoriaController::class, 'showAll'])->name('categorias.showAll');
 });
 /*

@@ -340,7 +340,8 @@ return [
             'submenu' => [
                 [
                     'text' => 'Listar',
-                    'url' => '/receitas',
+                    'url' => '/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                        \Carbon\Carbon::now()->isoFormat('MM'),
                     'icon' => 'fa fa-list nav-icon',
                     //'label' => 3,
                     'label_color' => 'success',

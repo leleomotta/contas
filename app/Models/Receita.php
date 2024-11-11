@@ -51,7 +51,7 @@ class Receita extends Model
                     Carbon::createFromDate($dt->lastOfMonth())->toDateString()
                 ]
             )
-            ->orderBy('Data','ASC')
+            ->orderBy('Data','DESC')
             //->toSql(); dd($receitas);
             ->paginate(99999);
         return $receitas;

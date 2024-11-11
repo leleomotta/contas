@@ -8,9 +8,16 @@ use App\Models\Receita;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class ReceitaController extends Controller
 {
+    public function bosta(int $ID_Receita)
+    {
+        dd($ID_Receita);
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -38,7 +45,12 @@ class ReceitaController extends Controller
         $receita->Efetivada = $request->Efetivada;
 
         $receita->save();
-        return redirect()->route('receitas.showAll');
+
+        $url ='/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+        \Carbon\Carbon::now()->isoFormat('MM');
+        return redirect::to($url);
+        //return redirect()->route('receitas.showAll');
+
     }
 
     /**
@@ -48,19 +60,6 @@ class ReceitaController extends Controller
     {
         //
     }
-
-    /*
-     $events = App\Events->orderBy('start', 'asc')->get()->groupBy(
-    function($date) {return $date->start->format('F, Y');}
-    );
-
-    $resultado = $receitas
-            ->groupBy(
-                function($date) {return $date->start->format('F, Y');}
-            )
-            ->paginate(5);
-     */
-
     public function showAll(Request $request){
         $contas = Conta::where(function ($query) {
             $query->select('*');
@@ -74,16 +73,10 @@ class ReceitaController extends Controller
 
         $dateFilter = $request->date_filter;
         $receitas = new Receita();
-        //Paginator::useBootstrap();
+
         /*
-        if (is_null($dateFilter) ) {
-            //Session::forget('filtros');
-            return view('receitaListar', [
-                'receitas' => $receitas->showAll(),
-                'contas' => $contas->showAll()
-            ]);
-        }
-        */
+         * Não precisa mais disso por que agora sempre vem o date_filter
+
         //fiz uma alteração para mostrar só as despesas do mês corrente
         if (is_null($dateFilter) ) {
             //Session::forget('filtros');
@@ -96,67 +89,93 @@ class ReceitaController extends Controller
             ]);
         }
         else {
-            return view('receitaListar', [
-                'receitas' => $receitas->show($dateFilter),
-                'contas' => $contas,
-                'categorias' => $categorias
-            ]);
-        }
+            */
+        return view('receitaListar', [
+            'receitas' => $receitas->show($dateFilter),
+            'contas' => $contas,
+            'categorias' => $categorias
+        ]);
 
-        /*
-        switch($dateFilter){
-            case '2024-04':
-                //$query->whereBetween('Data',array(2024-9-1,2024-9-3));
-                $query->whereBetween('Data',
-                    [
-                        Carbon::createFromDate($dt->firstOfMonth())->toDateString(),
-                        Carbon::createFromDate($dt->lastOfMonth())->toDateString()
-                    ]
-                );
-
-                break;
-            case 'today':
-                $query->whereDate('Data',Carbon::today());
-                break;
-            case 'yesterday':
-                $query->wheredate('Data',Carbon::yesterday());
-                break;
-            case 'this_week':
-                $query->whereBetween('Data',[Carbon::now()->startOfWeek(),Carbon::now()->endOfWeek()]);
-                break;
-            case 'last_week':
-                $query->whereBetween('Data',[Carbon::now()->subWeek(),Carbon::now()]);
-                break;
-            case 'this_month':
-                $query->whereMonth('Data',Carbon::now()->month);
-                break;
-            case 'last_month':
-                $query->whereMonth('Data',Carbon::now()->subMonth()->month);
-                break;
-            case 'this_year':
-                $query->whereYear('Data',Carbon::now()->year);
-                break;
-            case 'last_year':
-                $query->whereYear('Data',Carbon::now()->subYear()->year);
-                break;
-        }
-        */
     }
 
     public function filter(Request $request){
-        $start_date = $request->start_date;
-        $end_date = $request->end_date;
+        $start_date = implode("-",array_reverse(explode("/",substr($request->datas,0,10) )));
+        $end_date = implode("-",array_reverse(explode("/",substr($request->datas,13,10) )));
 
-        $receitas = Receita::whereDate('Data', '>=', $start_date)
-            ->whereDate('Data', '<=', $end_date)
-            ->get();
+        $request["chkCategoria"] = (isset($request["chkCategoria"]))?1:0;
+        $request["chkConta"] = (isset($request["chkConta"]))?1:0;
+        $request["chkTexto"] = (isset($request["chkTexto"]))?1:0;
+        $request["chkDatas"] = (isset($request["chkDatas"]))?1:0;
 
-        return view('receitaListar',compact('receitas'));
+        //$filtros = Receita::orderBy('Data','DESC');
 
+        $filtros = DB::table('receita')
+            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->orderBy('Data','DESC');
+
+        if($request["chkCategoria"]){
+            $filtros = $filtros->where("receita.ID_Categoria", "=", $request->categoria);
+        }
+
+        if($request["chkConta"]){
+            $filtros = $filtros->where("receita.ID_Conta", "=", $request->conta);
+        }
+
+        if($request["chkTexto"]){
+            $filtros = $filtros->where("receita.Descricao", "LIKE", "%" . $request->texto . "%");
+        }
+        if($request["chkDatas"]){
+            $filtros = $filtros->whereBetween('Data',[$start_date,$end_date]);
+        }
+
+
+        $receitas = $filtros->get();
+
+        $contas = Conta::where(function ($query) {
+            $query->select('*');
+            $query->orderBy('Descricao','ASC');
+        })->get();
+
+        $categorias = Categoria::where(function ($query) {
+            $query->select('*');
+            $query->orderBy('Nome','ASC');
+        })->get();
+
+        return view('receitaListar',
+            [ 'receitas' => $receitas,
+              'categorias' => $categorias,
+              'contas' => $contas,
+        ]);
     }
     /**
      * Update the specified resource in storage.
      */
+
+    public function edit(int $ID_Receita) {
+        dd($ID_Receita);
+        //$questao = Questao::find($idQuestao);
+        /*
+        $questao = Questao::where('idQuestao', $idQuestao)->get()->toArray();
+
+        if ( ((session()->get('UsuarioLogado'))->Administrador == 1) or ( (session()->get('UsuarioLogado'))->idUsuario  == $questao[0]['idUsuario'] ) ) {
+            $alternativas = Alternativa::where("idQuestao", '=', $idQuestao)->get();
+            $questao[0]["NumOpcoes"] = $alternativas->count();
+
+            array_push($questao, $alternativas->toArray());
+
+            return view('admin/questaoEditar', [
+                'questao' => $questao
+            ]);
+        }
+        else{
+            return redirect('/')->with('fail', 'Você não pode realizar essa ação!');
+        }
+        */
+
+    }
+
     public function update(Request $request, Receita $receita)
     {
         //
@@ -165,13 +184,31 @@ class ReceitaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Receita $receita)
+    //public function destroy(Receita $receita)
+    public function destroy(int $ID_Receita)
     {
-        //
+        $receita = Receita::find($ID_Receita);
+        try {
+            DB::beginTransaction();
+
+            $receita->delete();
+
+            DB::commit();
+            /*return redirect()->route('receitas.showAll', [
+                'page' => Request::capture()->page
+            ]);*/
+            $url ='/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                \Carbon\Carbon::now()->isoFormat('MM');
+            return redirect::to($url);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return back();
+        }
     }
 
     public function new(){
-
         $contas = Conta::where(function ($query) {
             $query->select('*');
             $query->orderBy('Descricao','ASC');

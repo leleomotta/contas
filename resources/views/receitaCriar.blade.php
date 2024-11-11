@@ -118,7 +118,6 @@
         $('#Data').datetimepicker({
             format:'DD/MM/YYYY'
         });
-
     </script>
     <!-- INPUT DATE -->
 
