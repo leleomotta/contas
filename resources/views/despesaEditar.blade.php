@@ -1,19 +1,22 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Receita')
+@section('title', 'Criar Despesa')
 
 @section('content_header')
 
 @stop
 
 @section('content')
-    <form id="cadastro" role="form" action="{{ route('receitas.store') }}" method="post" enctype="multipart/form-data">
+    <form id="cadastro" role="form" action="{{ route('despesas.update',['ID_Despesa' =>  $despesa['ID_Despesa']]) }}" method="post" enctype="multipart/form-data">
+
         @csrf
-        <div class="card card-success">
+        <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Criar receita</h3>
+                <h3 class="card-title">Editar despesa</h3>
             </div>
             <div class="card-body">
+                @csrf
+                @method('PUT')
                 <div class="box-body">
                 <!-- Date -->
                 <label>Data</label>
@@ -24,7 +27,7 @@
                         </div>
                         <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy"
+                               placeholder="dd/mm/yyyy" value=" {{ date('d/m/Y', strtotime($despesa['Data'])) }}"
                         />
                     </div>
                 </div>
@@ -34,7 +37,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a receita">
+                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa" value="{{ $despesa['Descricao'] }}">
                 </div>
 
                 <label >Valor</label>
@@ -45,7 +48,14 @@
                     <input type="text" class="form-control text-left" id="Valor" name="Valor"
                            data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da receita">
+                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
+                           value="{{ str_replace("-",'.',
+                                            str_replace(".",',',
+                                            str_replace(",",'-',
+                                            number_format($despesa['Valor'], 2
+                                            )))) }}">
+
+
                 </div>
 
                 <label>Categoria</label>
@@ -108,6 +118,10 @@
 @stop
 
 @section('js')
+    <script>
+        $("#Categoria").val( {{ $despesa['ID_Categoria'] }} );
+        $("#Conta").val( {{ $despesa['ID_Conta'] }} );
+    </script>
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
@@ -160,13 +174,13 @@
                 },
                 messages: {
                     Data: {
-                        required: "Por favor, entre com uma data para a receita."
+                        required: "Por favor, entre com uma data para a despesa."
                     },
                     Descricao:{
-                        required: "Por favor, entre com uma descrição para a receita."
+                        required: "Por favor, entre com uma descrição para a despesa."
                     },
                     Valor:{
-                        required: "Por favor, entre com um valor para a receita."
+                        required: "Por favor, entre com um valor para a despesa."
                     },
                     Categoria: {
                         valueNotEquals: "Por favor, selecione uma categoria."

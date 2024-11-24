@@ -8,9 +8,9 @@
 
 @section('content')
 
-    @foreach($contas->chunk(3) as $chunk)
+    @foreach($cartoes->chunk(3) as $chunk)
         <div class="row">
-            @foreach($chunk as $conta)
+            @foreach($chunk as $cartao)
                 <div class="col-md-4">
                     <!-- Widget: user widget style 1 -->
                     <div class="card card-widget widget-user" >
@@ -18,18 +18,14 @@
                         <!-- <div class="widget-user-header bg-info"> -->
 
                         <div class="widget-user-header text-white"
-                                 style="background:{{ $conta->Cor }}">
+                                 style="background:{{ $cartao->Cor }}">
 
-                            <h3 class="widget-user-username">{{ $conta->Banco }}</h3>
-                            <h5 class="widget-user-desc">{{ $conta->Descricao }}</h5>
+                            <h3 class="widget-user-username">{{ $cartao->Nome }}</h3>
+                            <h5 class="widget-user-desc">{{ $cartao->Bandeira }}</h5>
                         </div>
 
                         <div class="widget-user-image">
-                            @if (! $conta->Imagem == null)
-                                <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem  ) }} ' alt="Imagem">
-                            @else
                                 <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src='/contas/resources/img/user2-160x160.jpg' alt="Imagem">
-                            @endif
                         </div>
 
 
@@ -41,35 +37,30 @@
                                             {{ 'R$ ' .  str_replace("-",'.',
                                                         str_replace(".",',',
                                                         str_replace(",",'-',
-                                                        number_format($conta->Saldo, 2
-                                                        )))) }} </h5>
-                                        <span class="description-text">SALDO ATUAL</span>
+                                                        number_format(100, 2
+                                                        )))) }}</h5>
+                                        <span class="description-text">GASTO TOTAL</span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
-                                        <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                            {{ 'R$ ' .  str_replace("-",'.',
-                                                        str_replace(".",',',
-                                                        str_replace(",",'-',
-                                                        number_format($conta->Receitas, 2
-                                                        )))) }}</h5>
-                                        <span class="description-text">RECEITAS</span>
+                                        <h5 class="description-header">13,000</h5>
+                                        <span class="description-text">FATURA ATUAL</span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
                                 <!-- /.col -->
                                 <div class="col-sm-4">
                                     <div class="description-block">
-                                        <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                            {{ 'R$ ' .  str_replace("-",'.',
-                                                        str_replace(".",',',
-                                                        str_replace(",",'-',
-                                                        number_format($conta->Despesas, 2
-                                                        )))) }}</h5>
-                                        <span class="description-text">DESPESAS</span>
+                                        <form id="fatura{{$cartao->ID_Cartao}}" role="form" action="{{ route('cartoes.fatura') }}" method="GET">
+                                            <input type="hidden" name="ID_Cartao" value="{{ $cartao->ID_Cartao }}">
+                                            <a href="javascript:{}" onclick="document.getElementById('fatura{{$cartao->ID_Cartao}}').submit();" class="btn btn-app">
+                                                <span class="badge bg-info">12</span>
+                                                <i class="fas fa-inbox"></i> Fatura
+                                            </a>
+                                        </form>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>

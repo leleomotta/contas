@@ -340,8 +340,11 @@ return [
             'submenu' => [
                 [
                     'text' => 'Listar',
+                    /*
                     'url' => '/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
                         \Carbon\Carbon::now()->isoFormat('MM'),
+                    */
+                    'url' => '/receitas',
                     'icon' => 'fa fa-list nav-icon',
                     //'label' => 3,
                     'label_color' => 'success',
@@ -364,14 +367,14 @@ return [
             'submenu' => [
                 [
                     'text' => 'Listar',
-                    'url' => '',
+                    'url' => '/despesas',
                     'icon' => 'fa fa-list nav-icon',
                     //'label' => 3,
                     'label_color' => 'success',
                 ],
                 [
                     'text' => 'Adicionar',
-                    'url' => '',
+                    'url' => '/despesas/novo',
                     //'url' => {{ route('') }},
                     //'url' => route('contas.new') ,
                     'icon' => 'fa fa-plus nav-icon',
@@ -402,6 +405,26 @@ return [
             ],
         ],
 
+        [
+            'text' => 'Cartões',
+            'icon' => 'fa fa-credit-card',
+            'submenu' => [
+                [
+                    'text' => 'Listar',
+                    'url' => '/cartoes',
+                    'icon' => 'fa fa-list nav-icon',
+                    //'label' => 3,
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Adicionar',
+                    'url' => '/cartoes/novo',
+                    'icon' => 'fa fa-plus nav-icon',
+                    //'label' => 3,
+                    'label_color' => 'success',
+                ],
+            ],
+        ],
 
 
         ['header' => 'account_settings'],

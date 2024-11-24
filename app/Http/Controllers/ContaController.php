@@ -6,6 +6,7 @@ use App\Models\Conta;
 use App\Models\Imagem;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Session;
 
 class ContaController extends Controller
@@ -57,13 +58,20 @@ class ContaController extends Controller
 
 
     public function showAll(){
-        Paginator::useBootstrap();
-        $contas = Conta::paginate(999);
-        //$contas = Conta::paginate((Session::get('configuracao'))->Paginacao);
-        //Session::forget('filtros');
+
+
+        $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+                Carbon::now()->isoFormat('MM');
+
+        $dt = Carbon::now();
+        $dt->setDateFrom($dateFilter . '-15');
+        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+
+        $contas = new Conta();
 
         return view('contaListar', [
-            'contas' => $contas
+            'contas' => $contas->show($start_date, $end_date)
         ]);
     }
 

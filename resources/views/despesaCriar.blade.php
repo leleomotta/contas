@@ -1,17 +1,17 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Receita')
+@section('title', 'Criar Despesa')
 
 @section('content_header')
 
 @stop
 
 @section('content')
-    <form id="cadastro" role="form" action="{{ route('receitas.store') }}" method="post" enctype="multipart/form-data">
+    <form id="cadastro" role="form" action="{{ route('despesas.store') }}" method="post" enctype="multipart/form-data">
         @csrf
         <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">Criar receita</h3>
+                <h3 class="card-title">Criar despesa</h3>
             </div>
             <div class="card-body">
                 <div class="box-body">
@@ -34,7 +34,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a receita">
+                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa">
                 </div>
 
                 <label >Valor</label>
@@ -45,7 +45,7 @@
                     <input type="text" class="form-control text-left" id="Valor" name="Valor"
                            data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da receita">
+                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa">
                 </div>
 
                 <label>Categoria</label>
@@ -160,13 +160,13 @@
                 },
                 messages: {
                     Data: {
-                        required: "Por favor, entre com uma data para a receita."
+                        required: "Por favor, entre com uma data para a despesa."
                     },
                     Descricao:{
-                        required: "Por favor, entre com uma descrição para a receita."
+                        required: "Por favor, entre com uma descrição para a despesa."
                     },
                     Valor:{
-                        required: "Por favor, entre com um valor para a receita."
+                        required: "Por favor, entre com um valor para a despesa."
                     },
                     Categoria: {
                         valueNotEquals: "Por favor, selecione uma categoria."

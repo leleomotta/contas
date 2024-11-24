@@ -8,13 +8,13 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 
-class Receita extends Model
+class Despesa extends Model
 {
     use HasFactory;
 
-    protected $table = 'receita';
+    protected $table = 'despesa';
 
-    protected $primaryKey = 'ID_Receita';
+    protected $primaryKey = 'ID_Despesa';
 
     public function conta()
     {
@@ -38,23 +38,23 @@ class Receita extends Model
     }
     */
     public function filter($categoria, $conta, $texto, $start_date, $end_date){
-        $filtros = DB::table('receita')
-            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+        $filtros = DB::table('despesa')
+            ->select('despesa.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->orderBy('Data','DESC');
 
 
         if (!is_null($categoria) ){
-            $filtros = $filtros->where("receita.ID_Categoria", "=", $categoria);
+            $filtros = $filtros->where("despesa.ID_Categoria", "=", $categoria);
         }
 
         if (!is_null($conta) ){
-            $filtros = $filtros->where("receita.ID_Conta", "=", $conta);
+            $filtros = $filtros->where("despesa.ID_Conta", "=", $conta);
         }
 
         if (!is_null($texto) ){
-            $filtros = $filtros->where("receita.Descricao", "LIKE", "%" . $texto . "%");
+            $filtros = $filtros->where("despesa.Descricao", "LIKE", "%" . $texto . "%");
         }
 
         if ($start_date != '0001-01-01'){
@@ -68,32 +68,61 @@ class Receita extends Model
     public function show($start_date, $end_date){
         //$dt = Carbon::now();
         //$dt->setDateFrom($filtro . '-15');
-        $receitas = DB::table('receita')
-            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+        $despesas = DB::table('despesa')
+            //->select('despesa.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
+                    'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+
+            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->whereBetween('Data',
                 [
-                    //Carbon::createFromDate(2024, 6, 01)->toDateString(),
-                    //Carbon::createFromDate(2024, 6, 30)->toDateString()
-                    //Carbon::createFromDate($dt->firstOfMonth())->toDateString(),
-                    //Carbon::createFromDate($dt->lastOfMonth())->toDateString()
                     $start_date,
                     $end_date
                 ]
             )
+            //->where('despesa.ID_Conta', '1')
+
+            ->whereNull('despesa.ID_Cartao')
             ->orderBy('Data','DESC')
-            //->toSql(); dd($receitas);
+            //->toSql(); dd($despesas);
+            ->get();
+
+        $cartao =DB::table('despesa')
+            /*
+            ->select('despesa.ID_Despesa', 'despesa.Descricao', DB::raw('sum(despesa.Valor) as Valor'),
+                'despesa.Data', 'despesa.Efetivada', DB::raw("'cartao.Nome' as NomeCategoria"), 'conta.Banco' )
+            */
+            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+                'despesa.Data', 'despesa.Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('cartao', 'despesa.ID_Cartao', '=', 'cartao.ID_Cartao')
+            //->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+
+            ->whereBetween('Data',
+                [
+                    $start_date,
+                    $end_date
+                ]
+            )
+
+            ->whereNotNull('despesa.ID_Cartao')
+            ->groupBy('despesa.ID_Cartao')
+            ->orderBy('Data','DESC')
+            //->toSql(); dd($cartao);
             //->paginate(99999);
-        ->get();
-        return $receitas;
+            ->get();
+
+        $despesas = $despesas->merge($cartao);
+        //$despesas = $cartao;
+        return $despesas;
     }
 
     public function pendente($categoria, $conta, $texto, $start_date, $end_date){
         //arrumar a prendencia e recebidos sobre filtro
-        $retorno = DB::table('receita')
+        $retorno = DB::table('despesa')
             //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->select('receita.*')
+            ->select('despesa.*')
             ->where('Efetivada','0')
             ->whereBetween('Data',
                 [
@@ -103,15 +132,15 @@ class Receita extends Model
             );
 
             if (!is_null($categoria) ){
-                $retorno = $retorno->where("receita.ID_Categoria", "=", $categoria);
+                $retorno = $retorno->where("despesa.ID_Categoria", "=", $categoria);
             }
 
             if (!is_null($conta) ){
-                $retorno = $retorno->where("receita.ID_Conta", "=", $conta);
+                $retorno = $retorno->where("despesa.ID_Conta", "=", $conta);
             }
 
             if (!is_null($texto) ){
-                $retorno = $retorno->where("receita.Descricao", "LIKE", "%" . $texto . "%");
+                $retorno = $retorno->where("despesa.Descricao", "LIKE", "%" . $texto . "%");
             }
 
         //dd($retorno->toSql());
@@ -120,8 +149,8 @@ class Receita extends Model
         return $retorno->sum('Valor');
     }
 
-    public function recebido($categoria, $conta, $texto, $start_date, $end_date){
-        $retorno = DB::table('receita')
+    public function pago($categoria, $conta, $texto, $start_date, $end_date){
+        $retorno = DB::table('despesa')
             //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
             //->select('receita.*')
             ->where('Efetivada','1')
@@ -132,15 +161,15 @@ class Receita extends Model
                 ]
             );
             if (!is_null($categoria) ){
-             $retorno = $retorno->where("receita.ID_Categoria", "=", $categoria);
+             $retorno = $retorno->where("despesa.ID_Categoria", "=", $categoria);
             }
 
             if (!is_null($conta) ){
-                $retorno = $retorno->where("receita.ID_Conta", "=", $conta);
+                $retorno = $retorno->where("despesa.ID_Conta", "=", $conta);
             }
 
             if (!is_null($texto) ){
-                $retorno = $retorno->where("receita.Descricao", "LIKE", "%" . $texto . "%");
+                $retorno = $retorno->where("despesa.Descricao", "LIKE", "%" . $texto . "%");
             }
 
         //dd($retorno->toSql());

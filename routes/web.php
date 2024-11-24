@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Controllers\CartaoController;
 use App\Http\Controllers\CategoriaController;
+use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\ReceitaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -18,6 +20,8 @@ use App\Http\Controllers\ContaController;
 
 //php artisan make:model XXXXX -mcr --api
 
+
+
 //deixa o botão de login na inicial
 Auth::routes();
 
@@ -31,22 +35,54 @@ Route::get('/', function () {
 Route::group(['middleware'=>['auth']], function(){
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
 
-    //Contas
+//----------------- CONTAS -----------------
     Route::get('contas',[ContaController::class, 'showAll'])->name('contas.showAll');
     Route::get('contas/novo',[ContaController::class, 'new'])->name('contas.new');
     Route::post('contas/salvar',[ContaController::class, 'store'])->name('contas.store');
+//----------------- CONTAS -----------------
+
+//----------------- CARTÃO -----------------
+    Route::get('cartoes',[CartaoController::class, 'showAll'])->name('cartoes.showAll');
+    Route::get('cartoes/novo',[CartaoController::class, 'new'])->name('cartoes.new');
+    Route::post('cartoes/salvar',[CartaoController::class, 'store'])->name('cartoes.store');
+    //Route::delete('cartoes/apagar/{ID_Receita}',[CartaoController::class, 'destroy'])->name('cartoes.destroy');
+    //Route::get('cartoes/editar/{ID_Receita}',[CartaoController::class, 'edit'])->name('cartoes.edit');
+    //Route::put('cartoes/atualiza/{ID_Receita}',[CartaoController::class, 'update'])->name('cartoes.update');
+
+    //FATURA PRA MIM É Cartão. Vai ficar no controle do CartaoController por pragmatismo
+    Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');
+    Route::get('fatura/despesa/novo',[CartaoController::class, 'new_despesa'])->name('cartoes.new_despesa');
+    Route::post('fatura/despesa/salvar',[CartaoController::class, 'store_despesa'])->name('cartoes.store_despesa');
 
 
+//----------------- CARTÃO -----------------
+
+
+//----------------- RECEITAS -----------------
     Route::get('receitas',[ReceitaController::class, 'showAll'])->name('receitas.showAll');
     Route::get('receitas/novo',[ReceitaController::class, 'new'])->name('receitas.new');
     Route::post('receitas/salvar',[ReceitaController::class, 'store'])->name('receitas.store');
-    Route::get('filter',[ReceitaController::class, 'filter'])->name('receitas.filter');
+    Route::get('receitas/filter',[ReceitaController::class, 'filter'])->name('receitas.filter');
     Route::delete('receitas/apagar/{ID_Receita}',[ReceitaController::class, 'destroy'])->name('receitas.destroy');
-    //Route::put('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'efetiva'])->name('receitas.efetiva');
-    Route::get('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'bosta'])->name('receitas.efetiva');
+    Route::get('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'efetiva'])->name('receitas.efetiva');
     Route::get('receitas/editar/{ID_Receita}',[ReceitaController::class, 'edit'])->name('receitas.edit');
+    Route::put('receitas/atualiza/{ID_Receita}',[ReceitaController::class, 'update'])->name('receitas.update');
+//----------------- RECEITAS -----------------
 
+//----------------- DESPESAS -----------------
+    Route::get('despesas',[DespesaController::class, 'showAll'])->name('despesas.showAll');
+    Route::get('despesas/novo',[DespesaController::class, 'new'])->name('despesas.new');
+    Route::post('despesas/salvar',[DespesaController::class, 'store'])->name('despesas.store');
+    Route::get('despesas/filter',[DespesaController::class, 'filter'])->name('despesas.filter');
+    Route::delete('despesas/apagar/{ID_Despesa}',[DespesaController::class, 'destroy'])->name('despesas.destroy');
+    Route::get('despesas/efetiva/{ID_Despesa}',[DespesaController::class, 'efetiva'])->name('despesas.efetiva');
+    Route::get('despesas/editar/{ID_Despesa}',[DespesaController::class, 'edit'])->name('despesas.edit');
+    Route::put('despesas/atualiza/{ID_Despesa}',[DespesaController::class, 'update'])->name('despesas.update');
+//----------------- DESPESAS -----------------
+
+//----------------- CATEGORIAS -----------------
     Route::get('categorias',[CategoriaController::class, 'showAll'])->name('categorias.showAll');
+//----------------- CATEGORIAS -----------------
 });
 /*
 

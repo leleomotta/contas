@@ -10,7 +10,7 @@
 
 
     <!--Filtro -->
-    <form id="filtro" role="form" action="{{ route('receitas.filter') }}" method="GET">
+    <form id="filtro" role="form" action="{{ route('despesas.filter') }}" method="GET">
         <div class="card card-primary collapsed-card">
             <div class="card-header">
                 <h3 class="card-title">Filtro&nbsp;&nbsp;</h3>
@@ -108,7 +108,7 @@
     </form>
     <!--/.Filtro -->
 
-    <!--<form id="registros" role="form" action="{{ route('receitas.showAll') }}" method="GET">-->
+    <!--<form id="registros" role="form" action="{{ route('despesas.showAll') }}" method="GET">-->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -125,7 +125,7 @@
 
                         <li id="{{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
@@ -137,7 +137,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('MMM') }}
@@ -150,7 +150,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('MMM') }}
@@ -163,7 +163,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('MMM') }}
@@ -175,7 +175,7 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' . \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('MMM') }}
@@ -186,7 +186,7 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->isoFormat('Y') . '-' . \Carbon\Carbon::now()->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->isoFormat('MMM') }}
@@ -198,7 +198,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('MMM') }}
@@ -210,7 +210,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('MMM') }}
@@ -222,7 +222,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('MMM') }}
@@ -234,7 +234,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('MMM') }}
@@ -246,7 +246,7 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
+                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('MMM') }}
@@ -281,70 +281,71 @@
                         </tr>
                     </thead>
                     <tbody>
-                    @foreach($receitas as $receita)
+                    @foreach($despesas as $despesa)
                         <tr>
                             <td>
-                                @if ($receita->Efetivada == 1)
+                                @if ($despesa->Efetivada == 1)
                                     <img src="../resources/img/V.bmp">
                                 @else
                                     <img src='../resources/img/X.bmp'>
                                 @endif
                             </td>
-                            <td style="text-align: center">{{ date('d/m/Y', strtotime($receita->Data)) }}</td>
-                            <td>{{ $receita->Descricao  }}</td>
+                            <td style="text-align: center">{{ date('d/m/Y', strtotime($despesa->Data)) }}</td>
+                            <td>{{ $despesa->Descricao  }}</td>
                             <td>{{ 'R$ ' .  str_replace("-",'.',
                                             str_replace(".",',',
                                             str_replace(",",'-',
-                                            number_format($receita->Valor, 2
+                                            number_format($despesa->Valor, 2
                                             )))) }}</td>
-                            <td>{{$receita->Banco}}</td>
-                            <td>{{$receita->NomeCategoria}}</td>
+                            <td>{{$despesa->Banco}}</td>
+                            <td>{{$despesa->NomeCategoria}}</td>
                             <td>
 
                                 <div class="row">
-                                    <div class="col-3">
-                                        @if ($receita->Efetivada == 1)
-                                            <form id="efetiva" role="form" action="{{ route('receitas.efetiva', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
+                                    @unless ($despesa->Descricao == "Cartão")
+                                        <div class="col-3">
+                                            @if ($despesa->Efetivada == 1)
+                                                <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                    <button type="submit" class="btn btn-danger"
+                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                            onclick="return confirm('Deseja realmente desefetivar esta despesa?')">
+                                                        <span class="fa fa-window-close"></span>
+                                                    </button>
+                                                </form>
+                                            @else
+                                                <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                    <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
+                                                    <button type="submit" class="btn btn-success"
+                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                            onclick="return confirm('Deseja realmente efetivar esta despesa?')">
+                                                        <span class="fa fa-check"></span>
+                                                    </button>
+                                                </form>
+                                            @endif
+                                        </div>
+
+                                        <div class="col-3">
+                                            <form id="edita" role="form" action="{{ route('despesas.edit', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                <button type="submit" class="btn btn-primary"
+                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                    <span class="fa fa-edit"></span>
+                                                </button>
+                                            </form>
+                                        </div>
+
+                                        <div class="col-3">
+                                            <form action="{{ route('despesas.destroy', ['ID_Despesa'=> $despesa->ID_Despesa])  }}" method="POST">
+                                                @csrf
+                                                @method('delete')
+                                                <input type="hidden" name="ID_Despesa" value="{{ $despesa->ID_Despesa }}">
                                                 <button type="submit" class="btn btn-danger"
                                                         style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                        onclick="return confirm('Deseja realmente desefetivar esta receita?')">
-                                                    <span class="fa fa-window-close"></span>
+                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                    <span class="fa fa-trash"></span>
                                                 </button>
                                             </form>
-                                        @else
-                                            <form id="efetiva" role="form" action="{{ route('receitas.efetiva', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
-                                                <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
-                                                <button type="submit" class="btn btn-success"
-                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                        onclick="return confirm('Deseja realmente efetivar esta receita?')">
-                                                    <span class="fa fa-check"></span>
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-
-                                    <div class="col-3">
-                                        <form id="edita" role="form" action="{{ route('receitas.edit', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
-                                            <button type="submit" class="btn btn-primary"
-                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                <span class="fa fa-edit"></span>
-                                            </button>
-                                        </form>
-                                    </div>
-
-                                    <div class="col-3">
-                                        <form action="{{ route('receitas.destroy', ['ID_Receita'=> $receita->ID_Receita])  }}" method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            <input type="hidden" name="ID_Receita" value="{{ $receita->ID_Receita }}">
-                                            <button type="submit" class="btn btn-danger"
-                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                    onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                <span class="fa fa-trash"></span>
-                                            </button>
-                                        </form>
-                                    </div>
-
+                                        </div>
+                                    @endunless
                                 </div>
 
                             </td>
@@ -401,12 +402,12 @@
                     <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Recebido</span>
+                        <span class="info-box-text">Pago</span>
                         <span class="info-box-number">
                             {{ 'R$ ' .  str_replace("-",'.',
                                             str_replace(".",',',
                                             str_replace(",",'-',
-                                            number_format($recebido, 2
+                                            number_format($pago, 2
                                             )))) }}
                         </span>
                     </div>

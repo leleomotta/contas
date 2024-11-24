@@ -4,26 +4,26 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Conta;
-use App\Models\Receita;
+use App\Models\Despesa;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
 
-class ReceitaController extends Controller
+class DespesaController extends Controller
 {
     public function efetiva(Request $request)
     {
-        $receita = Receita::find($request->ID_Receita);
-        $receita->Efetivada = !$receita->Efetivada;
-        $receita->save();
+        $despesa = Despesa::find($request->ID_Despesa);
+        $despesa->Efetivada = !$despesa->Efetivada;
+        $despesa->save();
         $dateFilter = $request->date_filter;
         if (is_null($dateFilter) ) {
             $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
                 Carbon::now()->isoFormat('MM');
         }
-        $url ='/receitas?date_filter=' . $dateFilter;
+        $url ='/despesas?date_filter=' . $dateFilter;
         return redirect::to($url);
     }
 
@@ -40,22 +40,22 @@ class ReceitaController extends Controller
      */
     public function store(Request $request)
     {
-        $receita = new Receita();
+        $despesa = new Despesa();
 
-        $receita->Descricao = $request->Descricao;
-        $receita->Valor =
+        $despesa->Descricao = $request->Descricao;
+        $despesa->Valor =
             str_replace(",",'.',str_replace(".","",
                 str_replace("R$ ","",$request->Valor)));
-        $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
-        $receita->ID_Conta = $request->Conta;
-        $receita->ID_Categoria = $request->Categoria;
+        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $despesa->ID_Conta = $request->Conta;
+        $despesa->ID_Categoria = $request->Categoria;
 
         $request["Efetivada"] = (isset($request["Efetivada"]))?1:0;
-        $receita->Efetivada = $request->Efetivada;
+        $despesa->Efetivada = $request->Efetivada;
 
-        $receita->save();
+        $despesa->save();
 
-        $url ='/receitas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' .
+        $url ='/despesas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' .
         Carbon::now()->isoFormat('MM');
         return redirect::to($url);
         //return redirect()->route('receitas.showAll');
@@ -65,22 +65,15 @@ class ReceitaController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Receita $receita)
+    public function show(Despesa $despesa)
     {
         //
     }
 
     public function showAll(Request $request){
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
         $dateFilter = $request->date_filter;
         if (is_null($dateFilter) ) {
@@ -95,12 +88,13 @@ class ReceitaController extends Controller
         $conta = null;
         $texto = null;
 
-        $receitas = new Receita();
+        $despesas = new Despesa();
 
-        return view('receitaListar', [
-            'receitas' => $receitas->show($start_date, $end_date),
-            'pendente' => $receitas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-            'recebido' => $receitas->recebido($categoria, $conta, $texto, $start_date, $end_date),
+
+        return view('despesaListar', [
+            'despesas' => $despesas->show($start_date, $end_date),
+            'pendente' => $despesas->pendente($categoria, $conta, $texto, $start_date, $end_date),
+            'pago' => $despesas->pago($categoria, $conta, $texto, $start_date, $end_date),
             'contas' => $contas,
             'categorias' => $categorias
         ]);
@@ -108,6 +102,7 @@ class ReceitaController extends Controller
     }
 
     public function filter(Request $request){
+
         $start_date = implode("-",array_reverse(explode("/",substr($request->datas,0,10) )));
         $end_date = implode("-",array_reverse(explode("/",substr($request->datas,13,10) )));
 
@@ -142,24 +137,17 @@ class ReceitaController extends Controller
             $end_date = '9999-12-31';
         }
 
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
-        $receitas = new Receita();
+        $despesas = new Despesa();
 
-        return view('receitaListar',
+        return view('despesaListar',
             [
-                'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
-                'pendente' => $receitas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-                'recebido' => $receitas->recebido($categoria, $conta, $texto, $start_date, $end_date),
+                'despesas' => $despesas->filter($categoria, $conta, $texto, $start_date, $end_date),
+                'pendente' => $despesas->pendente($categoria, $conta, $texto, $start_date, $end_date),
+                'pago' => $despesas->pago($categoria, $conta, $texto, $start_date, $end_date),
                 'categorias' => $categorias,
                 'contas' => $contas,
         ]);
@@ -168,45 +156,38 @@ class ReceitaController extends Controller
      * Update the specified resource in storage.
      */
 
-    public function edit(int $ID_Receita) {
+    public function edit(int $ID_Despesa) {
 
-        $receita = Receita::find($ID_Receita);
+        $despesa = Despesa::find($ID_Despesa);
 
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
-        return view('receitaEditar', [
-            'receita' => $receita,
+        return view('despesaEditar', [
+            'despesa' => $despesa,
             'categorias' => $categorias,
             'contas' => $contas,
         ]);
     }
 
-    public function update(Request $request, int $ID_Receita)
+    public function update(Request $request, int $ID_Despesa)
     {
-        $receita = Receita::find($ID_Receita);
-        $receita->Descricao = $request->Descricao;
-        $receita->Valor =
+        $despesa = Despesa::find($ID_Despesa);
+        $despesa->Descricao = $request->Descricao;
+        $despesa->Valor =
             str_replace(",",'.',str_replace(".","",
                 str_replace("R$ ","",$request->Valor)));
-        $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
-        $receita->ID_Conta = $request->Conta;
-        $receita->ID_Categoria = $request->Categoria;
+        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $despesa->ID_Conta = $request->Conta;
+        $despesa->ID_Categoria = $request->Categoria;
 
         $request["Efetivada"] = (isset($request["Efetivada"]))?1:0;
-        $receita->Efetivada = $request->Efetivada;
+        $despesa->Efetivada = $request->Efetivada;
 
-        $receita->save();
+        $despesa->save();
 
-        return redirect()->route('receitas.showAll');
+        return redirect()->route('despesas.showAll');
 
 
     }
@@ -215,19 +196,19 @@ class ReceitaController extends Controller
      * Remove the specified resource from storage.
      */
     //public function destroy(Receita $receita)
-    public function destroy(int $ID_Receita)
+    public function destroy(int $ID_Despesa)
     {
-        $receita = Receita::find($ID_Receita);
+        $despesa = Despesa::find($ID_Despesa);
         try {
             DB::beginTransaction();
 
-            $receita->delete();
+            $despesa->delete();
 
             DB::commit();
             /*return redirect()->route('receitas.showAll', [
                 'page' => Request::capture()->page
             ]);*/
-            $url ='/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+            $url ='/despesas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
                 \Carbon\Carbon::now()->isoFormat('MM');
             return redirect::to($url);
 
@@ -239,21 +220,11 @@ class ReceitaController extends Controller
     }
 
     public function new(){
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        /*
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
-*/
-        $categorias = (new \App\Models\Categoria)->show();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
-        return view('receitaCriar', [
+        return view('despesaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,
         ]);

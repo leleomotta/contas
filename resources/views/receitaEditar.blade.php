@@ -7,13 +7,16 @@
 @stop
 
 @section('content')
-    <form id="cadastro" role="form" action="{{ route('receitas.store') }}" method="post" enctype="multipart/form-data">
+    <form id="cadastro" role="form" action="{{ route('receitas.update',['ID_Receita' =>  $receita['ID_Receita']]) }}" method="post" enctype="multipart/form-data">
+
         @csrf
-        <div class="card card-success">
+        <div class="card card-warning">
             <div class="card-header">
-                <h3 class="card-title">Criar receita</h3>
+                <h3 class="card-title">Editar receita</h3>
             </div>
             <div class="card-body">
+                @csrf
+                @method('PUT')
                 <div class="box-body">
                 <!-- Date -->
                 <label>Data</label>
@@ -24,7 +27,7 @@
                         </div>
                         <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy"
+                               placeholder="dd/mm/yyyy" value=" {{ date('d/m/Y', strtotime($receita['Data'])) }}"
                         />
                     </div>
                 </div>
@@ -34,7 +37,7 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a receita">
+                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a receita" value="{{ $receita['Descricao'] }}">
                 </div>
 
                 <label >Valor</label>
@@ -45,7 +48,12 @@
                     <input type="text" class="form-control text-left" id="Valor" name="Valor"
                            data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da receita">
+                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da receita"
+                           value="{{ str_replace("-",'.',
+                                            str_replace(".",',',
+                                            str_replace(",",'-',
+                                            number_format($receita['Valor'], 2
+                                            )))) }}">
                 </div>
 
                 <label>Categoria</label>
@@ -108,6 +116,10 @@
 @stop
 
 @section('js')
+    <script>
+        $("#Categoria").val( {{ $receita['ID_Categoria'] }} );
+        $("#Conta").val( {{ $receita['ID_Conta'] }} );
+    </script>
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>

@@ -34,7 +34,12 @@ class CategoriaController extends Controller
 
     public function showAll(){
         Paginator::useBootstrap();
-        $categorias = Categoria::paginate(999);
+        //$categorias = Categoria::paginate(999);
+        $categorias = Categoria::where(function ($query) {
+            $query->select('*');
+            $query->where('Tipo','D');
+            $query->orderBy('Nome','ASC');
+        })->get();
 
         return view('categoriaListar', [
             'categorias' => $categorias
