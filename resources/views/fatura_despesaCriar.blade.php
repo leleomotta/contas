@@ -9,6 +9,7 @@
 @section('content')
     <form id="cadastro" role="form" action="{{ route('cartoes.store_despesa') }}" method="post" enctype="multipart/form-data">
         @csrf
+        <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">Criar despesa de cartão</h3>
@@ -61,24 +62,14 @@
                     </select>
                 </div>
 
-                <label>Conta</label>
+                <label>Fatura</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
                     </div>
-                    <select class="custom-select" id="Conta" name="Conta">
-                        <option selected data-default>- Selecione uma conta -</option>
-                        @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
-                        @endforeach
-                    </select>
-                </div>
+                    <input type="number" id="Ano" name="Ano" min="1970" max="2999" value="{{ \Carbon\Carbon::now()->format('Y') }}">
+                    <input type="number" id="Mes" name="Mes" min="1" max="12" value="{{ \Carbon\Carbon::now()->isoFormat('MM') }}">
 
-                <div class="form-group">
-                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                        <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
-                        <label class="custom-control-label" for="Efetivada">Efetivada</label>
-                    </div>
                 </div>
             </div>
 
@@ -126,8 +117,6 @@
         $('input').inputmask();
     </script>
 
-
-
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/additional-methods.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_pt_BR.min.js"></script>
@@ -152,9 +141,6 @@
                     },
                     Categoria: {
                         valueNotEquals: "- Selecione uma categoria -"
-                    },
-                    Conta:{
-                        valueNotEquals: "- Selecione uma conta -"
                     }
 
                 },
@@ -170,10 +156,8 @@
                     },
                     Categoria: {
                         valueNotEquals: "Por favor, selecione uma categoria."
-                    },
-                    Conta:{
-                        valueNotEquals: "Por favor, selecione uma conta"
                     }
+
                 },
                 errorElement: 'span',
                 errorPlacement: function (error, element) {

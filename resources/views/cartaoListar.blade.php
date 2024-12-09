@@ -37,7 +37,7 @@
                                             {{ 'R$ ' .  str_replace("-",'.',
                                                         str_replace(".",',',
                                                         str_replace(",",'-',
-                                                        number_format(100, 2
+                                                        number_format($cartao->Gasto_Total, 2
                                                         )))) }}</h5>
                                         <span class="description-text">GASTO TOTAL</span>
                                     </div>
@@ -46,7 +46,13 @@
                                 <!-- /.col -->
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
-                                        <h5 class="description-header">13,000</h5>
+                                        <h5 class="description-header">
+                                            {{ 'R$ ' .  str_replace("-",'.',
+                                                        str_replace(".",',',
+                                                        str_replace(",",'-',
+                                                        number_format($cartao->Valor, 2
+                                                        )))) }}
+                                        </h5>
                                         <span class="description-text">FATURA ATUAL</span>
                                     </div>
                                     <!-- /.description-block -->

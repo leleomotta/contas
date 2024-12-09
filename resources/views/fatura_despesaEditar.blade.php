@@ -1,21 +1,21 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Despesa')
+@section('title', 'Editar Despesa de Cartão')
 
 @section('content_header')
 
 @stop
 
 @section('content')
-    <form id="cadastro" role="form" action="{{ route('despesas.update',['ID_Despesa' =>  $despesa['ID_Despesa']]) }}" method="post" enctype="multipart/form-data">
+    <form id="cadastro" role="form" action="{{ route('cartoes.update_despesa',['ID_Despesa' =>  $despesa['ID_Despesa']]) }}" method="post" enctype="multipart/form-data">
         @csrf
-        <div class="card card-warning">
+        @method('PUT')
+        <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+        <div class="card card-success">
             <div class="card-header">
-                <h3 class="card-title">Editar despesa</h3>
+                <h3 class="card-title">Editar despesa de cartão</h3>
             </div>
             <div class="card-body">
-                @csrf
-                @method('PUT')
                 <div class="box-body">
                 <!-- Date -->
                 <label>Data</label>
@@ -70,24 +70,16 @@
                     </select>
                 </div>
 
-                <label>Conta</label>
+                <label>Fatura</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
                     </div>
-                    <select class="custom-select" id="Conta" name="Conta">
-                        <option selected data-default>- Selecione uma conta -</option>
-                        @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <div class="form-group">
-                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                        <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
-                        <label class="custom-control-label" for="Efetivada">Efetivada</label>
-                    </div>
+
+                    <input type="number" id="Ano" name="Ano" min="1970" max="2999" value="{{ substr($fatura->Ano_Mes,0,4) }}">
+                    <input type="number" id="Mes" name="Mes" min="1" max="12" value="{{ substr($fatura->Ano_Mes,5,2) }}">
+
                 </div>
             </div>
 
@@ -119,7 +111,6 @@
 @section('js')
     <script>
         $("#Categoria").val( {{ $despesa['ID_Categoria'] }} );
-        $("#Conta").val( {{ $despesa['ID_Conta'] }} );
     </script>
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -138,8 +129,6 @@
         $('[data-mask]').inputmask();
         $('input').inputmask();
     </script>
-
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/additional-methods.min.js"></script>
@@ -165,9 +154,6 @@
                     },
                     Categoria: {
                         valueNotEquals: "- Selecione uma categoria -"
-                    },
-                    Conta:{
-                        valueNotEquals: "- Selecione uma conta -"
                     }
 
                 },
@@ -183,10 +169,8 @@
                     },
                     Categoria: {
                         valueNotEquals: "Por favor, selecione uma categoria."
-                    },
-                    Conta:{
-                        valueNotEquals: "Por favor, selecione uma conta"
                     }
+
                 },
                 errorElement: 'span',
                 errorPlacement: function (error, element) {

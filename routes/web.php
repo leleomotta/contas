@@ -20,7 +20,12 @@ use App\Http\Controllers\ContaController;
 
 //php artisan make:model XXXXX -mcr --api
 
+//php artisan route:cache
 
+//php artisan config:cache
+
+//php artisan optimize
+//php artisan optimize:clear
 
 //deixa o botão de login na inicial
 Auth::routes();
@@ -53,8 +58,11 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');
     Route::get('fatura/despesa/novo',[CartaoController::class, 'new_despesa'])->name('cartoes.new_despesa');
     Route::post('fatura/despesa/salvar',[CartaoController::class, 'store_despesa'])->name('cartoes.store_despesa');
-
-
+    Route::delete('fatura/despesas/apagar/{ID_Despesa}',[CartaoController::class, 'destroy_despesa'])->name('cartoes.destroy_despesa');
+    Route::get('fatura/despesas/editar/{ID_Despesa}',[CartaoController::class, 'edit_despesa'])->name('cartoes.edit_despesa');
+    Route::put('fatura/despesas/atualiza/{ID_Despesa}',[CartaoController::class, 'update_despesa'])->name('cartoes.update_despesa');
+    Route::get('fatura/fechar',[CartaoController::class, 'fatura_fechar'])->name('cartoes.fatura_fechar');
+    Route::get('fatura/reabrir',[CartaoController::class, 'fatura_reabrir'])->name('cartoes.fatura_reabrir');
 //----------------- CARTÃO -----------------
 
 

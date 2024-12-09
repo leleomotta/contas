@@ -90,7 +90,6 @@ class DespesaController extends Controller
 
         $despesas = new Despesa();
 
-
         return view('despesaListar', [
             'despesas' => $despesas->show($start_date, $end_date),
             'pendente' => $despesas->pendente($categoria, $conta, $texto, $start_date, $end_date),

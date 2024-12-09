@@ -24,8 +24,13 @@
 
                         <li id="{{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit"
+
+                            >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -191,7 +196,35 @@
                             <td>
 
                                 <div class="row">
-                                    Botões
+                                    <div class="col-3">
+                                        @if ($fatura->Fechada == 0)
+                                            <form id="edita" role="form" action="{{ route('cartoes.edit_despesa', ['ID_Despesa' =>$fatura->ID_Despesa])  }}" method="GET">
+                                                <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
+                                                <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
+                                                <button type="submit" class="btn btn-primary"
+                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                    <span class="fa fa-edit"></span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+
+                                    <div class="col-3">
+                                        @if ($fatura->Fechada == 0)
+                                            <form action="{{ route('cartoes.destroy_despesa', ['ID_Despesa'=> $fatura->ID_Despesa])  }}" method="POST">
+                                                @csrf
+                                                @method('delete')
+                                                <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
+                                                <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
+
+                                                <button type="submit" class="btn btn-danger"
+                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                    <span class="fa fa-trash"></span>
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
                                 </div>
 
                             </td>
@@ -215,11 +248,10 @@
         </div>
     </div>
 
-
     <!-- Rodapé -->
     <div class="card card-success">
         <div class="card-header">
-            <h3 class="card-title">Saldos&nbsp;&nbsp;</h3>
+            <h3 class="card-title">Operações&nbsp;&nbsp;</h3>
             <div class="card-tools">
                 <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
             </div>
@@ -228,34 +260,56 @@
         <div class="card-body">
             <div class="row" id="div1">
                     <div class="info-box col-6">
-                        <span class="info-box-icon bg-warning"><i class="fa fa-lock"></i></span>
+                        <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
 
                         <div class="info-box-content">
-                            <span class="info-box-text">Pendente {{app('request')->input('ID_Cartao')}}</span>
+                            <span class="info-box-text">Total da fatura</span>
                             <span class="info-box-number">
                                 {{ 'R$ ' .  str_replace("-",'.',
                                             str_replace(".",',',
                                             str_replace(",",'-',
-                                            number_format(909090, 2
+                                            number_format($totalFatura, 2
                                             )))) }}
                             </span>
                         </div>
                     </div>
 
                 <div class="info-box col-6">
-                    <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+
 
                     <div class="info-box-content">
-                        <span class="info-box-text">Pago</span>
-                        <span class="info-box-number">
-                            <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                                            <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
-                                            <a href="javascript:{}" onclick="document.getElementById('fatura{{app('request')->input('ID_Cartao')}}').submit();" class="btn btn-app">
-                                                <span class="badge bg-info">12</span>
-                                                <i class="fas fa-inbox"></i> Fatura
-                                            </a>
-                            </form>
-                        </span>
+                        <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                            <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                            <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
+                                <span class="fa fa-plus"></span>
+                            </button>
+                        </form>
+                        @if (isset($faturas) )
+                            @if ($fatura->Fechada  == 0)
+
+                                <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.fatura_fechar') }}" method="GET">
+                                    <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                                    <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
+                                    <button type="submit" class="btn btn-warning btn-block" title="Fechar fatura"
+                                            onclick="return confirm('Deseja realmente fechar a fatura?')">
+                                        <span class="fas fa-money-bill-wave"></span>
+                                    </button>
+                                </form>
+                            @else
+                                <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
+                                    <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                                    <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
+                                    <button type="submit" class="btn btn-danger btn-block" title="Reabrir fatura"
+                                            onclick="return confirm('Deseja realmente reabrir a fatura?')">
+                                        <span class="fas fa-money-bill-wave"></span>
+                                    </button>
+                                </form>
+                            @endif
+                        @endif
+
+
+
+
                     </div>
                 </div>
             </div>
@@ -271,6 +325,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css">
+
+    {{-- NOVOS EM TESTE --}}
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css">
+
+
 @stop
 
 @section('js')

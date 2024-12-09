@@ -125,8 +125,9 @@
 
                         <li id="{{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -137,8 +138,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -150,8 +152,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -163,8 +166,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -175,8 +179,9 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' . \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -186,8 +191,9 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->isoFormat('Y') . '-' . \Carbon\Carbon::now()->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->isoFormat('MMM') }}
                                 </p>
@@ -198,8 +204,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -210,8 +217,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -222,8 +230,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -234,8 +243,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -246,8 +256,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="despesas?date_filter={{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -285,9 +296,9 @@
                         <tr>
                             <td>
                                 @if ($despesa->Efetivada == 1)
-                                    <img src="../resources/img/V.bmp">
+                                    <img src="/contas/resources/img/V.bmp">
                                 @else
-                                    <img src='../resources/img/X.bmp'>
+                                    <img src='/contas/resources/img/X.bmp'>
                                 @endif
                             </td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($despesa->Data)) }}</td>
@@ -300,7 +311,6 @@
                             <td>{{$despesa->Banco}}</td>
                             <td>{{$despesa->NomeCategoria}}</td>
                             <td>
-
                                 <div class="row">
                                     @unless ($despesa->Descricao == "Cartão")
                                         <div class="col-3">
@@ -347,7 +357,6 @@
                                         </div>
                                     @endunless
                                 </div>
-
                             </td>
                         </tr>
                     @endforeach

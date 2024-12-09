@@ -116,17 +116,16 @@
                 <!-- Paginador de meses -->
                 <div class="card-body">
                     <ul class="pagination pagination-month justify-content-center">
-
                         <li class="page-item">
                             <a class="page-link" href="#">
 
                             </a>
                         </li>
-
                         <li id="{{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -137,8 +136,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -150,8 +150,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -163,8 +164,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -175,8 +177,9 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' . \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -186,8 +189,9 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->isoFormat('Y') . '-' . \Carbon\Carbon::now()->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->isoFormat('MMM') }}
                                 </p>
@@ -198,8 +202,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -210,8 +215,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -222,8 +228,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -234,8 +241,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -246,8 +254,9 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="receitas?date_filter={{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" type="submit" >
+                            <a class="page-link" href="{{ route('receitas.showAll',array('date_filter' =>
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM'))) }}" type="submit" >
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('MMM') }}
                                 </p>

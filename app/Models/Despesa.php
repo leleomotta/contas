@@ -38,13 +38,18 @@ class Despesa extends Model
     }
     */
     public function filter($categoria, $conta, $texto, $start_date, $end_date){
-        $filtros = DB::table('despesa')
-            ->select('despesa.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+         $filtros = DB::table('despesa')
+            ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
+                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->whereNotExists(function($query)
+            {
+                $query->select(DB::raw(1))
+                    ->from('fatura')
+                    ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
+            })
             ->orderBy('Data','DESC');
-
-
         if (!is_null($categoria) ){
             $filtros = $filtros->where("despesa.ID_Categoria", "=", $categoria);
         }
@@ -60,19 +65,14 @@ class Despesa extends Model
         if ($start_date != '0001-01-01'){
             $filtros = $filtros->whereBetween('Data',[$start_date,$end_date]);
         }
-        //dd($filtros);
         //dd($filtros->toSql());
         return $filtros->get();
     }
 
     public function show($start_date, $end_date){
-        //$dt = Carbon::now();
-        //$dt->setDateFrom($filtro . '-15');
         $despesas = DB::table('despesa')
-            //->select('despesa.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
             ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
                     'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->whereBetween('Data',
@@ -81,40 +81,31 @@ class Despesa extends Model
                     $end_date
                 ]
             )
-            //->where('despesa.ID_Conta', '1')
-
-            ->whereNull('despesa.ID_Cartao')
+            ->whereNotExists(function($query)
+            {
+                $query->select(DB::raw(1))
+                    ->from('fatura')
+                    ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
+            })
             ->orderBy('Data','DESC')
             //->toSql(); dd($despesas);
             ->get();
 
-        $cartao =DB::table('despesa')
-            /*
-            ->select('despesa.ID_Despesa', 'despesa.Descricao', DB::raw('sum(despesa.Valor) as Valor'),
-                'despesa.Data', 'despesa.Efetivada', DB::raw("'cartao.Nome' as NomeCategoria"), 'conta.Banco' )
-            */
+        $cartao =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
-                'despesa.Data', 'despesa.Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
-            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('cartao', 'despesa.ID_Cartao', '=', 'cartao.ID_Cartao')
-            //->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-
-            ->whereBetween('Data',
-                [
-                    $start_date,
-                    $end_date
-                ]
-            )
-
-            ->whereNotNull('despesa.ID_Cartao')
-            ->groupBy('despesa.ID_Cartao')
-            ->orderBy('Data','DESC')
+                //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+                'fatura.data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            ->join('conta', 'cartao.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->where('Ano_Mes','=',
+                Carbon::createFromDate($start_date)->isoFormat('Y') . '-' .
+                        Carbon::createFromDate($start_date)->isoFormat('MM'))
+            ->groupBy('cartao.ID_Cartao')
             //->toSql(); dd($cartao);
-            //->paginate(99999);
             ->get();
 
         $despesas = $despesas->merge($cartao);
-        //$despesas = $cartao;
         return $despesas;
     }
 
