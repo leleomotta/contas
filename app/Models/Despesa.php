@@ -137,6 +137,23 @@ class Despesa extends Model
         //dd($retorno->toSql());
             $retorno->get();
 
+
+        $cartao =DB::table('fatura')
+            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+                //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+                'fatura.data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            ->join('conta', 'cartao.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->where('Ano_Mes','=',
+                Carbon::createFromDate($start_date)->isoFormat('Y') . '-' .
+                Carbon::createFromDate($start_date)->isoFormat('MM'))
+            ->groupBy('cartao.ID_Cartao')
+            //->toSql(); dd($cartao);
+            ->get();
+
+        //$despesas = $despesas->merge($cartao);
+
         return $retorno->sum('Valor');
     }
 

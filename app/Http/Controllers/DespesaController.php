@@ -76,6 +76,7 @@ class DespesaController extends Controller
         $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
         $dateFilter = $request->date_filter;
+
         if (is_null($dateFilter) ) {
             $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
             Carbon::now()->isoFormat('MM');
