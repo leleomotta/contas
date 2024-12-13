@@ -85,16 +85,13 @@ class DespesaController extends Controller
         $dt->setDateFrom($dateFilter . '-15');
         $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
         $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-        $categoria = null;
-        $conta = null;
-        $texto = null;
 
-        $despesas = new Despesa();
+        $despesas = (new \App\Models\Despesa)->show($start_date, $end_date);
 
         return view('despesaListar', [
-            'despesas' => $despesas->show($start_date, $end_date),
-            'pendente' => $despesas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-            'pago' => $despesas->pago($categoria, $conta, $texto, $start_date, $end_date),
+            'despesas' => $despesas,
+            'pendente' => $despesas->where('Efetivada','=',0)->sum('Valor'),
+            'pago' => $despesas->where('Efetivada','=',1)->sum('Valor'),
             'contas' => $contas,
             'categorias' => $categorias
         ]);
@@ -141,13 +138,13 @@ class DespesaController extends Controller
 
         $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
 
-        $despesas = new Despesa();
+        $despesas = (new \App\Models\Despesa)->filter($categoria, $conta, $texto, $start_date, $end_date);
 
         return view('despesaListar',
             [
-                'despesas' => $despesas->filter($categoria, $conta, $texto, $start_date, $end_date),
-                'pendente' => $despesas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-                'pago' => $despesas->pago($categoria, $conta, $texto, $start_date, $end_date),
+                'despesas' => $despesas,
+                'pendente' => $despesas->where('Efetivada','=',0)->sum('Valor'),
+                'pago' => $despesas->where('Efetivada','=',1)->sum('Valor'),
                 'categorias' => $categorias,
                 'contas' => $contas,
         ]);

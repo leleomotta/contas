@@ -18,85 +18,85 @@
                 @method('PUT')
                 <div class="box-body">
                 <!-- Date -->
-                <label>Data</label>
-                <div class="form-group">
-                    <div class="input-group date" id="Data" data-target-input="nearest">
-                        <div class="input-group-append" data-target="#Data" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    <label>Data</label>
+                    <div class="form-group">
+                        <div class="input-group date" id="Data" data-target-input="nearest">
+                            <div class="input-group-append" data-target="#Data" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                            <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
+                                   data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                   placeholder="dd/mm/yyyy" value=" {{ date('d/m/Y', strtotime($despesa['Data'])) }}"
+                            />
                         </div>
-                        <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
-                               data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy" value=" {{ date('d/m/Y', strtotime($despesa['Data'])) }}"
-                        />
                     </div>
-                </div>
 
-                <label >Descrição</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
+                    <label >Descrição</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
+                        </div>
+                        <input type="text" name="Descricao" class="form-control" id="Descricao"
+                               placeholder="Digite uma descrição para a despesa"
+                               value="{{ $despesa['Descricao'] }}">
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao"
-                           placeholder="Digite uma descrição para a despesa"
-                           value="{{ $despesa['Descricao'] }}">
-                </div>
 
-                <label >Valor</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                    <label >Valor</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                        </div>
+                        <input type="text" class="form-control text-left" id="Valor" name="Valor"
+                               data-inputmask="'alias': 'numeric',
+                               'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
+                               'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
+                               value="{{ str_replace("-",'.',
+                                                str_replace(".",',',
+                                                str_replace(",",'-',
+                                                number_format($despesa['Valor'], 2
+                                                )))) }}">
                     </div>
-                    <input type="text" class="form-control text-left" id="Valor" name="Valor"
-                           data-inputmask="'alias': 'numeric',
-                           'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
-                           value="{{ str_replace("-",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'-',
-                                            number_format($despesa['Valor'], 2
-                                            )))) }}">
-                </div>
 
-                <label>Categoria</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
+                    <label>Categoria</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
+                        </div>
+                        <select class="custom-select" id="Categoria" name="Categoria">
+                            <option selected data-default>- Selecione uma categoria -</option>
+                            @foreach($categorias as $categoria)
+                                <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select class="custom-select" id="Categoria" name="Categoria">
-                        <option selected data-default>- Selecione uma categoria -</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <label>Conta</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
+                    <label>Conta</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
+                        </div>
+                        <select class="custom-select" id="Conta" name="Conta">
+                            <option selected data-default>- Selecione uma conta -</option>
+                            @foreach($contas as $conta)
+                                <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select class="custom-select" id="Conta" name="Conta">
-                        <option selected data-default>- Selecione uma conta -</option>
-                        @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
-                        @endforeach
-                    </select>
-                </div>
 
-                <div class="form-group">
-                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                        <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
-                        <label class="custom-control-label" for="Efetivada">Efetivada</label>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
+                            <label class="custom-control-label" for="Efetivada">Efetivada</label>
+                        </div>
                     </div>
                 </div>
-            </div>
 
                 <div class="card-footer">
-                <div class="float-right">
-                    <button type="submit" class="btn btn-success">Cadastrar</button>
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-success">Cadastrar</button>
+                    </div>
+                    <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
                 </div>
-                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
-            </div>
             </div>
         </div>
 

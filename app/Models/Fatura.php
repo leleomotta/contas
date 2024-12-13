@@ -43,9 +43,9 @@ class Fatura extends Model
         return $retorno->sum('Valor');
     }
 
-    public function fatura_fechar($Ano_Mes, $ID_Cartao){
+    public function fatura_fechar($Ano_Mes, $ID_Cartao, $Data, $Conta){
 
-        $data_fechamento = Carbon::now()->isoFormat('Y-MM-D');
+        //$data_fechamento = Carbon::now()->isoFormat('Y-MM-D');
 
         $retorno = DB::table('fatura')
             ->select('fatura.ID_Despesa', 'fatura.ID_Cartao', 'fatura.Ano_Mes', 'fatura.data_fechamento',
@@ -58,16 +58,15 @@ class Fatura extends Model
         foreach($retorno as $despesa) {
             $efetiva = Despesa::find($despesa->ID_Despesa);
             $efetiva->Efetivada = 1;
+            $efetiva->ID_Conta = $Conta;
             $efetiva->save();
 
             Fatura::where(function ($query) use ($ID_Cartao,$Ano_Mes) {
                 $query->where('ID_Cartao', '=', $ID_Cartao)
                     ->where('Ano_Mes', '=', $Ano_Mes);
-            })->update(['fechada'=>'1','data_fechamento'=>$data_fechamento] );
+            })->update(['fechada'=>'1','data_fechamento'=>$Data] );
 
         }
-
-
     }
 
     public function fatura_reabrir($Ano_Mes, $ID_Cartao){

@@ -19,7 +19,7 @@ class Cartao extends Model
         $cartoes = DB::table('cartao')
             ->select('cartao.ID_Cartao', 'cartao.Nome', 'cartao.Bandeira', 'cartao.Dia_Vencimento',
                 'cartao.ID_Conta', 'cartao.Cor',
-                DB::raw("'000' as Valor"), DB::raw("'000' as Gasto_Total")
+                DB::raw("'000' as Valor"), DB::raw("'000' as Gasto_Total"), DB::raw("'000' as N_Despesas")
                 //'fatura.Ano_Mes', 'fatura.data_fechamento', '''0' as Valor''
             )
             //->leftJoin('fatura', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
@@ -36,6 +36,7 @@ class Cartao extends Model
                     ['fatura.Ano_Mes','=', $Ano_Mes],
                     ['fatura.ID_Cartao', '=', $cartao->ID_Cartao]
                 ])
+                //->toSql(); dd($soma);
             ->get();
             $cartao->Valor = $soma[0]->Valor;
 
@@ -43,11 +44,22 @@ class Cartao extends Model
                 ->select(DB::raw('sum(despesa.Valor) as Valor'))
                 ->join('despesa', 'despesa.ID_Despesa','=', 'fatura.ID_Despesa')
                 ->where([
-                    //['fatura.Ano_Mes','=', $Ano_Mes],
+                    ['fatura.Ano_Mes','=', $Ano_Mes],
                     ['fatura.ID_Cartao', '=', $cartao->ID_Cartao]
                 ])
                 ->get();
             $cartao->Gasto_Total = $soma[0]->Valor;
+
+            $soma = DB::table('fatura')
+                ->select(DB::raw('count(despesa.Valor) as N_Despesas'))
+                ->join('despesa', 'despesa.ID_Despesa','=', 'fatura.ID_Despesa')
+                ->where([
+                    ['fatura.Ano_Mes','=', $Ano_Mes],
+                    ['fatura.ID_Cartao', '=', $cartao->ID_Cartao]
+                ])
+                ->get();
+            $cartao->N_Despesas = $soma[0]->N_Despesas;
+
         }
         return $cartoes;
     }

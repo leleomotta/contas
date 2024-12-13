@@ -122,10 +122,12 @@ class CartaoController extends Controller
 
         //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
+        $contas = (new \App\Models\Conta)->showAll();
 
         return view('faturaListar', [
             'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao)
+            'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),
+            'contas' => $contas
         ]);
     }
 
@@ -140,15 +142,20 @@ class CartaoController extends Controller
             $Ano_Mes = $request->Ano_Mes;
         }
         $ID_Cartao = $request->ID_Cartao;
+        $Data = implode("-",array_reverse(explode("/",$request->Data)));
 
-        (new \App\Models\Fatura)->fatura_fechar($Ano_Mes,$ID_Cartao);
+        $Conta = $request->Conta;
+
+        (new \App\Models\Fatura)->fatura_fechar($Ano_Mes,$ID_Cartao,$Data,$Conta);
 
         //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
+        $contas = (new \App\Models\Conta)->showAll();
 
         return view('faturaListar', [
             'faturas' => $fatura->show($Ano_Mes,$ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao)
+            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao),
+            'contas' => $contas
         ]);
 
     }
@@ -169,10 +176,12 @@ class CartaoController extends Controller
 
         //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
+        $contas = (new \App\Models\Conta)->showAll();
 
         return view('faturaListar', [
             'faturas' => $fatura->show($Ano_Mes,$ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao)
+            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao),
+            'contas' => $contas
         ]);
 
     }
@@ -210,7 +219,8 @@ class CartaoController extends Controller
     }
 
     public function showAll(){
-        $Ano_Mes = '2024-11';
+        $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
+            Carbon::now()->isoFormat('MM');
         $cartoes = new Cartao();
 
         return view('cartaoListar', [

@@ -63,7 +63,7 @@
                                         <form id="fatura{{$cartao->ID_Cartao}}" role="form" action="{{ route('cartoes.fatura') }}" method="GET">
                                             <input type="hidden" name="ID_Cartao" value="{{ $cartao->ID_Cartao }}">
                                             <a href="javascript:{}" onclick="document.getElementById('fatura{{$cartao->ID_Cartao}}').submit();" class="btn btn-app">
-                                                <span class="badge bg-info">12</span>
+                                                <span class="badge bg-info">{{$cartao->N_Despesas}}</span>
                                                 <i class="fas fa-inbox"></i> Fatura
                                             </a>
                                         </form>
