@@ -28,9 +28,7 @@
                                         \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
                                         \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM'),
                                         'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
-                               type="submit"
-
-                            >
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -41,8 +39,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -54,8 +55,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -67,8 +71,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -79,8 +86,11 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' . \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -90,8 +100,11 @@
                             </a>
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->isoFormat('Y') . '-' . \Carbon\Carbon::now()->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                                    <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                                   type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->isoFormat('MMM') }}
                                 </p>
@@ -102,8 +115,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                                <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                                   type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('MMM') }}
                                 </p>
@@ -114,8 +130,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('MMM') }}
                                 </p>
@@ -126,8 +145,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('MMM') }}
                                 </p>
@@ -138,8 +160,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('MMM') }}
                                 </p>
@@ -150,8 +175,11 @@
                         </li>
                         <li id="{{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
                                                                 \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="fatura?Ano_Mes={{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}&ID_Cartao={{app('request')->input('ID_Cartao')}}" type="submit" >
+                            <a class="page-link" href="{{ route('cartoes.fatura',array('Ano_Mes' =>
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
+                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM'),
+                                        'ID_Cartao'=> app('request')->input('ID_Cartao') )) }}"
+                               type="submit">
                                 <p class="page-month">
                                     {{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('MMM') }}
                                 </p>
@@ -187,9 +215,9 @@
                         <tr>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($fatura->Data)) }}</td>
                             <td>{{ $fatura->Descricao  }}</td>
-                            <td>{{ 'R$ ' .  str_replace("-",'.',
+                            <td>{{ 'R$ ' .  str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($fatura->Valor, 2
                                             )))) }}</td>
                             <td>{{$fatura->NomeCategoria}}</td>
@@ -197,7 +225,7 @@
 
                                 <div class="row">
                                     <div class="col-3">
-                                        @if (isset($faturas) )
+                                        @if ($faturas->count() <> 0 )
                                             @if ($fatura->Fechada == 0)
                                                 <form id="edita" role="form" action="{{ route('cartoes.edit_despesa', ['ID_Despesa' =>$fatura->ID_Despesa])  }}" method="GET">
                                                     <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
@@ -212,7 +240,7 @@
                                     </div>
 
                                     <div class="col-3">
-                                        @if (isset($faturas) )
+                                        @if ($faturas->count() <> 0 )
                                             @if ($fatura->Fechada == 0)
                                                 <form action="{{ route('cartoes.destroy_despesa', ['ID_Despesa'=> $fatura->ID_Despesa])  }}" method="POST">
                                                     @csrf
@@ -269,9 +297,9 @@
                         <div class="info-box-content">
                             <span class="info-box-text">Total da fatura</span>
                             <span class="info-box-number">
-                                {{ 'R$ ' .  str_replace("-",'.',
+                                {{ 'R$ ' .  str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($totalFatura, 2
                                             )))) }}
                             </span>
@@ -288,7 +316,7 @@
                                 <span class="fa fa-plus"></span>
                             </button>
                         </form>
-                        @if (isset($faturas) )
+                        @if ($faturas->count() <> 0 )
                             @if ($fatura->Fechada  == 0)
                                 <button type="submit" class="btn btn-warning btn-block" title="Fechar fatura"
                                         data-toggle="modal" data-target="#fechaFatura">
@@ -311,9 +339,9 @@
                                                 <div class="modal-body">
                                                     <div class="alert alert-warning alert-dismissible">
                                                         <label>Total da fatura: </label>
-                                                        {{ 'R$ ' .  str_replace("-",'.',
+                                                        {{ 'R$ ' .  str_replace("_",'.',
                                                                     str_replace(".",',',
-                                                                    str_replace(",",'-',
+                                                                    str_replace(",",'_',
                                                                     number_format($totalFatura, 2
                                                                     )))) }}
                                                     </div>

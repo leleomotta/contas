@@ -18,49 +18,40 @@ class Conta extends Model
 
         $contas = DB::table('conta')
             ->select('conta.ID_Conta', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor',
-                DB::raw('sum(despesa.Valor) as Despesas'), DB::raw('sum(receita.Valor) as Receitas'),
+                DB::raw("000 as Despesas"), DB::raw('000 as Receitas'),
                 DB::raw("'MOTTA' as Saldo"))
-
-            ->leftJoin('despesa', function($join) use ($start_date, $end_date) {
-                $join->on('despesa.ID_Conta', '=', 'conta.ID_Conta')
-                    ->where('despesa.Efetivada', '=', 1)
-                    ->where('despesa.Data', '>=', $start_date)
-                    ->where('despesa.Data', '<=', $end_date);
-                    //->on('despesa.Data','>=', "'" . $start_date)
-                    //->on('despesa.Data','<=', DB::raw($end_date));
-            })
-            ->leftJoin('receita', function($join) use ($start_date, $end_date) {
-                $join->on('receita.ID_Conta', '=', 'conta.ID_Conta')
-                    ->where('receita.Efetivada', '=', 1)
-                    ->where('receita.Data', '>=', $start_date)
-                    ->where('receita.Data', '<=', $end_date);
-            })
             ->groupBy('conta.ID_Conta')
             //->toSql(); dd($contas);
             ->get();
-            //dd($contas);
 
         foreach($contas as $conta){
-            $soma = DB::table('conta')
+            $receita = DB::table('conta')
                 ->select('conta.ID_Conta', 'conta.Saldo_inicial',
-                    DB::raw('sum(despesa.Valor) as Despesas'),
                     DB::raw('sum(receita.Valor) as Receitas') )
-
-                ->leftJoin('despesa', function($join) {
-                    $join->on('despesa.ID_Conta', '=', 'conta.ID_Conta')
-                        ->where('despesa.Efetivada', '=', 1);
-                })
                 ->leftJoin('receita', function($join) {
                     $join->on('receita.ID_Conta', '=', 'conta.ID_Conta')
                         ->where('receita.Efetivada', '=', 1);
                 })
                 ->where('conta.ID_Conta', '=', $conta->ID_Conta)
                 ->groupBy('conta.ID_Conta')
-                //->toSql(); dd($contas);
+                //->toSql(); dd($receita);
                 ->get();
-            //dd($soma[0]->Despesas);
 
-            $conta->Saldo = $soma[0]->Saldo_inicial + $soma[0]->Receitas - $soma[0]->Despesas;
+            $despesa = DB::table('conta')
+                ->select('conta.ID_Conta', 'conta.Saldo_inicial',
+                    DB::raw('sum(despesa.Valor) as Despesas') )
+
+                ->leftJoin('despesa', function($join) {
+                    $join->on('despesa.ID_Conta', '=', 'conta.ID_Conta')
+                        ->where('despesa.Efetivada', '=', 1);
+                })
+                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
+                ->groupBy('conta.ID_Conta')
+                ->get();
+
+            $conta->Despesas = $despesa[0]->Despesas;
+            $conta->Receitas = $receita[0]->Receitas;
+            $conta->Saldo = $receita[0]->Saldo_inicial + $receita[0]->Receitas - $despesa[0]->Despesas;
 
         }
 

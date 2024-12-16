@@ -44,6 +44,8 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('contas',[ContaController::class, 'showAll'])->name('contas.showAll');
     Route::get('contas/novo',[ContaController::class, 'new'])->name('contas.new');
     Route::post('contas/salvar',[ContaController::class, 'store'])->name('contas.store');
+    Route::get('contas/editar/{ID_Conta}',[ContaController::class, 'edit'])->name('contas.edit');
+    Route::put('contas/atualiza/{ID_Conta}',[ContaController::class, 'update'])->name('contas.update');
 //----------------- CONTAS -----------------
 
 //----------------- CARTÃO -----------------

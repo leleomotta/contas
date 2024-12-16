@@ -120,10 +120,9 @@ class CartaoController extends Controller
             $Ano_Mes = $request->Ano_Mes;
         }
 
-        //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
-
+//dd($fatura->count());
         return view('faturaListar', [
             'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
             'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),

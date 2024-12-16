@@ -244,15 +244,7 @@ class ReceitaController extends Controller
             $query->orderBy('Descricao','ASC');
         })->get();
 
-        /*
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
-*/
-        $categorias = (new \App\Models\Categoria)->show();
-
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
         return view('receitaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,

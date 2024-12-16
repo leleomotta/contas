@@ -34,9 +34,9 @@
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                            {{ 'R$ ' .  str_replace("-",'.',
+                                            {{ 'R$ ' .  str_replace("_",'.',
                                                         str_replace(".",',',
-                                                        str_replace(",",'-',
+                                                        str_replace(",",'_',
                                                         number_format($cartao->Gasto_Total, 2
                                                         )))) }}</h5>
                                         <span class="description-text">GASTO TOTAL</span>
@@ -47,9 +47,9 @@
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header">
-                                            {{ 'R$ ' .  str_replace("-",'.',
+                                            {{ 'R$ ' .  str_replace("_",'.',
                                                         str_replace(".",',',
-                                                        str_replace(",",'-',
+                                                        str_replace(",",'_',
                                                         number_format($cartao->Valor, 2
                                                         )))) }}
                                         </h5>

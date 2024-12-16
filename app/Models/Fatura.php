@@ -48,7 +48,7 @@ class Fatura extends Model
         //$data_fechamento = Carbon::now()->isoFormat('Y-MM-D');
 
         $retorno = DB::table('fatura')
-            ->select('fatura.ID_Despesa', 'fatura.ID_Cartao', 'fatura.Ano_Mes', 'fatura.data_fechamento',
+            ->select('fatura.ID_Despesa', 'fatura.ID_Cartao', 'fatura.Ano_Mes', 'fatura.Data_fechamento',
                 'fatura.fechada')
             ->where('fatura.ID_Cartao',$ID_Cartao)
             ->where('fatura.Ano_Mes',$Ano_Mes)
@@ -64,7 +64,7 @@ class Fatura extends Model
             Fatura::where(function ($query) use ($ID_Cartao,$Ano_Mes) {
                 $query->where('ID_Cartao', '=', $ID_Cartao)
                     ->where('Ano_Mes', '=', $Ano_Mes);
-            })->update(['fechada'=>'1','data_fechamento'=>$Data] );
+            })->update(['Fechada'=>'1','Data_fechamento'=>$Data,'Conta_fechamento'=>$Conta] );
 
         }
     }
@@ -74,7 +74,7 @@ class Fatura extends Model
         $data_fechamento = Carbon::now()->isoFormat('Y-MM-D');
 
         $retorno = DB::table('fatura')
-            ->select('fatura.ID_Despesa', 'fatura.ID_Cartao', 'fatura.Ano_Mes', 'fatura.data_fechamento',
+            ->select('fatura.ID_Despesa', 'fatura.ID_Cartao', 'fatura.Ano_Mes', 'fatura.Data_fechamento',
                 'fatura.fechada')
             ->where('fatura.ID_Cartao',$ID_Cartao)
             ->where('fatura.Ano_Mes',$Ano_Mes)
@@ -89,7 +89,7 @@ class Fatura extends Model
             Fatura::where(function ($query) use ($ID_Cartao,$Ano_Mes) {
                 $query->where('ID_Cartao', '=', $ID_Cartao)
                     ->where('Ano_Mes', '=', $Ano_Mes);
-            })->update(['fechada'=>'0','data_fechamento'=>null ] );
+            })->update(['fechada'=>'0','Data_fechamento'=>null ] );
 
         }
 

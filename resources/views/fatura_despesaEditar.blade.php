@@ -50,9 +50,9 @@
                            data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                            'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
-                           value="{{ str_replace("-",'.',
+                           value="{{ str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($despesa['Valor'], 2
                                             )))) }}">
                 </div>

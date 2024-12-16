@@ -58,8 +58,6 @@ class ContaController extends Controller
 
 
     public function showAll(){
-
-
         $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
                 Carbon::now()->isoFormat('MM');
 
@@ -75,12 +73,43 @@ class ContaController extends Controller
         ]);
     }
 
+
+    public function edit(int $ID_Conta)
+    {
+        $conta = Conta::find($ID_Conta);
+
+        return view('contaEditar', [
+            'conta' => $conta,
+        ]);
+
+    }
+
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Conta $conta)
+    public function update(Request $request, int $ID_Conta)
     {
-        //
+        $conta = Conta::find($ID_Conta);
+
+        $conta->Descricao = $request->Descricao;
+        $conta->Banco = $request->Banco;
+        $conta->Saldo_Inicial =
+            str_replace(",",'.',str_replace(".","",
+                str_replace("R$ ","",$request->Saldo_Inicial)));
+
+        $conta->Cor = $request->corConta;
+
+        $imagens = $request->files->all();
+        if ($request["ApagaFoto"] == 1) {
+            $conta->Imagem = null;
+        } else {
+            if (isset($imagens['imagem'])) {
+                $conta->Imagem = Imagem::CriaImagem($imagens, 'imagem');
+            }
+        }
+        $conta->save();
+
+        return redirect()->route('contas.showAll');
     }
 
     /**

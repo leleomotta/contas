@@ -35,14 +35,33 @@ class CategoriaController extends Controller
     public function showAll(){
         Paginator::useBootstrap();
         //$categorias = Categoria::paginate(999);
-        $categorias = Categoria::where(function ($query) {
+        $despesasPai = Categoria::where(function ($query) {
             $query->select('*');
             $query->where('Tipo','D');
+            $query->WhereNull('ID_Categoria_Pai');
             $query->orderBy('Nome','ASC');
         })->get();
 
+        $despesas = Categoria::where(function ($query) {
+            $query->select('*');
+            $query->where('Tipo','X');
+        })->get();
+
+
+//a ideia é ir rodando e acrescentando quem tem filho na mão
+        foreach($despesasPai as $desp) {
+            $X = Categoria::where(function ($query) use ($desp) {
+                $query->select('*');
+                $query->where('ID_Categoria',$desp->ID_categoria);
+                $query->WhereNull('ID_Categoria_Pai');
+                $query->orderBy('Nome','ASC');
+            })->get();
+
+        }
+        //$despesas = $despesas->merge($cartao);
+
         return view('categoriaListar', [
-            'categorias' => $categorias
+            'categorias' => $despesas
         ]);
     }
 

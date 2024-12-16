@@ -301,9 +301,9 @@
                             </td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($receita->Data)) }}</td>
                             <td>{{ $receita->Descricao  }}</td>
-                            <td>{{ 'R$ ' .  str_replace("-",'.',
+                            <td>{{ 'R$ ' .  str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($receita->Valor, 2
                                             )))) }}</td>
                             <td>{{$receita->Banco}}</td>
@@ -397,9 +397,9 @@
                         <div class="info-box-content">
                             <span class="info-box-text">Pendente</span>
                             <span class="info-box-number">
-                                {{ 'R$ ' .  str_replace("-",'.',
+                                {{ 'R$ ' .  str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($pendente, 2
                                             )))) }}
                             </span>
@@ -412,9 +412,9 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Recebido</span>
                         <span class="info-box-number">
-                            {{ 'R$ ' .  str_replace("-",'.',
+                            {{ 'R$ ' .  str_replace("_",'.',
                                             str_replace(".",',',
-                                            str_replace(",",'-',
+                                            str_replace(",",'_',
                                             number_format($recebido, 2
                                             )))) }}
                         </span>

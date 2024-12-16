@@ -50,9 +50,9 @@
                                data-inputmask="'alias': 'numeric',
                                'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                                'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
-                               value="{{ str_replace("-",'.',
+                               value="{{ str_replace("_",'.',
                                                 str_replace(".",',',
-                                                str_replace(",",'-',
+                                                str_replace(",",'_',
                                                 number_format($despesa['Valor'], 2
                                                 )))) }}">
                     </div>
@@ -85,7 +85,8 @@
 
                     <div class="form-group">
                         <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                            <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
+                            <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada" value="1" @if ($despesa['Efetivada'] == 1) checked @endif>
+
                             <label class="custom-control-label" for="Efetivada">Efetivada</label>
                         </div>
                     </div>
