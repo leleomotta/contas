@@ -397,7 +397,7 @@ return [
                 ],
                 [
                     'text' => 'Adicionar',
-                    'url' => '',
+                    'url' => '/categorias/novo',
                     'icon' => 'fa fa-plus nav-icon',
                     //'label' => 3,
                     'label_color' => 'success',

@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Categoria;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Session;
+use function PHPUnit\Framework\isNull;
 
 class CategoriaController extends Controller
 {
@@ -21,7 +24,14 @@ class CategoriaController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $categoria = new Categoria();
+
+        $categoria->Nome = $request->Nome;
+        $categoria->Cor = $request->corCategoria;
+        $categoria->Tipo = $request->Tipo;
+        $categoria->save();
+        return redirect()->route('categorias.showAll');
+
     }
 
     /**
@@ -33,42 +43,25 @@ class CategoriaController extends Controller
     }
 
     public function showAll(){
-        Paginator::useBootstrap();
-        //$categorias = Categoria::paginate(999);
-        $despesasPai = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','D');
-            $query->WhereNull('ID_Categoria_Pai');
-            $query->orderBy('Nome','ASC');
-        })->get();
 
-        $despesas = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','X');
-        })->get();
-
-
-//a ideia é ir rodando e acrescentando quem tem filho na mão
-        foreach($despesasPai as $desp) {
-            $X = Categoria::where(function ($query) use ($desp) {
-                $query->select('*');
-                $query->where('ID_Categoria',$desp->ID_categoria);
-                $query->WhereNull('ID_Categoria_Pai');
-                $query->orderBy('Nome','ASC');
-            })->get();
-
-        }
-        //$despesas = $despesas->merge($cartao);
+        $despesas = (new \App\Models\Categoria)->show('D');
+        $receitas = (new \App\Models\Categoria)->show('R');
 
         return view('categoriaListar', [
-            'categorias' => $despesas
+            'despesas' => $despesas,
+            'receitas' => $receitas
         ]);
     }
+
+    public function edit(int $ID_Categoria) {
+
+    }
+
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Categoria $categoria)
+    public function update(Request $request, int $ID_Categoria)
     {
         //
     }
@@ -76,8 +69,30 @@ class CategoriaController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Categoria $categoria)
+    public function destroy(int $ID_Categoria)
     {
-        //
+        $categoria = Categoria::find($ID_Categoria);
+
+        try {
+            DB::beginTransaction();
+            $categoria->delete();
+            DB::commit();
+            return redirect()->route('categorias.showAll');
+
+        } catch (\Exception $e) {
+            DB::rollback();
+            Session::flash('naoapagado', true);
+            return back();
+        }
+    }
+
+    public function new(){
+
+        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+
+        return view('categoriaCriar', [
+//            'categorias' => $categorias
+        ]);
+
     }
 }
