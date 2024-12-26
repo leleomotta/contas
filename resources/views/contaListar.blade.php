@@ -19,7 +19,6 @@
 
                         <div class="widget-user-header text-white"
                                  style="background:{{ $conta->Cor }}">
-
                             <h3 class="widget-user-username">{{ $conta->Banco }}</h3>
                             <h5 class="widget-user-desc">{{ $conta->Descricao }}</h5>
                         </div>
@@ -37,7 +36,7 @@
 
                         <div class="card-footer">
                             <div class="row">
-                                <div class="col-sm-4 border-right">
+                                <div class="col-sm-3 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                             {{ 'R$ ' .  str_replace("_",'.',
@@ -50,7 +49,7 @@
                                     <!-- /.description-block -->
                                 </div>
                                 <!-- /.col -->
-                                <div class="col-sm-4 border-right">
+                                <div class="col-sm-3 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                             {{ 'R$ ' .  str_replace("_",'.',
@@ -63,7 +62,7 @@
                                     <!-- /.description-block -->
                                 </div>
                                 <!-- /.col -->
-                                <div class="col-sm-4">
+                                <div class="col-sm-3 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                             {{ 'R$ ' .  str_replace("_",'.',
@@ -72,6 +71,19 @@
                                                         number_format($conta->Despesas, 2
                                                         )))) }}</h5>
                                         <span class="description-text">DESPESAS</span>
+                                    </div>
+                                    <!-- /.description-block -->
+                                </div>
+
+                                <!-- /.col -->
+                                <div class="col-sm-3">
+                                    <div class="description-block">
+                                        <form id="transferencia{{ $conta->ID_Conta }}" role="form" action="{{ route('transferencias.new') }}" method="GET">
+                                            <input type="hidden" name="ID_Conta_Origem" value="{{ $conta->ID_Conta }}">
+                                            <a href="javascript:{}" onclick="document.getElementById('transferencia{{ $conta->ID_Conta }}').submit();" class="btn btn-app">
+                                                <i class="fas fa-exchange-alt"></i> Transferência
+                                            </a>
+                                        </form>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>

@@ -334,7 +334,7 @@ return [
                 ],
                 [
                     'text' => 'Tranferência',
-                    'url' => '#',
+                    'url' => '/transferencias',
                     //'url' => {{ route('') }},
                     //'url' => route('contas.new') ,
                     'icon' => 'fa fa-share nav-icon',

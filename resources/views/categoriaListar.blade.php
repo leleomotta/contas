@@ -33,7 +33,6 @@
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th style="width: 110px">&nbsp;</th>
                                     </tr>
@@ -42,7 +41,6 @@
 
                                     @foreach($despesas as $despesa)
                                         <tr bgcolor="{{ $despesa->Cor  }}">
-                                            <td>{{ $despesa->ID_Categoria }}</td>
                                             <td>{{ $despesa->Nome }}</td>
                                             <td>
 
@@ -89,7 +87,6 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th style="width: 110px">&nbsp;</th>
                                     </tr>
@@ -103,7 +100,6 @@
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th style="width: 110px">&nbsp;</th>
                                     </tr>
@@ -112,7 +108,6 @@
 
                                     @foreach($receitas as $receita)
                                         <tr bgcolor="{{ $receita->Cor  }}">
-                                            <td>{{ $receita->ID_Categoria }}</td>
                                             <td>{{ $receita->Nome }}</td>
                                             <td>
 
@@ -159,7 +154,6 @@
                                     </tbody>
                                     <tfoot>
                                     <tr>
-                                        <th>ID</th>
                                         <th>Nome</th>
                                         <th style="width: 110px">&nbsp;</th>
                                     </tr>
@@ -186,23 +180,6 @@
 @stop
 
 @section('js')
-
-    <script src="/contas/resources/js/boot/jquery/jquery.min.js"></script>
-    <!--<script src="../../plugins/jquery/jquery.min.js"></script> -->
-    <!-- Bootstrap 4 -->
-
-    <!-- DataTables  & Plugins -->
-    <script src="/contas/resources/js/boot/datatables/jquery.dataTables.min.js"></script>
-    <script src="/contas/resources/js/boot/datatables-bs4/js/dataTables.bootstrap4.min.js"></script>
-
-    <script src="/contas/resources/js/boot/datatables-buttons/js/dataTables.buttons.min.js"></script>
-    <script src="/contas/resources/js/boot/datatables-buttons/js/buttons.bootstrap4.min.js"></script>
-    <script src="/contas/resources/js/boot/jszip/jszip.min.js"></script>
-    <script src="/contas/resources/js/boot/pdfmake/pdfmake.min.js"></script>
-    <script src="/contas/resources/js/boot/datatables-buttons/js/buttons.html5.min.js"></script>
-    <script src="/contas/resources/js/boot/datatables-buttons/js/buttons.print.min.js"></script>
-    <script src="/contas/resources/js/boot/datatables-buttons/js/buttons.colVis.min.js"></script>
-
     <script>
         $(function () {
             //para habilitar os filtros da tabela altere o nome para example1

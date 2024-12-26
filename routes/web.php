@@ -4,6 +4,7 @@ use App\Http\Controllers\CartaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\ReceitaController;
+use App\Http\Controllers\TransferenciaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContaController;
@@ -47,6 +48,12 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('contas/editar/{ID_Conta}',[ContaController::class, 'edit'])->name('contas.edit');
     Route::put('contas/atualiza/{ID_Conta}',[ContaController::class, 'update'])->name('contas.update');
 //----------------- CONTAS -----------------
+
+//----------------- TRANSFERENCIAS -----------------
+    Route::get('transferencias',[TransferenciaController::class, 'showAll'])->name('transferencias.showAll');
+    Route::get('transferencias/novo',[TransferenciaController::class, 'new'])->name('transferencias.new');
+    Route::post('transferencias/salvar',[TransferenciaController::class, 'store'])->name('transferencias.store');
+//----------------- TRANSFERENCIAS -----------------
 
 //----------------- CARTÃO -----------------
     Route::get('cartoes',[CartaoController::class, 'showAll'])->name('cartoes.showAll');
