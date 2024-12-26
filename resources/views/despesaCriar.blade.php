@@ -53,8 +53,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                     </div>
-                    <select class="custom-select" id="Categoria" name="Categoria">
-                        <option selected data-default>- Selecione uma categoria -</option>
+
+                    <select class="form-control select2" id="Categoria" name="Categoria">
                         @foreach($categorias as $categoria)
                             <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
                         @endforeach
@@ -124,9 +124,8 @@
     <script>
         $('[data-mask]').inputmask();
         $('input').inputmask();
+
     </script>
-
-
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/additional-methods.min.js"></script>

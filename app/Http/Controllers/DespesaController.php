@@ -185,8 +185,6 @@ class DespesaController extends Controller
         $despesa->save();
 
         return redirect()->route('despesas.showAll');
-
-
     }
 
     /**

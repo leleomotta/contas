@@ -1,49 +1,37 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Categoria')
+@section('title', 'Editar Categoria')
 
 @section('content_header')
-    <h1>Criar a categoria</h1>
+    <h1>Editar categoria</h1>
 @stop
 
 @section('content')
-    <form id="cadastro" role="form" action="{{ route('categorias.store') }}" method="post" enctype="multipart/form-data">
+    <form id="cadastro" role="form" action="{{ route('categorias.update',['ID_Categoria' =>  $categoria['ID_Categoria']]) }}" method="post" enctype="multipart/form-data">
         <div class="card-body">
 
         @csrf
+        @method('PUT')
         <div class="box-body">
             <div class="form-group">
                 <label >Nome</label>
-                <input type="text" name="Nome" class="form-control" id="Nome" placeholder="Digite um nome para Categoria">
+                <input type="text" name="Nome" class="form-control" id="Nome" placeholder="Digite um nome para Categoria" value="{{ $categoria['Nome'] }}">
             </div>
 
             <div class="form-group">
                 <label>Cor de marcação da categoria:</label>
                 <div class="input-group my-colorpicker2">
-                    <input type="text" class="form-control" id="corCategoria" name="corCategoria" value="#FDFDFD">
+                    <input type="text" class="form-control" id="corCategoria" name="corCategoria" value="{{ $categoria['Cor'] }}">
                     <div class="input-group-append">
                         <span class="input-group-text"><i class="fas fa-square"></i></span>
                     </div>
                 </div>
             </div>
 
-            <label>Tipo de categoria</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text"> <i class="fa fa-list"></i> </span>
-                </div>
-                <select class="custom-select" id="TipoCat" name="TipoCat">
-                    <option selected data-default>- Selecione um tipo de categoria -</option>
-                        <option value="D" style="background-color: blue"> Despesa  </option>
-                    <option value="R"> Receita  </option>
-                </select>
-            </div>
-            <input type="hidden" id="ID_Categoria_Pai" name="ID_Categoria_Pai" value="{{ $categoriaPai }}">
-            <input type="hidden" id="TipoCat2" name="TipoCat2" value="">
         </div>
         <div class="card-footer">
             <div class="float-right">
-                <button type="submit" class="btn btn-success">Cadastrar</button>
+                <button type="submit" class="btn btn-success">Editar</button>
             </div>
             <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
         </div>
@@ -70,7 +58,7 @@
     <script type="text/javascript">
         $(document).ready(function () {
             //console.log(  document.getElementById("corAltCorreta").value  );
-            $('.my-colorpicker2 .fa-square').css('color', document.getElementById("corCategoria").value);
+            $('.my-colorpicker2 .fa-square').css('color', document.getElementById("corConta").value);
         });
 
         $(function () {
@@ -137,13 +125,4 @@
             });
         });
     </script>
-
-    <script>
-        if('{{ $TipoCategoria }}' != ''){
-            document.getElementById("TipoCat").disabled = true;
-            $("#TipoCat").val('{{ $TipoCategoria }}');
-            $("#TipoCat2").val("{{ $TipoCategoria }}");
-        }
-    </script>
-
 @stop

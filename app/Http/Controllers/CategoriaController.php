@@ -28,7 +28,14 @@ class CategoriaController extends Controller
 
         $categoria->Nome = $request->Nome;
         $categoria->Cor = $request->corCategoria;
-        $categoria->Tipo = $request->Tipo;
+        if ($request->TipoCat == NULL){
+            $categoria->Tipo = $request->TipoCat2;
+        }
+        else{
+            $categoria->Tipo = $request->TipoCat;
+        }
+
+        $categoria->ID_Categoria_Pai = $request->ID_Categoria_Pai;
         $categoria->save();
         return redirect()->route('categorias.showAll');
 
@@ -54,7 +61,12 @@ class CategoriaController extends Controller
     }
 
     public function edit(int $ID_Categoria) {
+        $categoria = Categoria::find($ID_Categoria);
 
+        return view('categoriaEditar', [
+            'categoria' => $categoria
+
+        ]);
     }
 
 
@@ -63,7 +75,14 @@ class CategoriaController extends Controller
      */
     public function update(Request $request, int $ID_Categoria)
     {
-        //
+        $categoria = Categoria::find($ID_Categoria);
+
+        $categoria->Nome = $request->Nome;
+        $categoria->Cor = $request->corCategoria;
+
+        $categoria->save();
+
+        return redirect()->route('categorias.showAll');
     }
 
     /**
@@ -86,13 +105,12 @@ class CategoriaController extends Controller
         }
     }
 
-    public function new(){
-
-        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+    public function new(Request $request){
 
         return view('categoriaCriar', [
-//            'categorias' => $categorias
+            'categoriaPai' => $request->ID_Categoria_Pai,
+            'TipoCategoria' => $request->Tipo
         ]);
-
     }
+
 }

@@ -332,6 +332,15 @@ return [
                     //'label' => 3,
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Tranferência',
+                    'url' => '#',
+                    //'url' => {{ route('') }},
+                    //'url' => route('contas.new') ,
+                    'icon' => 'fa fa-share nav-icon',
+                    //'label' => 3,
+                    'label_color' => 'success',
+                ],
             ],
         ],
         [
@@ -424,35 +433,6 @@ return [
                     'label_color' => 'success',
                 ],
             ],
-        ],
-
-
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-user',
-        ],
-        [
-            'text' => 'change_password',
-            'url' => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
-        ],
-        ['header' => 'labels'],
-        [
-            'text' => 'important',
-            'icon_color' => 'red',
-            'url' => '#',
-        ],
-        [
-            'text' => 'warning',
-            'icon_color' => 'yellow',
-            'url' => '#',
-        ],
-        [
-            'text' => 'information',
-            'icon_color' => 'cyan',
-            'url' => '#',
         ],
     ],
 
