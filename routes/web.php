@@ -24,6 +24,13 @@ use App\Http\Controllers\ContaController;
 //php artisan route:cache
 //php artisan route:clear
 
+//Instruções para poder colocar no ar:
+//arrumar o .env => cp .env.example .env
+//rodar o update do composer => composer update
+//gerar a chave no .env => php artisan key:generate
+//faz isso que eu não sei o porque => php artisan storage:link
+//depois ela usa o migrate, mas eu já faço o banco
+
 //php artisan config:cache
 
 //php artisan optimize
