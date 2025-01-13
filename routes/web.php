@@ -22,6 +22,7 @@ use App\Http\Controllers\ContaController;
 //php artisan make:model XXXXX -mcr --api
 
 //php artisan route:cache
+//php artisan route:clear
 
 //php artisan config:cache
 
