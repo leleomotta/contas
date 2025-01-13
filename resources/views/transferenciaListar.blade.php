@@ -23,38 +23,66 @@
                     <div class="tab-content">
 
                         <div class="card-body">
-                                <table id="example1" class="table table-bordered table-hover">
-                                    <thead>
-                                    <tr>
-                                        <th>ID_Conta_Origem</th>
-                                        <th>ID_Conta_Destino</th>
-                                        <th>Data</th>
-                                        <th>Valor</th>
-                                        <th style="width: 110px">&nbsp;</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                            @foreach($transferencias as $transferencia)
-                                            <tr>
-                                                <td>{{ $transferencia->ID_Conta_Origem }}</td>
-                                                <td>{{ $transferencia->ID_Conta_Destino }}</td>
-                                                <td>{{ $transferencia->Data }}</td>
-                                                <td>{{ $transferencia->Valor }}</td>
-                                            </tr>
+                            <div class="card card-primary card-tabs">
+                                <div class="card-header p-0 pt-1">
+                                    <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                        @foreach($contasOrigem as $contaOrigem)
+                                            <li class="nav-item">
+                                                <a class="nav-link" id="custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}-tab" data-toggle="pill" href="#custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}"
+                                                   role="tab" aria-controls="custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}" aria-selected="false">{{ $contaOrigem->Banco }}</a>
+                                            </li>
                                         @endforeach
+                                    </ul>
+                                </div>
+                                <div class="card-body">
+                                    <div class="tab-content" id="custom-tabs-one-tabContent">
+                                        @foreach($contasOrigem as $contaOrigem)
+                                            <div class="tab-pane fade" id="custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}" role="tabpanel" aria-labelledby="custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}-tab">
+                                                <table id="example1" class="table table-bordered table-hover">
+                                                    <thead>
+                                                    <tr>
+                                                        <th>Conta Destino</th>
+                                                        <th>Data</th>
+                                                        <th>Valor</th>
+                                                        <th style="width: 110px">Ações</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach($transferencias->where('ID_Conta_Origem','=',$contaOrigem->ID_Conta_Origem) as $transferencia)
+                                                            <tr>
+                                                                <td>{{ $transferencia->Banco .' - ' . $transferencia->Descricao  }}</td>
+                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
 
-                                    </tbody>
-                                    <tfoot>
-                                    <tr>
-                                        <th>ID_Conta_Origem</th>
-                                        <th>ID_Conta_Destino</th>
-                                        <th>Data</th>
-                                        <th>Valor</th>
-                                        <th style="width: 110px">&nbsp;</th>
-                                    </tr>
-                                    </tfoot>
-                                </table>
+                                                                <td>{{ 'R$ ' .  str_replace("_",'.',
+                                                                    str_replace(".",',',
+                                                                    str_replace(",",'_',
+                                                                    number_format($transferencia->Valor, 2
+                                                                    )))) }}
+                                                                </td>
+                                                                <td>
+                                                                    óia
+                                                                </td>
+                                                            </tr>
+                                                        @endforeach
+                                                    </tbody>
+                                                    <tfoot>
+                                                    <tr>
+                                                        <th>Conta Destino</th>
+                                                        <th>Data</th>
+                                                        <th>Valor</th>
+                                                        <th style="width: 110px">Ações</th>
+                                                    </tr>
+                                                    </tfoot>
+                                                </table>
+
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                <!-- /.card -->
                             </div>
+                        </div>
+
 
                     </div>
 
@@ -75,42 +103,5 @@
 
 @section('js')
 
-    <script>
-        $(function () {
-            //para habilitar os filtros da tabela altere o nome para example1
-            $("#example").DataTable({
-                "responsive": true, "lengthChange": false, "autoWidth": false,
-                "buttons": ["copy", "csv", "excel", "pdf", "print", "colvis"]
-            }).buttons().container().appendTo('#example1_wrapper .col-md-6:eq(0)');
-        });
-    </script>
-
-    <!-- SweetAlert2 -->
-    <script src="//cdn.jsdelivr.net/npm/sweetalert2@10/dist/sweetalert2.min.js"></script>
-    <script type="text/javascript">
-        //quando carrega a página ele carrega as validações
-        $(document).ready(function () {
-            @if (Session::has('naoapagado'))
-                @if ( session('naoapagado') )
-                    erro('Não é possivel apagar a categoria.');
-                @endif
-            @endif
-        });
-    </script>
-    <script>
-        var Toast = Swal.mixin({
-            toast: true,
-            position: 'top-end',
-            showConfirmButton: false,
-            timer: 3000
-        });
-
-        function erro(mensagem) {
-            Toast.fire({
-                icon: 'error',
-                title: mensagem
-            })
-        }
-    </script>
 
 @stop
