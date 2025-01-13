@@ -44,10 +44,12 @@ class TransferenciaController extends Controller
     }
 
     public function showAll(){
+
         $transferencias = new Transferencia();
 
         return view('transferenciaListar', [
-            'transferencias' => $transferencias->showAll()
+            'transferencias' => $transferencias->showAll(),
+            'contasOrigem' => $transferencias->showContaOrigem()
         ]);
     }
 
