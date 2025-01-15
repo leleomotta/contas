@@ -24,7 +24,7 @@ class Transferencia extends Model
         */
 
         $transferencias = DB::table('transferencia')
-            ->select('ID_Conta_Origem', 'ID_Conta_Destino' , 'conta.Banco', 'conta.Descricao',
+            ->select('ID_Transferencia','ID_Conta_Origem', 'ID_Conta_Destino' , 'conta.Banco', 'conta.Descricao',
                 'transferencia.Data', 'transferencia.Valor')
             ->join('conta', 'transferencia.ID_Conta_Destino', '=', 'conta.ID_Conta')
             ->orderBy('transferencia.ID_Conta_Origem','ASC');
@@ -33,7 +33,7 @@ class Transferencia extends Model
 
     public function showContaOrigem(){
         $contasOrigem = DB::table('transferencia')
-            ->select('ID_Conta_Origem', 'conta.Banco', 'conta.Descricao')
+            ->select('ID_Transferencia','ID_Conta_Origem', 'conta.Banco', 'conta.Descricao')
             ->join('conta', 'transferencia.ID_Conta_Origem', '=', 'conta.ID_Conta')
             ->distinct('transferencia.ID_Conta_Origem')
             ->orderBy('transferencia.ID_Conta_Origem','ASC');

@@ -10,57 +10,57 @@
     <form id="cadastro" role="form" action="{{ route('contas.store') }}" method="post" enctype="multipart/form-data">
         <div class="card-body">
 
-        @csrf
-        <div class="box-body">
-            <div class="form-group">
-                <label >Descrição</label>
-                <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a conta">
-            </div>
-
-            <div class="form-group">
-                <label >Banco</label>
-                <input type="text" name="Banco" class="form-control" id="Banco" placeholder="Digite o nome do banco">
-            </div>
-
-
-            <label >Saldo Inicial</label>
-            <div class="input-group">
-                <div class="input-group-prepend">
-                    <span class="input-group-text">$</span>
+            @csrf
+            <div class="box-body">
+                <div class="form-group">
+                    <label >Descrição</label>
+                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a conta">
                 </div>
-                <input type="text" class="form-control text-left" id="Saldo_Inicial" name="Saldo_Inicial"
-                       data-inputmask="'alias': 'numeric',
-                       'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                       'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o saldo inicial da conta">
-            </div>
 
-            <div class="form-group">
-                <label>Cor de marcação da conta:</label>
-                <div class="input-group my-colorpicker2">
-                    <input type="text" class="form-control" id="corConta" name="corConta" value="#85AA79">
-                    <div class="input-group-append">
-                        <span class="input-group-text"><i class="fas fa-square"></i></span>
+                <div class="form-group">
+                    <label >Banco</label>
+                    <input type="text" name="Banco" class="form-control" id="Banco" placeholder="Digite o nome do banco">
+                </div>
+
+
+                <label >Saldo Inicial</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">$</span>
+                    </div>
+                    <input type="text" class="form-control text-left" id="Saldo_Inicial" name="Saldo_Inicial"
+                           data-inputmask="'alias': 'numeric',
+                           'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
+                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o saldo inicial da conta">
+                </div>
+
+                <div class="form-group">
+                    <label>Cor de marcação da conta:</label>
+                    <div class="input-group my-colorpicker2">
+                        <input type="text" class="form-control" id="corConta" name="corConta" value="#85AA79">
+                        <div class="input-group-append">
+                            <span class="input-group-text"><i class="fas fa-square"></i></span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <label>Imagem da conta</label>
-            <div class="input-group" >
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" name="imagem" id="imagem">
-                    <label class="custom-file-label">Selecione uma imagem para esta conta</label>
+                <label>Imagem da conta</label>
+                <div class="input-group" >
+                    <div class="custom-file">
+                        <input type="file" class="custom-file-input" name="imagem" id="imagem">
+                        <label class="custom-file-label">Selecione uma imagem para esta conta</label>
+                    </div>
                 </div>
+
             </div>
 
-        </div>
-
-        <div class="card-footer">
-            <div class="float-right">
-                <button type="submit" class="btn btn-success">Cadastrar</button>
+            <div class="card-footer">
+                <div class="float-right">
+                    <button type="submit" class="btn btn-success">Cadastrar</button>
+                </div>
+                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
             </div>
-            <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
         </div>
-    </div>
     </form>
 
 @stop

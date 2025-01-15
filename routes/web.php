@@ -61,6 +61,10 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('transferencias',[TransferenciaController::class, 'showAll'])->name('transferencias.showAll');
     Route::get('transferencias/novo',[TransferenciaController::class, 'new'])->name('transferencias.new');
     Route::post('transferencias/salvar',[TransferenciaController::class, 'store'])->name('transferencias.store');
+    Route::delete('transferencias/apagar/{ID_Transferencia}',[TransferenciaController::class, 'destroy'])->name('transferencias.destroy');
+    Route::get('transferencias/editar/{ID_Transferencia}',[TransferenciaController::class, 'edit'])->name('transferencias.edit');
+    Route::put('transferencias/atualiza/{ID_Transferencia}',[TransferenciaController::class, 'update'])->name('transferencias.update');
+
 //----------------- TRANSFERENCIAS -----------------
 
 //----------------- CARTÃO -----------------

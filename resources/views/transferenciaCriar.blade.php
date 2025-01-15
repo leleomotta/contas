@@ -1,9 +1,9 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Conta')
+@section('title', 'Criar transferencia')
 
 @section('content_header')
-    <h1>Criar a conta</h1>
+    <h1>Criar transferencia</h1>
 @stop
 
 @section('content')
@@ -103,6 +103,60 @@
         $('#Data').datetimepicker({
             format:'DD/MM/YYYY'
         });
+    </script>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/additional-methods.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_pt_BR.min.js"></script>
+    <script>
+        $(document).ready(function () {
+
+            $.validator.addMethod("valueNotEquals", function(value, element, arg){
+                return arg !== value;
+            }, "Value must not equal arg.");
+
+            $('#cadastro').validate({
+                rules: {
+                    Data:{
+                        required: true
+                        //date: true
+                    },
+                    Valor:{
+                        required: true
+                    },
+                    Conta_Origem:{
+                        valueNotEquals: "- Selecione uma conta -"
+                    },
+                    Conta_Destino:{
+                        valueNotEquals: "- Selecione uma conta -"
+                    }
+                },
+                messages: {
+                    Data: {
+                        required: "Por favor, entre com uma data para a transferencia."
+                    },
+                    Valor:{
+                        required: "Por favor, entre com um valor para a transferencia."
+                    },
+                    Conta_Origem:{
+                        valueNotEquals: "Por favor, selecione uma conta de origem"
+                    },
+                    Conta_Destino:{
+                        valueNotEquals: "Por favor, selecione uma conta de destino"
+                    }
+                },
+                errorElement: 'span',
+                errorPlacement: function (error, element) {
+                    error.addClass('invalid-feedback');
+                    element.closest('.form-group').append(error);
+                },
+                highlight: function (element, errorClass, validClass) {
+                    $(element).addClass('is-invalid');
+                },
+                unhighlight: function (element, errorClass, validClass) {
+                    $(element).removeClass('is-invalid');
+                }
+            });
+        });
     </script>
 @stop

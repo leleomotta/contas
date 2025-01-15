@@ -26,6 +26,7 @@
                             <div class="card card-primary card-tabs">
                                 <div class="card-header p-0 pt-1">
                                     <ul class="nav nav-tabs" id="custom-tabs-one-tab" role="tablist">
+                                        <li class="pt-2 px-3"><h3 class="card-title">Transferencias</h3></li>
                                         @foreach($contasOrigem as $contaOrigem)
                                             <li class="nav-item">
                                                 <a class="nav-link" id="custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}-tab" data-toggle="pill" href="#custom-tab-ID_Conta-{{$contaOrigem->ID_Conta_Origem}}"
@@ -60,7 +61,31 @@
                                                                     )))) }}
                                                                 </td>
                                                                 <td>
-                                                                    óia
+                                                                    <div class="row">
+                                                                        <div class="col-3">
+                                                                            <form id="edita" role="form" action="{{ route('transferencias.edit', ['ID_Transferencia' =>$transferencia->ID_Transferencia])  }}" method="GET">
+                                                                                <button type="submit" class="btn btn-primary"
+                                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                                                    <span class="fa fa-edit"></span>
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+
+                                                                        <div class="col-3">
+                                                                            <form action="{{ route('transferencias.destroy', ['ID_Transferencia'=> $transferencia->ID_Transferencia])  }}" method="POST">
+                                                                                @csrf
+                                                                                @method('delete')
+                                                                                <input type="hidden" name="ID_Transferencia" value="{{ $transferencia->ID_Transferencia }}">
+                                                                                <button type="submit" class="btn btn-danger"
+                                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                                                    <span class="fa fa-trash"></span>
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
+                                                                    </div>
+
+
                                                                 </td>
                                                             </tr>
                                                         @endforeach
@@ -85,7 +110,15 @@
 
 
                     </div>
+                    <div class="card-footer">
+                        <form id="novaTransferencia" role="form" action="{{ route('transferencias.new') }}" method="GET">
 
+                            <div class="float-right">
+                                <button type="submit" class="btn btn-success">Nova transferencia</button>
+                            </div>
+                        </form>
+
+                    </div>
                 </div><!-- /.card-body -->
             </div>
 

@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Conta;
 use App\Models\Transferencia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 
 class TransferenciaController extends Controller
 {
@@ -56,17 +58,49 @@ class TransferenciaController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Transferencia $transferencia)
+    public function edit(int $ID_Transferencia) {
+        $transferencia = Transferencia::find($ID_Transferencia);
+
+        $contas = (new \App\Models\Conta)->showAll();
+
+        return view('transferenciaEditar', [
+            'transferencia' => $transferencia,
+            'contas' => $contas
+        ]);
+    }
+
+    public function update(Request $request, int $ID_Transferencia)
     {
-        //
+        $transferencia = Transferencia::find($ID_Transferencia);
+
+        $transferencia->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $transferencia->Valor =
+            str_replace(",",'.',str_replace(".","",
+                str_replace("R$ ","",$request->Valor)));
+        $transferencia->ID_Conta_Origem = $request->Conta_Origem;
+        $transferencia->ID_Conta_Destino = $request->Conta_Destino;
+
+        $transferencia->save();
+
+        return redirect()->route('transferencias.showAll');
+
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(transferencia $transferencia)
+    public function destroy(int $ID_Transferencia)
     {
-        //
+        $transferencia = Transferencia::find($ID_Transferencia);
+        try {
+            DB::beginTransaction();
+            $transferencia->delete();
+            DB::commit();
+            return redirect()->route('transferencias.showAll');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return back();
+        }
     }
 
     public function new(){
@@ -75,6 +109,5 @@ class TransferenciaController extends Controller
         return view('transferenciaCriar', [
             'contas' => $contas
         ]);
-
     }
 }
