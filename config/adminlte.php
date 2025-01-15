@@ -333,7 +333,7 @@ return [
                     'label_color' => 'success',
                 ],
                 [
-                    'text' => 'Tranferência',
+                    'text' => 'Tranferências',
                     'url' => '/transferencias',
                     //'url' => {{ route('') }},
                     //'url' => route('contas.new') ,

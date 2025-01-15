@@ -49,10 +49,27 @@ class Conta extends Model
                 ->groupBy('conta.ID_Conta')
                 ->get();
 
+            $tranferencias_Saida = DB::table('transferencia')
+                ->select('transferencia.ID_Transferencia',
+                    DB::raw('sum(transferencia.Valor) as Saida') )
+
+                ->where('transferencia.ID_Conta_Origem', '=', $conta->ID_Conta)
+
+                ->get();
+
+            $tranferencias_Entrada = DB::table('transferencia')
+                ->select('transferencia.ID_Transferencia',
+                    DB::raw('sum(transferencia.Valor) as Saida') )
+
+                ->where('transferencia.ID_Conta_Destino', '=', $conta->ID_Conta)
+
+                ->get();
+
+
             $conta->Despesas = $despesa[0]->Despesas;
             $conta->Receitas = $receita[0]->Receitas;
-            $conta->Saldo = $receita[0]->Saldo_inicial + $receita[0]->Receitas - $despesa[0]->Despesas;
 
+            $conta->Saldo = $receita[0]->Saldo_inicial + $receita[0]->Receitas + $tranferencias_Entrada[0]->Saida - $despesa[0]->Despesas - $tranferencias_Saida[0]->Saida;
         }
 
         return $contas;

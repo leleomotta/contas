@@ -28,15 +28,17 @@ class Transferencia extends Model
                 'transferencia.Data', 'transferencia.Valor')
             ->join('conta', 'transferencia.ID_Conta_Destino', '=', 'conta.ID_Conta')
             ->orderBy('transferencia.ID_Conta_Origem','ASC');
+
         return $transferencias->get();
     }
 
     public function showContaOrigem(){
         $contasOrigem = DB::table('transferencia')
-            ->select('ID_Transferencia','ID_Conta_Origem', 'conta.Banco', 'conta.Descricao')
+            ->select('ID_Conta_Origem', 'conta.Banco', 'conta.Descricao')
             ->join('conta', 'transferencia.ID_Conta_Origem', '=', 'conta.ID_Conta')
             ->distinct('transferencia.ID_Conta_Origem')
             ->orderBy('transferencia.ID_Conta_Origem','ASC');
+            //->toSql(); dd($contasOrigem);
         return $contasOrigem->get();
     }
 }
