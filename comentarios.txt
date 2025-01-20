@@ -1,0 +1,46 @@
+FALTA
+
+*cartao =>
+    editar cartão
+    despesa parcelada
+
+* fazer um extrato consolidado
+* fazer receitas e despeas recorrentes
+
+* rever os títulos das páginas
+* limpar os javascripts das páginas
+* limpar a pasta de JS e CSS
+
+-----------------
+
+created_at timestamp
+
+updated_at timestamp
+
+Tabela de contas ======
+
+alter table conta add COLUMN Ativa tinyint(1) DEFAULT 1 after Cor
+
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (1,'Inter - CDB Diário', 'Inter', 0, 1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (2,'Inter - Corrente','Inter',0,1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (3,'Inter - LCI DI 360', 'Inter',0,1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (4,'Mauro :)','Empréstimo',0,0);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (5,'NossaCoop','NossaCoop',0,1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (6,'Poupança', 'Caixa',0,1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (7,'Visa Vale','Alimentação',0,0);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (8,'Pagamentos Papai','Empréstimo',0,0);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (9,'Adriene','Empréstimo',0,0);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (10,'BTG','BTG',0,1);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (11,'Carteira','Carteira',0,0);
+INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (12,'XP','XP',0,0);
+
+====================
+
+INSERT INTO `categoria`(`ID_Categoria`, `Nome`, `Tipo`) VALUES (99,'Reajuste','D')
+
+===================
+Receitas está ok
+
+Precisa pensar como dividir os cartões no SQL
+- Primeiro cria os cartões ou cria um só pra tudo que era anterior
+
