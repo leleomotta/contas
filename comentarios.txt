@@ -3,6 +3,8 @@ FALTA
 *cartao =>
     editar cartão
     despesa parcelada
+    se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
+    Na hora de adcionar despesa de cartão tem que colcoar no mês seguinte e ver a questão do dia de fechamento
 
 * fazer um extrato consolidado
 * fazer receitas e despeas recorrentes
