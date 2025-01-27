@@ -87,6 +87,7 @@ class ReceitaController extends Controller
             $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
             Carbon::now()->isoFormat('MM');
         }
+
         $dt = Carbon::now();
         $dt->setDateFrom($dateFilter . '-15');
         $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
