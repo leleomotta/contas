@@ -46,3 +46,9 @@ Receitas está ok
 Precisa pensar como dividir os cartões no SQL
 - Primeiro cria os cartões ou cria um só pra tudo que era anterior
 
+***************************************
+O que precisa na conversão
+- Ajustar tudo do que era antigo
+- Cartões do inter e do nubank desde agosto/2024
+- Extratos Inter desde agosto 2024 (dividir despesas, receitas e transferências  entre contas)
+- Extratos Sicoob desde agosto 2024 (dividir despesas, receitas e transferências  entre contas)
