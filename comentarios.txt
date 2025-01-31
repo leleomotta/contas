@@ -41,6 +41,14 @@ INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) 
 INSERT INTO `categoria`(`ID_Categoria`, `Nome`, `Tipo`) VALUES (99,'Reajuste','D')
 
 ===================
+Tabela de cartões
+
+INSERT INTO `cartao` (`ID_Cartao`, `Nome`, `Bandeira`, `Dia_Vencimento`, `ID_Conta`, `Cor`, `created_at`, `updated_at`) VALUES
+(1, 'Cartão Papai', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:21', '2025-01-30 20:32:21'),
+(2, 'Citi', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:34', '2025-01-30 20:32:34'),
+(3, 'Nubank', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:51', '2025-01-30 20:32:51'),
+(4, 'Inter Black', 'Master Card', 0, 2, '#85AA79', '2025-01-30 20:33:08', '2025-01-30 20:33:08');
+===================
 Receitas está ok
 
 Precisa pensar como dividir os cartões no SQL
