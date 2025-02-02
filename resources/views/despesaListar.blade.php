@@ -112,170 +112,29 @@
     <div class="row">
         <div class="col-12">
             <div class="card">
-
-                <!-- Paginador de meses -->
-                <div class="card-body">
-                    <ul class="pagination pagination-month justify-content-center">
-
-                        <li class="page-item">
-                            <a class="page-link" href="#">
-
-                            </a>
-                        </li>
-
-                        <li id="{{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->subMonth(5)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->subMonth(5)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->subMonth(5)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->subMonth(4)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->subMonth(4)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->subMonth(4)->format('Y') }}
-                                </p>
-
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->subMonth(3)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->subMonth(3)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->subMonth(3)->format('Y') }}
-                                </p>
-
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->subMonth(2)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->subMonth(2)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->subMonth(2)->format('Y') }}
-                                </p>
-
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' . \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->subMonth(1)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->subMonth(1)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->subMonth(1)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->isoFormat('Y') . '-' . \Carbon\Carbon::now()->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->addMonth(1)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->addMonth(1)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->addMonth(1)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->addMonth(2)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->addMonth(2)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->addMonth(2)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->addMonth(3)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->addMonth(3)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->addMonth(3)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->addMonth(4)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->addMonth(4)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->addMonth(4)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-                        <li id="{{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
-                                                                \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM') }}" class="page-item">
-                            <a class="page-link" href="{{ route('despesas.showAll',array('date_filter' =>
-                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('Y') . '-' .
-                                        \Carbon\Carbon::now()->addMonth(5)->isoFormat('MM'))) }}" type="submit" >
-                                <p class="page-month">
-                                    {{ \Carbon\Carbon::now()->addMonth(5)->isoFormat('MMM') }}
-                                </p>
-                                <p class="page-year">
-                                    {{ \Carbon\Carbon::now()->addMonth(5)->format('Y') }}
-                                </p>
-                            </a>
-                        </li>
-
-                        <li class="page-item">
-                            <a class="page-link" href="#">
-
-                            </a>
-                        </li>
-                    </ul>
+                <div class="card">
                 </div>
-                <!-- /Paginador de meses -->
+                <!-- Seletor de mês/ano -->
+                <div class="col-2 mx-auto">
+                    <div class="input-group date" id="divData" data-target-input="nearest">
+
+                        <div class="input-group-append" onclick="voltaData()">
+                            <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
+                        </div>
+
+                        <input type="text" class="form-control datetimepicker-input" data-target="#divData" id="Data" name="Data"
+                               data-inputmask-alias="datetime" data-inputmask-inputformat="yyyy-mm" data-mask
+                               placeholder="yyyy-mm"  data-toggle="datetimepicker"
+                               style="text-align:center;"
+                        />
+
+                        <div class="input-group-append" onclick="avancaData()">
+                            <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
+                        </div>
+
+                    </div>
+                </div>
+                <!-- /Seletor de mês/ano -->
 
                 <!-- Listagem-->
                 <div class="card-body">
@@ -458,6 +317,50 @@
             }
         });
 
+        function voltaData() {
+            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
+            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            mes = mes - 1;
+            if (mes === 0) {
+                mes = 12;
+                ano = ano - 1;
+            }
+            if (mes >= 1 && mes <= 9) {
+                mes = "0" + mes;
+            }
+            document.getElementById('Data').value = ano + '/' + mes;
+
+            var data = ano + '-' + mes;
+
+            url = '{{ route("despesas.showAll",array("date_filter" => 'DATA' ) ) }}';
+            url = url.replace('DATA', data);
+
+            window.location.href = url;
+        }
+
+        function avancaData() {
+            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
+            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            mes = mes + 1;
+            if (mes === 13) {
+                mes = 1;
+                ano = ano + 1;
+            }
+            if (mes >= 1 && mes <= 9) {
+                mes = "0" + mes;
+            }
+            document.getElementById('Data').value = ano + '/' + mes;
+
+
+            var data = ano + '-' + mes;
+
+            url = '{{ route("despesas.showAll",array("date_filter" => 'DATA' ) ) }}';
+            url = url.replace('DATA', data);
+
+            window.location.href = url;
+
+        }
+
         function habilitaCampos() {
             document.getElementById("categoria").disabled = !document.getElementById("chkCategoria").checked;
             document.getElementById("conta").disabled = !document.getElementById("chkConta").checked;
@@ -470,14 +373,35 @@
             const myParam = urlParams.get('date_filter');
             if (myParam == null) {
                 const dateObj = new Date();
-                const month   = dateObj.getUTCMonth() + 1; // months from 1-12
+                var month   = dateObj.getUTCMonth() + 1; // months from 1-12
+                if (month >= 1 && month <= 9) {
+                    month = "0" + month;
+                }
                 const year    = dateObj.getUTCFullYear();
                 const date_filter = year + '-' + month;
-                document.getElementById(date_filter).classList.add(("active"));
+                //document.getElementById(date_filter).classList.add(("active"));
+                document.getElementById('Data').value = date_filter;
+
             }
             else{
-                document.getElementById(myParam).classList.add(("active"));
+                document.getElementById('Data').value = myParam;
             }
+
         };
     </script>
+
+    <!-- INPUT DATE -->
+    <script>
+        //Date picker
+        $('#divData').datetimepicker({
+            //format:'DD/MM/YYYY',
+            format:'YYYY/MM',
+            viewMode: "months",
+            minViewMode: "months",
+
+        })
+        $('[data-mask]').inputmask();
+
+    </script>
+    <!-- INPUT DATE -->
 @stop

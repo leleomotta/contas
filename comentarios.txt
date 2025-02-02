@@ -1,6 +1,7 @@
 FALTA
 
 *cartao =>
+    Na fatura, se ela esta fechada precisa colocar data de fechamento e aa contta que fechou
     editar cartão
     despesa parcelada
     se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar

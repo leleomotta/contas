@@ -25,9 +25,8 @@ class Fatura extends Model
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->where('fatura.Ano_Mes',$Ano_Mes)
             ->where('fatura.ID_Cartao', $ID_Cartao)
-
     //->toSql(); dd($retorno);
-            ->get();
+            ->get();;
     //dd($retorno);
         return $retorno;
     }

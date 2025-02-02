@@ -10,6 +10,7 @@ use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Session;
 
 class CartaoController extends Controller
 {
@@ -122,10 +123,18 @@ class CartaoController extends Controller
 
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
-//dd($fatura->count());
+
+        if ($request->session()->get('ID_Cartao') == null){
+            $request->session()->put('ID_Cartao', $request->ID_Cartao);
+            //dd('bunda');
+        }
+
+        //dd($fatura->count());
         return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),
+            //'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
+            //'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),
+            'faturas' => $fatura->show($Ano_Mes,$request->session()->get('ID_Cartao')),
+            'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->session()->get('ID_Cartao')),
             'contas' => $contas
         ]);
     }
@@ -221,7 +230,8 @@ class CartaoController extends Controller
         $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
             Carbon::now()->isoFormat('MM');
         $cartoes = new Cartao();
-
+        //$request->session()->put('ID_Cartao', $request->ID_Cartao);
+        Session::forget('ID_Cartao');
         return view('cartaoListar', [
             'cartoes' => $cartoes->show($Ano_Mes)
         ]);
