@@ -2,62 +2,26 @@ FALTA
 
 *cartao =>
     Na fatura, se ela esta fechada precisa colocar data de fechamento e aa contta que fechou
-    editar cartão
-    despesa parcelada
-    se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
+    Possibilidade de ditar cartão
+    Criar despesa parcelada
+    Se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
     Na hora de adcionar despesa de cartão tem que colcoar no mês seguinte e ver a questão do dia de fechamento
+
+* Opção de contas habilitadas e desabilitadas
+alter table conta add COLUMN Arquivada tinyint(1) Default 0 after cor
 
 * fazer um extrato consolidado
 * fazer receitas e despeas recorrentes
+* na tela das contas colocar o seletor de mês para ter despesas e receitas exatas
+
 
 * rever os títulos das páginas
 * limpar os javascripts das páginas
 * limpar a pasta de JS e CSS
+* corrigir o caminho das imagens (existe um jeito especial de fazer no laravel
 
 -----------------
 
 created_at timestamp
 
 updated_at timestamp
-
-Tabela de contas ======
-
-alter table conta add COLUMN Ativa tinyint(1) DEFAULT 1 after Cor
-
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (1,'Inter - CDB Diário', 'Inter', 0, 1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (2,'Inter - Corrente','Inter',0,1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (3,'Inter - LCI DI 360', 'Inter',0,1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (4,'Mauro :)','Empréstimo',0,0);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (5,'NossaCoop','NossaCoop',0,1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (6,'Poupança', 'Caixa',0,1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (7,'Visa Vale','Alimentação',0,0);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (8,'Pagamentos Papai','Empréstimo',0,0);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (9,'Adriene','Empréstimo',0,0);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (10,'BTG','BTG',0,1);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (11,'Carteira','Carteira',0,0);
-INSERT INTO `conta`(`ID_Conta`, `Descricao`, `Banco`, `Saldo_Inicial`, `Ativa`) VALUES (12,'XP','XP',0,0);
-
-====================
-
-INSERT INTO `categoria`(`ID_Categoria`, `Nome`, `Tipo`) VALUES (99,'Reajuste','D')
-
-===================
-Tabela de cartões
-
-INSERT INTO `cartao` (`ID_Cartao`, `Nome`, `Bandeira`, `Dia_Vencimento`, `ID_Conta`, `Cor`, `created_at`, `updated_at`) VALUES
-(1, 'Cartão Papai', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:21', '2025-01-30 20:32:21'),
-(2, 'Citi', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:34', '2025-01-30 20:32:34'),
-(3, 'Nubank', 'Master Card', 0, 11, '#85AA79', '2025-01-30 20:32:51', '2025-01-30 20:32:51'),
-(4, 'Inter Black', 'Master Card', 0, 2, '#85AA79', '2025-01-30 20:33:08', '2025-01-30 20:33:08');
-===================
-Receitas está ok
-
-Precisa pensar como dividir os cartões no SQL
-- Primeiro cria os cartões ou cria um só pra tudo que era anterior
-
-***************************************
-O que precisa na conversão
-- Ajustar tudo do que era antigo
-- Cartões do inter e do nubank desde agosto/2024
-- Extratos Inter desde agosto 2024 (dividir despesas, receitas e transferências  entre contas)
-- Extratos Sicoob desde agosto 2024 (dividir despesas, receitas e transferências  entre contas)

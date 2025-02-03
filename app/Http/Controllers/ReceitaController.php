@@ -71,16 +71,9 @@ class ReceitaController extends Controller
     }
 
     public function showAll(Request $request){
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
 
         $dateFilter = $request->date_filter;
         if (is_null($dateFilter) ) {
@@ -143,16 +136,9 @@ class ReceitaController extends Controller
             $end_date = '9999-12-31';
         }
 
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
 
         $receitas = new Receita();
 
@@ -173,16 +159,9 @@ class ReceitaController extends Controller
 
         $receita = Receita::find($ID_Receita);
 
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','R');
-            $query->orderBy('Nome','ASC');
-        })->get();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
 
         return view('receitaEditar', [
             'receita' => $receita,
@@ -240,13 +219,10 @@ class ReceitaController extends Controller
     }
 
     public function new(){
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            $query->orderBy('Descricao','ASC');
-        })->get();
+        $contas = (new \App\Models\Conta)->showAll();
 
-        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
-        $categorias = (new \App\Models\Categoria)->show('R');
+        //$categorias = (new \App\Models\Categoria)->show('R');
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
         return view('receitaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,

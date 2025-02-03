@@ -70,6 +70,14 @@
 
             </div>
 
+            <div class="form-group">
+                <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                    <input type="checkbox" class="custom-control-input" id="Arquivada" name="Arquivada" value="1" @if ($conta['Arquivada'] == 1) checked @endif>
+
+                    <label class="custom-control-label" for="Arquivada">Arquivada</label>
+                </div>
+            </div>
+
         </div>
 
         <div class="card-footer">

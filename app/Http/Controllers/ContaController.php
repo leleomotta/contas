@@ -107,6 +107,10 @@ class ContaController extends Controller
                 $conta->Imagem = Imagem::CriaImagem($imagens, 'imagem');
             }
         }
+
+        $request["Arquivada"] = (isset($request["Arquivada"]))?1:0;
+        $conta->Arquivada = $request->Arquivada;
+
         $conta->save();
 
         return redirect()->route('contas.showAll');
