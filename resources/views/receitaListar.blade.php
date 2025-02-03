@@ -157,9 +157,9 @@
                         <tr>
                             <td>
                                 @if ($receita->Efetivada == 1)
-                                    <img src="../resources/img/V.bmp">
+                                    <img src="{{URL::asset('/storage/V.bmp')}}" >
                                 @else
-                                    <img src='../resources/img/X.bmp'>
+                                    <img src="{{URL::asset('/storage/X.bmp')}}" >
                                 @endif
                             </td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($receita->Data)) }}</td>

@@ -36,6 +36,17 @@ return [
             'throw' => false,
         ],
 
+        /*
+         esse bloco abaixo entrou para ver se funciona as imagens, mas não precisou... rs
+
+        'root_public' => [
+            'driver' => 'local',
+            'root' => public_path('/'),
+            'url' => env('APP_URL'),
+            'visibility' => 'public',
+        ],
+
+        */
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

@@ -36,6 +36,12 @@ use App\Http\Controllers\ContaController;
 //php artisan optimize
 //php artisan optimize:clear
 
+//php artisan storage::link
+
+
+//lista os comandos do artisan
+//php artisan list
+
 //deixa o botão de login na inicial
 Auth::routes();
 

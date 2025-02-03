@@ -155,9 +155,10 @@
                         <tr>
                             <td>
                                 @if ($despesa->Efetivada == 1)
-                                    <img src="/contas/resources/img/V.bmp">
+
+                                    <img src="{{URL::asset('/storage/V.bmp')}}" >
                                 @else
-                                    <img src='/contas/resources/img/X.bmp'>
+                                    <img src="{{URL::asset('/storage/X.bmp')}}" >
                                 @endif
                             </td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($despesa->Data)) }}</td>

@@ -80,6 +80,7 @@
                         <label class="custom-control-label" for="Efetivada">Efetivada</label>
                     </div>
                 </div>
+
             </div>
 
                 <div class="card-footer">

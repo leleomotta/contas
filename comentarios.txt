@@ -9,12 +9,17 @@ FALTA
 
 * Opção de contas habilitadas e desabilitadas
 alter table conta add COLUMN Arquivada tinyint(1) Default 0 after cor
+FALTA FAZER A DIVISÂO COM A ABA ASSIM COMO NAS CATEGORIAS
+
+
 
 * fazer um extrato consolidado
 * fazer receitas e despeas recorrentes
-* na tela das contas colocar o seletor de mês para ter despesas e receitas exatas
+* na tela das contas colocar o seletor de mês para ter despesas e receitas exatas => mellhoro colocar no dashboard?
 
 
+* na efetivação da despesa pode conferir a data?
+* alterar a imagem de pago ou não pelo checked do bootstrap
 * rever os títulos das páginas
 * limpar os javascripts das páginas
 * limpar a pasta de JS e CSS
