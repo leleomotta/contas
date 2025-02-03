@@ -39,50 +39,50 @@
                                     </thead>
                                     <tbody>
 
-                                    @foreach($despesas as $despesa)
-                                        <tr bgcolor="{{ $despesa->Cor  }}">
-                                            <td>{{ $despesa->Nome }}</td>
-                                            <td>
+                                        @foreach($despesas as $despesa)
+                                            <tr bgcolor="{{ $despesa->Cor  }}">
+                                                <td>{{ $despesa->Nome }}</td>
+                                                <td>
 
-                                                <div class="row">
-                                                    <div class="col-3">
-                                                        <form id="edita" role="form" action="{{ route('categorias.edit', ['ID_Categoria' =>$despesa->ID_Categoria])  }}" method="GET">
-                                                            <button type="submit" class="btn btn-primary"
-                                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                                <span class="fa fa-edit"></span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <form action="{{ route('categorias.destroy', ['ID_Categoria'=> $despesa->ID_Categoria])  }}" method="POST">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <input type="hidden" name="ID_Categoria" value="{{ $despesa->ID_Categoria }}">
-                                                            <button type="submit" class="btn btn-danger"
-                                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                                    onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                                <span class="fa fa-trash"></span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    @unless ($despesa->ID_Categoria_Pai <> NULL)
+                                                    <div class="row">
                                                         <div class="col-3">
-                                                            <form action="{{ route('categorias.new') }}" method="GET">
-                                                                <input type="hidden" name="ID_Categoria_Pai" value="{{ $despesa->ID_Categoria }}">
-                                                                <input type="hidden" name="Tipo" value="D">
-                                                                <button type="submit" class="btn btn-success"
-                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                                        onclick="return confirm('Deseja adicionar uma subcategoria?')">
-                                                                    <span class="fa fa-plus"></span>
+                                                            <form id="edita" role="form" action="{{ route('categorias.edit', ['ID_Categoria' =>$despesa->ID_Categoria])  }}" method="GET">
+                                                                <button type="submit" class="btn btn-primary"
+                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                                    <span class="fa fa-edit"></span>
                                                                 </button>
                                                             </form>
                                                         </div>
-                                                    @endunless
-                                                </div>
+                                                        <div class="col-3">
+                                                            <form action="{{ route('categorias.destroy', ['ID_Categoria'=> $despesa->ID_Categoria])  }}" method="POST">
+                                                                @csrf
+                                                                @method('delete')
+                                                                <input type="hidden" name="ID_Categoria" value="{{ $despesa->ID_Categoria }}">
+                                                                <button type="submit" class="btn btn-danger"
+                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                                    <span class="fa fa-trash"></span>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                        @unless ($despesa->ID_Categoria_Pai <> NULL)
+                                                            <div class="col-3">
+                                                                <form action="{{ route('categorias.new') }}" method="GET">
+                                                                    <input type="hidden" name="ID_Categoria_Pai" value="{{ $despesa->ID_Categoria }}">
+                                                                    <input type="hidden" name="Tipo" value="D">
+                                                                    <button type="submit" class="btn btn-success"
+                                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                            onclick="return confirm('Deseja adicionar uma subcategoria?')">
+                                                                        <span class="fa fa-plus"></span>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endunless
+                                                    </div>
 
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
                                     </tbody>
                                     <tfoot>
@@ -106,50 +106,50 @@
                                     </thead>
                                     <tbody>
 
-                                    @foreach($receitas as $receita)
-                                        <tr bgcolor="{{ $receita->Cor  }}">
-                                            <td>{{ $receita->Nome }}</td>
-                                            <td>
+                                        @foreach($receitas as $receita)
+                                            <tr bgcolor="{{ $receita->Cor  }}">
+                                                <td>{{ $receita->Nome }}</td>
+                                                <td>
 
-                                                <div class="row">
-                                                    <div class="col-3">
-                                                        <form id="edita" role="form" action="{{ route('categorias.edit', ['ID_Categoria' =>$receita->ID_Categoria])  }}" method="GET">
-                                                            <button type="submit" class="btn btn-primary"
-                                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                                <span class="fa fa-edit"></span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    <div class="col-3">
-                                                        <form action="{{ route('categorias.destroy', ['ID_Categoria'=> $receita->ID_Categoria])  }}" method="POST">
-                                                            @csrf
-                                                            @method('delete')
-                                                            <input type="hidden" name="ID_Categoria" value="{{ $receita->ID_Categoria }}">
-                                                            <button type="submit" class="btn btn-danger"
-                                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                                    onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                                <span class="fa fa-trash"></span>
-                                                            </button>
-                                                        </form>
-                                                    </div>
-                                                    @unless ($receita->ID_Categoria_Pai <> NULL)
+                                                    <div class="row">
                                                         <div class="col-3">
-                                                            <form action="{{ route('categorias.new') }}" method="GET">
-                                                                <input type="hidden" name="ID_Categoria_Pai" value="{{ $receita->ID_Categoria }}">
-                                                                <input type="hidden" name="Tipo" value="R">
-                                                                <button type="submit" class="btn btn-success"
-                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                                        onclick="return confirm('Deseja adicionar uma subcategoria?')">
-                                                                    <span class="fa fa-plus"></span>
+                                                            <form id="edita" role="form" action="{{ route('categorias.edit', ['ID_Categoria' =>$receita->ID_Categoria])  }}" method="GET">
+                                                                <button type="submit" class="btn btn-primary"
+                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                                    <span class="fa fa-edit"></span>
                                                                 </button>
                                                             </form>
                                                         </div>
-                                                    @endunless
-                                                </div>
+                                                        <div class="col-3">
+                                                            <form action="{{ route('categorias.destroy', ['ID_Categoria'=> $receita->ID_Categoria])  }}" method="POST">
+                                                                @csrf
+                                                                @method('delete')
+                                                                <input type="hidden" name="ID_Categoria" value="{{ $receita->ID_Categoria }}">
+                                                                <button type="submit" class="btn btn-danger"
+                                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                                    <span class="fa fa-trash"></span>
+                                                                </button>
+                                                            </form>
+                                                        </div>
+                                                        @unless ($receita->ID_Categoria_Pai <> NULL)
+                                                            <div class="col-3">
+                                                                <form action="{{ route('categorias.new') }}" method="GET">
+                                                                    <input type="hidden" name="ID_Categoria_Pai" value="{{ $receita->ID_Categoria }}">
+                                                                    <input type="hidden" name="Tipo" value="R">
+                                                                    <button type="submit" class="btn btn-success"
+                                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                            onclick="return confirm('Deseja adicionar uma subcategoria?')">
+                                                                        <span class="fa fa-plus"></span>
+                                                                    </button>
+                                                                </form>
+                                                            </div>
+                                                        @endunless
+                                                    </div>
 
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                </td>
+                                            </tr>
+                                        @endforeach
 
                                     </tbody>
                                     <tfoot>

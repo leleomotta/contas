@@ -69,7 +69,9 @@ class ContaController extends Controller
         $contas = new Conta();
 
         return view('contaListar', [
-            'contas' => $contas->show($start_date, $end_date)
+            //'contas' => $contas->show($start_date, $end_date)
+            'contasAtivas' => $contas->show($start_date, $end_date,0),
+            'contasArquivadas' => $contas->show($start_date, $end_date,1),
         ]);
     }
 

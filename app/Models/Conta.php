@@ -14,12 +14,13 @@ class Conta extends Model
 
     protected $primaryKey = 'ID_Conta';
 
-    public function show($start_date, $end_date){
+    public function show($start_date, $end_date, $arquivada){
 
         $contas = DB::table('conta')
-            ->select('conta.ID_Conta', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor',
+            ->select('conta.ID_Conta', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor', 'conta.Arquivada',
                 DB::raw("000 as Despesas"), DB::raw('000 as Receitas'),
                 DB::raw("'MOTTA' as Saldo"))
+            ->where('conta.Arquivada', $arquivada)
             ->groupBy('conta.ID_Conta')
             //->toSql(); dd($contas);
             ->get();

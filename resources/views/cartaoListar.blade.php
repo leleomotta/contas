@@ -25,7 +25,7 @@
                         </div>
 
                         <div class="widget-user-image">
-                                <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src='/contas/resources/img/user2-160x160.jpg' alt="Imagem">
+                            <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/cartao.png')}}" alt="Cartão">
                         </div>
 
 
