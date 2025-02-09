@@ -126,7 +126,6 @@ class CartaoController extends Controller
 
         if ($request->session()->get('ID_Cartao') == null){
             $request->session()->put('ID_Cartao', $request->ID_Cartao);
-            //dd('bunda');
         }
 
         //dd($fatura->count());
@@ -150,7 +149,7 @@ class CartaoController extends Controller
             $Ano_Mes = $request->Ano_Mes;
         }
         $ID_Cartao = $request->ID_Cartao;
-        $Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $Data = implode("-",array_reverse(explode("/",$request->Data_Fechamento)));
 
         $Conta = $request->Conta;
 

@@ -41,6 +41,7 @@
                 <table id="example1" class="table table-bordered table-hover">
                     <thead>
                         <tr>
+                            <th style="text-align: center">ID</th>
                             <th style="text-align: center">Data</th>
                             <th style="text-align: center">Descrição</th>
                             <th style="text-align: center">Valor</th>
@@ -51,6 +52,7 @@
                     <tbody>
                     @foreach($faturas as $fatura)
                         <tr>
+                            <td>{{ $fatura->ID_Despesa  }}</td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($fatura->Data)) }}</td>
                             <td>{{ $fatura->Descricao  }}</td>
                             <td>{{ 'R$ ' .  str_replace("_",'.',
@@ -103,6 +105,7 @@
                     </tbody>
                     <tfoot>
                         <tr>
+                            <th style="text-align: center">ID</th>
                             <th style="text-align: center">Data</th>
                             <th style="text-align: center">Descrição</th>
                             <th style="text-align: center">Valor</th>
@@ -113,7 +116,6 @@
                 </table>
             </div>
                 <!-- /Listagem-->
-
             </div>
         </div>
     </div>
@@ -129,27 +131,42 @@
 
         <div class="card-body">
             <div class="row" id="div1">
-                    <div class="info-box col-6">
-                        <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
-
-                        <div class="info-box-content">
-                            <span class="info-box-text">Total da fatura</span>
-                            <span class="info-box-number">
-                                {{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($totalFatura, 2
-                                            )))) }}
-                            </span>
-                        </div>
+                <div class="info-box col-3">
+                    <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Total da fatura</span>
+                        <span class="info-box-number">
+                            {{ 'R$ ' .  str_replace("_",'.',
+                                        str_replace(".",',',
+                                        str_replace(",",'_',
+                                        number_format($totalFatura, 2
+                                        )))) }}
+                        </span>
                     </div>
+                </div>
+
+                <div class="info-box col-3">
+                    <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Fechamento da fatura</span>
+                        <span class="info-box-number">
+                            @if ($faturas->count() <> 0 )
+                                @if ($fatura->Fechada == 0)
+                                    ---
+                                @else
+                                    {{ date('d/m/Y', strtotime($fatura->Data_fechamento)) }}
+                                @endif
+                            @else
+                                ---
+                            @endif
+                        </span>
+                    </div>
+                </div>
 
                 <div class="info-box col-6">
-
-
                     <div class="info-box-content">
-                        <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                            <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                        <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                            <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
                             <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
                                 <span class="fa fa-plus"></span>
                             </button>
@@ -163,7 +180,7 @@
 
                                 <!-- Modal de figura -->
                                 <form id="fatura" role="form" action="{{ route('cartoes.fatura_fechar') }}" method="GET">
-                                    <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                                    <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
                                     <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
                                     <div class="modal fade" id="fechaFatura">
                                         <div class="modal-dialog  modal-lg">
@@ -186,11 +203,11 @@
 
                                                     <label>Data</label>
                                                     <div class="form-group">
-                                                        <div class="input-group date" id="Data" data-target-input="nearest">
-                                                            <div class="input-group-append" data-target="#Data" data-toggle="datetimepicker">
+                                                        <div class="input-group date" id="Data_Fechamento" data-target-input="nearest">
+                                                            <div class="input-group-append" data-target="#Data_Fechamento" data-toggle="datetimepicker">
                                                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                                                             </div>
-                                                            <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
+                                                            <input type="text" class="form-control datetimepicker-input" data-target="#Data_Fechamento" name="Data_Fechamento"
                                                                    data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                                                                    placeholder="dd/mm/yyyy" value=" "
                                                             />
@@ -218,8 +235,8 @@
                                     <!-- Modal de figura -->
                                 </form>
                             @else
-                                <form id="fatura{{app('request')->input('ID_Cartao')}}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
-                                    <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+                                <form id="fatura{{ Session::get('ID_Cartao') }}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
+                                    <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
                                     <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
                                     <button type="submit" class="btn btn-danger btn-block" title="Reabrir fatura"
                                             onclick="return confirm('Deseja realmente reabrir a fatura?')">
@@ -316,7 +333,6 @@
             else{
                 document.getElementById('Data').value = myParam;
             }
-
         };
     </script>
 
@@ -328,19 +344,21 @@
         //Date picker
         $('#divData').datetimepicker({
             //format:'DD/MM/YYYY',
-            format:'YYYY/MM',
+            format:'YYYY-MM',
             viewMode: "months",
             minViewMode: "months",
 
         })
-        //$('[data-mask]').inputmask();
 
+        $('#Data_Fechamento').datetimepicker({
+            format:'DD/MM/YYYY',
+        })
     </script>
-    <!-- INPUT DATE -->
 
+    <!-- INPUT DATE -->
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.9/dist/jquery.inputmask.min.js"></script>
     <script>
-        //$('input').inputmask();
+        $('input').inputmask();
     </script>
 
 @stop

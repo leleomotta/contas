@@ -9,7 +9,7 @@
 @section('content')
     <form id="cadastro" role="form" action="{{ route('cartoes.store_despesa') }}" method="post" enctype="multipart/form-data">
         @csrf
-        <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+        <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">Criar despesa de cartão</h3>

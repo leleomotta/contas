@@ -10,7 +10,7 @@
     <form id="cadastro" role="form" action="{{ route('cartoes.update_despesa',['ID_Despesa' =>  $despesa['ID_Despesa']]) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <input type="hidden" name="ID_Cartao" value="{{app('request')->input('ID_Cartao')}}">
+        <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
         <div class="card card-success">
             <div class="card-header">
                 <h3 class="card-title">Editar despesa de cartão</h3>

@@ -18,14 +18,15 @@ class Fatura extends Model
 
     public function show($Ano_Mes, $ID_Cartao){
         $retorno = DB::table('fatura')
-            ->select('fatura.Ano_Mes', 'fatura.Fechada', 'fatura.ID_Cartao', 'despesa.ID_Despesa',
+            ->select('fatura.Ano_Mes', 'fatura.Data_fechamento' , 'fatura.Fechada', 'fatura.ID_Cartao', 'despesa.ID_Despesa',
             'despesa.Data', 'despesa.Descricao', 'despesa.Valor', 'categoria.Nome as NomeCategoria' )
             //->select('receita.*')
             ->join('despesa', 'fatura.ID_Despesa', '=', 'despesa.ID_Despesa')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->where('fatura.Ano_Mes',$Ano_Mes)
             ->where('fatura.ID_Cartao', $ID_Cartao)
-    //->toSql(); dd($retorno);
+            ->orderBy('despesa.Data','DESC')
+            //->toSql(); dd($retorno);
             ->get();;
     //dd($retorno);
         return $retorno;

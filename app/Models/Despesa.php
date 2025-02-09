@@ -91,7 +91,7 @@ class Despesa extends Model
             //->toSql(); dd($despesas);
             ->get();
 
-        $cartao =DB::table('fatura')
+        $cartaoAberto =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
                 'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
@@ -103,11 +103,34 @@ class Despesa extends Model
             ->where('Ano_Mes','=',
                 Carbon::createFromDate($start_date)->isoFormat('Y') . '-' .
                         Carbon::createFromDate($start_date)->isoFormat('MM'))
+            ->whereNull('fatura.Data_fechamento')
             ->groupBy('cartao.ID_Cartao')
-            //->toSql(); dd($cartao);
+            //->toSql(); dd($cartaoAberto);
             ->get();
 
-        $despesas = $despesas->merge($cartao);
+        $despesas = $despesas->merge($cartaoAberto);
+
+        $cartaoPago =DB::table('fatura')
+            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+                //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+            ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->whereBetween('fatura.Data_fechamento',
+                [
+                    $start_date,
+                    $end_date
+                ]
+            )
+            ->groupBy('cartao.ID_Cartao','fatura.Ano_Mes')
+            //->toSql(); dd($cartaoPago);
+            ->get();
+
+       $despesas = $despesas->merge($cartaoPago);
+
 
         return $despesas;
     }

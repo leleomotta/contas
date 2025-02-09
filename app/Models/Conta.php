@@ -81,9 +81,11 @@ class Conta extends Model
         //$contas = DB::table('conta')->paginate(99999);
         $contas = Conta::where(function ($query) {
             $query->select('*');
-            $query->where('Arquivada',0);
+            //$query->where('Arquivada',0);
             $query->orderBy('Banco','ASC');
         })->get();
         return $contas;
     }
 }
+
+//precisa criar um show das arquivas?
