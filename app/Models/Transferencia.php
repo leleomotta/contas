@@ -27,7 +27,8 @@ class Transferencia extends Model
             ->select('ID_Transferencia','ID_Conta_Origem', 'ID_Conta_Destino' , 'conta.Banco', 'conta.Descricao',
                 'transferencia.Data', 'transferencia.Valor')
             ->join('conta', 'transferencia.ID_Conta_Destino', '=', 'conta.ID_Conta')
-            ->orderBy('transferencia.ID_Conta_Origem','ASC');
+            //->orderBy('transferencia.ID_Conta_Origem','ASC');
+            ->orderBy('transferencia.Data','DESC');
 
         return $transferencias->get();
     }

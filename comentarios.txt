@@ -1,7 +1,7 @@
 FALTA
 
 *cartao =>
-    Na fatura, se ela esta fechada precisa colocar data de fechamento e aa contta que fechou
+    Na fatura, se ela esta fechada precisa colocar data de fechamento (a data está, a conta ainda não) e aa contta que fechou
     Possibilidade de ditar cartão
     Criar despesa parcelada
     Se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
@@ -30,3 +30,5 @@ FALTA FAZER A DIVISÂO COM A ABA ASSIM COMO NAS CATEGORIAS
 created_at timestamp
 
 updated_at timestamp
+
+alter TABLE transferencia add COLUMN Obervacao varchar (255) after valor

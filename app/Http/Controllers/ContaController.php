@@ -57,14 +57,25 @@ class ContaController extends Controller
     }
 
 
-    public function showAll(){
-        $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
+    public function showAll(Request $request){
 
-        $dt = Carbon::now();
-        $dt->setDateFrom($dateFilter . '-15');
-        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+    $dateFilter = $request->date_filter;
+
+    if (is_null($dateFilter) ) {
+        $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+            Carbon::now()->isoFormat('MM');
+    }
+    $dt = Carbon::now();
+    $dt->setDateFrom($dateFilter . '-15');
+    $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+    $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+    //$start_date = Carbon::createFromDate('2024','03')->startOfMonth()->toDateString();
+    //$end_date = Carbon::createFromDate('2024','03')->endOfMonth()->toDateString();
+
+    /* Como era
+    $start_date = Carbon::createFromDate('2014','06')->startOfMonth()->toDateString();
+    $end_date = Carbon::createFromDate('2014','06')->endOfMonth()->toDateString();
+    */
 
         $contas = new Conta();
 
