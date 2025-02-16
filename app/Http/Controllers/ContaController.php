@@ -68,6 +68,7 @@ class ContaController extends Controller
     $dt = Carbon::now();
     $dt->setDateFrom($dateFilter . '-15');
     $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+
     $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
     //$start_date = Carbon::createFromDate('2019','11')->startOfMonth()->toDateString();
     //$end_date = Carbon::createFromDate('2019','11')->endOfMonth()->toDateString();
