@@ -109,7 +109,7 @@ class Despesa extends Model
             ->get();
 
         $despesas = $despesas->merge($cartaoAberto);
-
+/*
         $cartaoPago =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
@@ -128,12 +128,42 @@ class Despesa extends Model
             ->groupBy('cartao.ID_Cartao','fatura.Ano_Mes')
             //->toSql(); dd($cartaoPago);
             ->get();
+*/
 
-       $despesas = $despesas->merge($cartaoPago);
+        $cartaoPago = $this->cartaoPago($start_date, $end_date, null);
+        $despesas = $despesas->merge($cartaoPago);
+       //$despesas = $despesas->merge($this->cartaoPago($start_date, $end_date, null));
 
 
         return $despesas;
     }
 
+    public function cartaoPago($start_date, $end_date, $conta){
+        $cartaoPago =DB::table('fatura')
+            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+                //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+            ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+
+
+            ->groupBy('cartao.ID_Cartao','fatura.Ano_Mes');
+            if (0==0) {
+                $cartaoPago->whereBetween('fatura.Data_fechamento',
+                    [
+                        $start_date,
+                        $end_date
+                    ]
+                );
+            }
+            //->toSql(); dd($cartaoPago);
+            $cartaoPago->get();
+
+        return $cartaoPago;
+
+    }
 }
 
