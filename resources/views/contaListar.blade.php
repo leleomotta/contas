@@ -310,6 +310,7 @@
                                     <thead>
                                         <tr>
                                             <th style="text-align: center">Conta</th>
+                                            <th style="text-align: center">Ano/Mês</th>
                                             <th style="text-align: center">Saldo Atual</th>
                                             <th style="text-align: center">Receitas</th>
                                             <th style="text-align: center">Despesas</th>
@@ -330,7 +331,10 @@
                                         @foreach($sorted as $conta)
                                             <tr>
                                                 <td>
-                                                    {{ $conta->ID_Conta . '-' . $conta->Banco }}
+                                                    {{ $conta->ID_Conta . '-' . $conta->Descricao }}
+                                                </td>
+                                                <td>
+                                                    {{ $conta->Ano_Mes }}
                                                 </td>
                                                 <td>
                                                     {{ 'R$ ' .  str_replace("_",'.',
@@ -383,6 +387,7 @@
                                     <tfoot>
                                         <tr>
                                             <th style="text-align: center">Conta</th>
+                                            <th style="text-align: center">Ano/Mês</th>
                                             <th style="text-align: center">Saldo Atual</th>
                                             <th style="text-align: center">Receitas</th>
                                             <th style="text-align: center">Despesas</th>

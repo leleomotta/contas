@@ -21,6 +21,7 @@ class Conta extends Model
                 DB::raw("000 as Despesas"), DB::raw('000 as Receitas'),
                 DB::raw("'Entra' as Entradas"), DB::raw("'Sai' as Saidas"),
                 DB::raw("'MOTTA' as SaldoMes"),
+                DB::raw("'---' as Ano_Mes"),
                 DB::raw("'MOTTA' as Saldo") )
             ->where('conta.Arquivada', $arquivada)
             ->groupBy('conta.ID_Conta')
@@ -40,7 +41,7 @@ class Conta extends Model
                 ->where('conta.ID_Conta', '=', $conta->ID_Conta)
                 ->groupBy('conta.ID_Conta')
 
-                //->toSql(); dd($receitaMes);
+                //dd($receitaMes->toSql(), $receitaMes->getBindings());
                 ->get();
 
             $receitaAte = DB::table('conta')
@@ -77,7 +78,7 @@ class Conta extends Model
                 })
                 ->where('conta.ID_Conta', '=', $conta->ID_Conta)
                 ->orderBy('Data','DESC')
-                //->toSql(); dd($despesa);
+                //->toSql(); dd($despesaMes);
                 ->get();
 
             $despesaAte = DB::table('despesa')
@@ -111,7 +112,7 @@ class Conta extends Model
                     ]
                 )
                 ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                //->toSql(); dd($cartaoPago);
+                //->toSql(); dd($cartaoPagoMes);
                 ->get();
 
             $cartaoPagoAte =DB::table('fatura')
@@ -160,6 +161,9 @@ class Conta extends Model
                 //->toSql(); dd($tranferencias_Entrada);
                 ->get();
 
+            //coloca o ano mês
+            $conta->Ano_Mes = substr($start_date,0,7);
+
             //as receitas e despesas DENTRO DO MÊS ATUAL
             if ($cartaoPagoMes->count() > 0){
                 //$conta->Despesas = $despesaMes[0]->Despesas + $cartaoPagoMes[0]->Valor + $tranferencias_SaidaMes[0]->Saida;
@@ -186,8 +190,6 @@ class Conta extends Model
 
             $conta->SaldoMes = $receitaMes[0]->Receitas + $tranferencias_EntradaMes[0]->Saida
                             - $despesaMes[0]->Despesas - $cartaoPagoMes[0]->Valor - $tranferencias_SaidaMes[0]->Saida;
-
-
         }
 
         //assim ordena o array collection depois de pronto
@@ -197,7 +199,7 @@ class Conta extends Model
             return $conta->Descricao;
         });
         dd($sorted);
-*/
+        */
         return $contas;
     }
 
