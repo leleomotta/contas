@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Dashboard')
+@section('title', 'Conta - Listar')
 
 @section('content_header')
 
@@ -39,8 +39,8 @@
 
                     <ul class="nav nav-pills ml-auto p-2">
                         <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Ativas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Inativas</a></li>
-                        <li class="nav-item"><a class="nav-link" href="#tab_3" data-toggle="tab">Tabela</a></li>
+                        <li class="nav-item"><a class="nav-link " href="#tab_2" data-toggle="tab">Inativas</a></li>
+                        <li class="nav-item"><a class="nav-link " href="#tab_3" data-toggle="tab">Tabela</a></li>
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body">
@@ -304,7 +304,7 @@
                         <!-- /.tab-pane -->
 
                         <!-- .tab-pane -->
-                        <div class="tab-pane" id="tab_3">
+                        <div class="tab-pane " id="tab_3">
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
@@ -329,7 +329,8 @@
                                         });
                                     @endphp
                                         @foreach($sorted as $conta)
-                                            <tr>
+
+                                                <tr>
                                                 <td>
                                                     {{ $conta->ID_Conta . '-' . $conta->Descricao }}
                                                 </td>
@@ -380,6 +381,7 @@
                                                 </td>
 
                                             </tr>
+
                                         @endforeach
 
                                     </tbody>

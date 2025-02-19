@@ -70,7 +70,7 @@ class CartaoController extends Controller
         $despesa = Despesa::find($request->ID_Despesa);
         $fatura = Fatura::find($request->ID_Despesa);
 
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+        $categorias = (new \App\Models\Categoria)->show('D');
 
         return view('fatura_despesaEditar', [
             'despesa' => $despesa,
@@ -102,7 +102,8 @@ class CartaoController extends Controller
     public function new_despesa(){
         $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+        $categorias = (new \App\Models\Categoria)->show('D');
 
         return view('fatura_despesaCriar', [
             'categorias' => $categorias,

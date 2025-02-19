@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Editar Despesa de Cartão')
+@section('title', 'Cartão - Editar Despesa')
 
 @section('content_header')
 

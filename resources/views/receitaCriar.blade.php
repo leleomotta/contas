@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Receita')
+@section('title', 'Receita - Criar')
 
 @section('content_header')
 

@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Cartão')
+@section('title', 'Cartão - Criar')
 
 @section('content_header')
 

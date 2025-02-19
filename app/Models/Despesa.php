@@ -109,7 +109,7 @@ class Despesa extends Model
             ->get();
 
         $despesas = $despesas->merge($cartaoAberto);
-/*
+
         $cartaoPago =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
@@ -128,9 +128,7 @@ class Despesa extends Model
             ->groupBy('cartao.ID_Cartao','fatura.Ano_Mes')
             //->toSql(); dd($cartaoPago);
             ->get();
-*/
 
-        $cartaoPago = $this->cartaoPago($start_date, $end_date, null);
         $despesas = $despesas->merge($cartaoPago);
        //$despesas = $despesas->merge($this->cartaoPago($start_date, $end_date, null));
 

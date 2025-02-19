@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Despesa')
+@section('title', 'Despesa - Criar')
 
 @section('content_header')
 

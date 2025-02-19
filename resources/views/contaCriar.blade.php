@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Criar Conta')
+@section('title', 'Conta - Criar')
 
 @section('content_header')
     <h1>Criar a conta</h1>
