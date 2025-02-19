@@ -28,6 +28,7 @@ class ContaController extends Controller
 
         //$prova->idUsuario = (session()->get('UsuarioLogado'))->idUsuario;
 
+        $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;
         //$conta->Saldo_Inicial = str_replace("R$ ","",$request->Saldo_Inicial);
@@ -59,24 +60,22 @@ class ContaController extends Controller
 
     public function showAll(Request $request){
 
-    $dateFilter = $request->date_filter;
+        $dateFilter = $request->date_filter;
 
-    if (is_null($dateFilter) ) {
-        $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-            Carbon::now()->isoFormat('MM');
-    }
-    $dt = Carbon::now();
-    $dt->setDateFrom($dateFilter . '-15');
-    $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+        if (is_null($dateFilter) ) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+                Carbon::now()->isoFormat('MM');
+        }
+        $dt = Carbon::now();
+        $dt->setDateFrom($dateFilter . '-15');
+        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
 
-    $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-    //$start_date = Carbon::createFromDate('2019','11')->startOfMonth()->toDateString();
-    //$end_date = Carbon::createFromDate('2019','11')->endOfMonth()->toDateString();
+        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
 
-    /* Como era
-    $start_date = Carbon::createFromDate('2014','06')->startOfMonth()->toDateString();
-    $end_date = Carbon::createFromDate('2014','06')->endOfMonth()->toDateString();
-    */
+        /* Como era
+        $start_date = Carbon::createFromDate('2014','06')->startOfMonth()->toDateString();
+        $end_date = Carbon::createFromDate('2014','06')->endOfMonth()->toDateString();
+        */
 
         $contas = new Conta();
 
@@ -105,6 +104,8 @@ class ContaController extends Controller
     {
         $conta = Conta::find($ID_Conta);
 
+
+        $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;
         $conta->Saldo_Inicial =

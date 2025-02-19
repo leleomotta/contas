@@ -61,8 +61,8 @@
 
                                                             <div class="widget-user-header text-white"
                                                                      style="background:{{ $conta->Cor }}">
-                                                                <h3 class="widget-user-username">{{ $conta->ID_Conta . '-' . $conta->Banco }}</h3>
-                                                                <h5 class="widget-user-desc">{{ $conta->Descricao }}</h5>
+                                                                <h3 class="widget-user-username">{{ $conta->ID_Conta . '-' . $conta->Nome }}</h3>
+                                                                <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
                                                             </div>
 
                                                             <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
@@ -332,7 +332,7 @@
 
                                                 <tr>
                                                 <td>
-                                                    {{ $conta->ID_Conta . '-' . $conta->Descricao }}
+                                                    {{ $conta->ID_Conta . ' - ' . $conta->Nome . ' - ' . $conta->Banco }}
                                                 </td>
                                                 <td>
                                                     {{ $conta->Ano_Mes }}

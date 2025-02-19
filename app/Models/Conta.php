@@ -17,7 +17,7 @@ class Conta extends Model
     public function show($start_date, $end_date, $arquivada){
 
         $contas = DB::table('conta')
-            ->select('conta.ID_Conta', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor', 'conta.Arquivada',
+            ->select('conta.ID_Conta', 'conta.Nome', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor', 'conta.Arquivada',
                 DB::raw("000 as Despesas"), DB::raw('000 as Receitas'),
                 DB::raw("'Entra' as Entradas"), DB::raw("'Sai' as Saidas"),
                 DB::raw("'MOTTA' as SaldoMes"),

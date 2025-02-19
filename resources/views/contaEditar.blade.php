@@ -14,6 +14,12 @@
         @method('PUT')
         <div class="box-body">
             <div class="form-group">
+                <label >Nome</label>
+                <input type="text" name="Nome" class="form-control" id="Nome" placeholder="Digite um nome para a conta"
+                       value="{{ $conta['Nome'] }}">
+            </div>
+
+            <div class="form-group">
                 <label >Descrição</label>
                 <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a conta"
                        value="{{ $conta['Descricao'] }}">
