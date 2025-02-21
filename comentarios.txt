@@ -5,13 +5,10 @@ FALTA
     Possibilidade de ditar cartão
     Criar despesa parcelada
     Se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
-    Na hora de adcionar despesa de cartão tem que colcoar no mês seguinte e ver a questão do dia de fechamento
+    Na hora de adcionar despesa de cartão tem que colocar no mês seguinte e ver a questão do dia de fechamento
 
-* Opção de contas habilitadas e desabilitadas
-alter table conta add COLUMN Arquivada tinyint(1) Default 0 after cor
-FALTA FAZER A DIVISÂO COM A ABA ASSIM COMO NAS CATEGORIAS
-
-
+* ajustar os controller e os Models para unificar funções (Exemplo: despesa)
+* Fazer a tela de dash Board
 
 * fazer um extrato consolidado
 * fazer receitas e despeas recorrentes
@@ -19,16 +16,13 @@ FALTA FAZER A DIVISÂO COM A ABA ASSIM COMO NAS CATEGORIAS
 
 
 * na efetivação da despesa pode conferir a data?
-* alterar a imagem de pago ou não pelo checked do bootstrap
-* rever os títulos das páginas
 * limpar os javascripts das páginas
-* limpar a pasta de JS e CSS
-* corrigir o caminho das imagens (existe um jeito especial de fazer no laravel
 
 -----------------
-
 created_at timestamp
-
 updated_at timestamp
-
 alter TABLE transferencia add COLUMN Obervacao varchar (255) after valor
+-----------------
+
+Recorrentes:
+* Arquivo Excel

@@ -93,8 +93,8 @@ class ReceitaController extends Controller
 
         return view('receitaListar', [
             'receitas' => $receitas->show($start_date, $end_date),
-            'pendente' => $receitas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-            'recebido' => $receitas->recebido($categoria, $conta, $texto, $start_date, $end_date),
+            'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
+            'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
             'contas' => $contas,
             'categorias' => $categorias
         ]);
@@ -145,8 +145,8 @@ class ReceitaController extends Controller
         return view('receitaListar',
             [
                 'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
-                'pendente' => $receitas->pendente($categoria, $conta, $texto, $start_date, $end_date),
-                'recebido' => $receitas->recebido($categoria, $conta, $texto, $start_date, $end_date),
+                'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
+                'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
                 'categorias' => $categorias,
                 'contas' => $contas,
         ]);

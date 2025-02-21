@@ -51,7 +51,8 @@ class TransferenciaController extends Controller
 
         return view('transferenciaListar', [
             'transferencias' => $transferencias->showAll(),
-            'contasOrigem' => $transferencias->showContaOrigem()
+            'contasOrigem' => $transferencias->showContaOrigem(),
+            'contasDestino' => $transferencias->showContaDestino()
         ]);
     }
 

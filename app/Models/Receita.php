@@ -21,22 +21,6 @@ class Receita extends Model
         return $this->hasOne(Conta::class, 'ID_Conta', 'ID_Conta');
     }
 
-    /*
-    public function showAll(){
-
-        $receitas = DB::table('receita')
-            //->leftJoin('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
-            //->join('materia', 'prova.idMateria', '=', 'materia.idMateria')
-            //->select('prova.*', 'materia.Nome', DB::raw('count(prova_questao.idQuestao) as totQuestoes'))->groupBy('prova.idProva')
-
-            //->toSql(); dd($receitas);
-            ->paginate(99999);
-        return $receitas;
-    }
-    */
     public function filter($categoria, $conta, $texto, $start_date, $end_date){
         $filtros = DB::table('receita')
             ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
@@ -66,30 +50,33 @@ class Receita extends Model
     }
 
     public function show($start_date, $end_date){
-        //$dt = Carbon::now();
-        //$dt->setDateFrom($filtro . '-15');
-        $receitas = DB::table('receita')
-            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->whereBetween('Data',
-                [
-                    //Carbon::createFromDate(2024, 6, 01)->toDateString(),
-                    //Carbon::createFromDate(2024, 6, 30)->toDateString()
-                    //Carbon::createFromDate($dt->firstOfMonth())->toDateString(),
-                    //Carbon::createFromDate($dt->lastOfMonth())->toDateString()
-                    $start_date,
-                    $end_date
-                ]
-            )
-            ->orderBy('Data','DESC')
-            //->toSql(); dd($receitas);
-            //->paginate(99999);
-        ->get();
-        return $receitas;
+        return $this->receitas($start_date,$end_date,null);
     }
 
-    public function pendente($categoria, $conta, $texto, $start_date, $end_date){
+    public function receitas($start_date, $end_date, $conta){
+        $receitas = DB::table('receita')
+            //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->select('receita.ID_Receita', 'receita.Efetivada', 'receita.Data',
+                'receita.Descricao', 'receita.Valor',
+                'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria');
+            if (! is_null($start_date) ) {
+                $receitas->where('Data', '>=', $start_date);
+            }
+            if (! is_null($end_date) ) {
+                $receitas->where('Data', '<=', $end_date);
+            }
+            if (! is_null($conta) ){
+                $receitas->where('conta.ID_Conta', $conta);
+            }
+            $receitas->orderBy('Data','DESC');
+            //$receitas->toSql(); dd($receitas);
+
+        return $receitas->get();
+    }
+
+    public function receitasPendente($categoria, $conta, $texto, $start_date, $end_date){
         //arrumar a prendencia e recebidos sobre filtro
         $retorno = DB::table('receita')
             //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
@@ -120,7 +107,7 @@ class Receita extends Model
         return $retorno->sum('Valor');
     }
 
-    public function recebido($categoria, $conta, $texto, $start_date, $end_date){
+    public function receitasRecebido($categoria, $conta, $texto, $start_date, $end_date){
         $retorno = DB::table('receita')
             //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
             //->select('receita.*')

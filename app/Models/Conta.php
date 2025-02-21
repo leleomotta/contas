@@ -18,6 +18,7 @@ class Conta extends Model
 
         $contas = DB::table('conta')
             ->select('conta.ID_Conta', 'conta.Nome', 'conta.Descricao', 'conta.Banco', 'conta.Imagem', 'conta.Cor', 'conta.Arquivada',
+                'conta.Saldo_Inicial',
                 DB::raw("000 as Despesas"), DB::raw('000 as Receitas'),
                 DB::raw("'Entra' as Entradas"), DB::raw("'Sai' as Saidas"),
                 DB::raw("'MOTTA' as SaldoMes"),
@@ -29,252 +30,124 @@ class Conta extends Model
             ->get();
 
         foreach($contas as $conta) {
+            $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $receitaMes = DB::table('conta')
-                ->select('conta.ID_Conta', 'conta.Saldo_inicial',
-                    DB::raw('sum(receita.Valor) as Receitas'))
-                ->leftJoin('receita', function ($join) use ($start_date, $end_date) {
-                    $join->on('receita.ID_Conta', '=', 'conta.ID_Conta')
-                        ->where('receita.Efetivada', '=', 1)
-                        ->whereBetween('receita.Data', [$start_date, $end_date]); //linha para filtrar a data
-                })
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                ->groupBy('conta.ID_Conta')
+            $receitaAte = (new \App\Models\Receita)->receitas(null,$end_date,$conta->ID_Conta)->sum('Valor');
 
-                //dd($receitaMes->toSql(), $receitaMes->getBindings());
-                //->toSql(); dd($receitaMes);
-                //select `conta`.`ID_Conta`, `conta`.`Saldo_inicial`, sum(receita.Valor) as Receitas from `conta` left join `receita` on `receita`.`ID_Conta` = `conta`.`ID_Conta` and `receita`.`Efetivada` = ? and `receita`.`Data` between ? and ? where `conta`.`ID_Conta` = ? group by `conta`.`ID_Conta`
-                ->get();
+            $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $receitaAte = DB::table('conta')
-                ->select('conta.ID_Conta', 'conta.Saldo_inicial',
-                    DB::raw('sum(receita.Valor) as Receitas') )
-                ->leftJoin('receita', function($join) use ($start_date, $end_date) {
-                    $join->on('receita.ID_Conta', '=', 'conta.ID_Conta')
-                        ->where('receita.Efetivada', '=', 1)
-                        //->whereBetween('receita.Data',[$start_date,$end_date]); //linha para filtrar a data
-                        ->where('receita.Data', '<=', $end_date);
-                })
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                ->groupBy('conta.ID_Conta')
-                //->toSql(); dd($receitaAte);
-                //select `conta`.`ID_Conta`, `conta`.`Saldo_inicial`, sum(receita.Valor) as Receitas from `conta` left join `receita` on `receita`.`ID_Conta` = `conta`.`ID_Conta` and `receita`.`Efetivada` = ? and `receita`.`Data` <= ? where `conta`.`ID_Conta` = ? group by `conta`.`ID_Conta`
-                ->get();
+            $despesaAte  = (new \App\Models\Despesa)->despesasSemCartao(null,$end_date,$conta->ID_Conta)->sum('Valor');
 
+            $cartaoPagoMes = (new \App\Models\Despesa)->cartaoPago($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $despesaMes = DB::table('despesa')
-                ->select('conta.ID_Conta', 'conta.Saldo_inicial',
-                    DB::raw('sum(despesa.Valor) as Despesas') )
-                ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
-                ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-                ->whereBetween('Data',
-                    [
-                        $start_date,
-                        $end_date
-                    ]
-                )
-                ->whereNotExists(function($query)
-                {
-                    $query->select(DB::raw(1))
-                        ->from('fatura')
-                        ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
-                })
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                ->orderBy('Data','DESC')
-                //->toSql(); dd($despesaMes);
-                //select `conta`.`ID_Conta`, `conta`.`Saldo_inicial`, sum(despesa.Valor) as Despesas from `despesa` inner join `conta` on `despesa`.`ID_Conta` = `conta`.`ID_Conta` inner join `categoria` on `despesa`.`ID_Categoria` = `categoria`.`ID_Categoria` where `Data` between ? and ? and not exists (select 1 from `fatura` where despesa.ID_Despesa = fatura.ID_Despesa) and `conta`.`ID_Conta` = ? order by `Data` desc
-                ->get();
+            $cartaoPagoAte = (new \App\Models\Despesa)->cartaoPago(null,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $despesaAte = DB::table('despesa')
-                ->select('conta.ID_Conta', 'conta.Saldo_inicial',
-                    DB::raw('sum(despesa.Valor) as Despesas') )
-                ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
-                ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-                ->where('Data', '<=', $end_date)
-                ->whereNotExists(function($query)
-                {
-                    $query->select(DB::raw(1))
-                        ->from('fatura')
-                        ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
-                })
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                ->orderBy('Data','DESC')
-                //->toSql(); dd($despesaAte);
-                //select `conta`.`ID_Conta`, `conta`.`Saldo_inicial`, sum(despesa.Valor) as Despesas from `despesa` inner join `conta` on `despesa`.`ID_Conta` = `conta`.`ID_Conta` inner join `categoria` on `despesa`.`ID_Categoria` = `categoria`.`ID_Categoria` where `Data` <= ? and not exists (select 1 from `fatura` where despesa.ID_Despesa = fatura.ID_Despesa) and `conta`.`ID_Conta` = ? order by `Data` desc
-                ->get();
+            $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $cartaoPagoMes =DB::table('fatura')
-                ->select(DB::raw('sum(despesa.Valor) as Valor'))
-                ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
-                //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
-                ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+            $tranferencias_SaidaAte = (new \App\Models\Transferencia())->tranferenciasSaida(null,$end_date,$conta->ID_Conta)->sum('Valor');
 
-                ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
-                ->whereBetween('fatura.Data_fechamento',
-                    [
-                        $start_date,
-                        $end_date
-                    ]
-                )
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                //->toSql(); dd($cartaoPagoMes);
-                //select sum(despesa.Valor) as Valor from `fatura` inner join `cartao` on `fatura`.`ID_Cartao` = `cartao`.`ID_Cartao` left join `conta` on `fatura`.`Conta_fechamento` = `conta`.`ID_Conta` inner join `despesa` on `despesa`.`ID_Despesa` = `fatura`.`ID_Despesa` where `fatura`.`Data_fechamento` between ? and ? and `conta`.`ID_Conta` = ?
-                ->get();
+            $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
-            $cartaoPagoAte =DB::table('fatura')
-                ->select(DB::raw('sum(despesa.Valor) as Valor'))
-                ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
-                //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
-                ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
-
-                ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
-                ->where('fatura.Data_fechamento', '<=', $end_date)
-
-                ->where('conta.ID_Conta', '=', $conta->ID_Conta)
-                //->toSql(); dd($cartaoPagoAte);
-                //select sum(despesa.Valor) as Valor from `fatura` inner join `cartao` on `fatura`.`ID_Cartao` = `cartao`.`ID_Cartao` left join `conta` on `fatura`.`Conta_fechamento` = `conta`.`ID_Conta` inner join `despesa` on `despesa`.`ID_Despesa` = `fatura`.`ID_Despesa` where `fatura`.`Data_fechamento` <= ? and `conta`.`ID_Conta` = ?
-                ->get();
-
-
-            $tranferencias_SaidaMes = DB::table('transferencia')
-                ->select('transferencia.ID_Transferencia',
-                    DB::raw('sum(transferencia.Valor) as Saida') )
-                ->where('transferencia.ID_Conta_Origem', '=', $conta->ID_Conta)
-                ->whereBetween('transferencia.Data',[$start_date,$end_date]) //linha para filtrar a data
-                //->toSql(); dd($tranferencias_SaidaMes);
-                //select `transferencia`.`ID_Transferencia`, sum(transferencia.Valor) as Saida from `transferencia` where `transferencia`.`ID_Conta_Origem` = ? and `transferencia`.`Data` between ? and ?
-                ->get();
-
-            $tranferencias_SaidaAte = DB::table('transferencia')
-                ->select('transferencia.ID_Transferencia',
-                    DB::raw('sum(transferencia.Valor) as Saida') )
-                ->where('transferencia.ID_Conta_Origem', '=', $conta->ID_Conta)
-                ->where('transferencia.Data','<=',$end_date) //linha para filtrar a data
-                //->toSql(); dd($tranferencias_SaidaAte);
-                //select `transferencia`.`ID_Transferencia`, sum(transferencia.Valor) as Saida from `transferencia` where `transferencia`.`ID_Conta_Origem` = ? and `transferencia`.`Data` <= ?
-                ->get();
-
-            $tranferencias_EntradaMes = DB::table('transferencia')
-                ->select('transferencia.ID_Transferencia',
-                    DB::raw('sum(transferencia.Valor) as Saida') )
-                ->where('transferencia.ID_Conta_Destino', '=', $conta->ID_Conta)
-                ->whereBetween('transferencia.Data',[$start_date,$end_date]) //linha para filtrar a data
-                //->toSql(); dd($tranferencias_EntradaMes);
-                //select `transferencia`.`ID_Transferencia`, sum(transferencia.Valor) as Saida from `transferencia` where `transferencia`.`ID_Conta_Destino` = ? and `transferencia`.`Data` between ? and ?
-                ->get();
-
-            $tranferencias_EntradaAte = DB::table('transferencia')
-                ->select('transferencia.ID_Transferencia',
-                    DB::raw('sum(transferencia.Valor) as Saida') )
-                ->where('transferencia.ID_Conta_Destino', '=', $conta->ID_Conta)
-                ->where('transferencia.Data','<=',$end_date) //linha para filtrar a data
-                //->toSql(); dd($tranferencias_EntradaAte);
-                //select `transferencia`.`ID_Transferencia`, sum(transferencia.Valor) as Saida from `transferencia` where `transferencia`.`ID_Conta_Destino` = ? and `transferencia`.`Data` <= ?
-                ->get();
+            $tranferencias_EntradaAte = (new \App\Models\Transferencia())->tranferenciasEntrada(null,$end_date,$conta->ID_Conta)->sum('Valor');
 
             //coloca o ano mês
-            $conta->Ano_Mes = substr($start_date,0,7);
+            $conta->Ano_Mes = substr($start_date, 0, 7);
 
             //as receitas e despesas DENTRO DO MÊS ATUAL
-            if ($cartaoPagoMes->count() > 0){
-                //$conta->Despesas = $despesaMes[0]->Despesas + $cartaoPagoMes[0]->Valor + $tranferencias_SaidaMes[0]->Saida;
-                $conta->Despesas = $despesaMes[0]->Despesas + $cartaoPagoMes[0]->Valor;
-            }
-            else{
-                //$conta->Despesas = $despesaMes[0]->Despesas + $tranferencias_SaidaMes[0]->Saida;
-                $conta->Despesas = $despesaMes[0]->Despesas;
-            }
-
-            //$conta->Receitas = $receitaMes[0]->Receitas + $tranferencias_EntradaMes[0]->Saida;
-            $conta->Receitas = $receitaMes[0]->Receitas;
+            $conta->Despesas = $despesaMes + $cartaoPagoMes;
+            $conta->Receitas = $receitaMes;
 
 
             //entradas e saídas dentro do mês atual
-            $conta->Entradas = $tranferencias_EntradaMes[0]->Saida;
-            $conta->Saidas = $tranferencias_SaidaMes[0]->Saida;
+            $conta->Entradas = $tranferencias_EntradaMes;
+            $conta->Saidas = $tranferencias_SaidaMes;
 
-        //$conta->Saldo = $receita[0]->Saldo_inicial + $receita[0]->Receitas + $tranferencias_Entrada[0]->Saida - $conta->Despesas - $tranferencias_Saida[0]->Saida;
             //Saldo até a data
-            $conta->Saldo = $receitaAte[0]->Saldo_inicial +
-                ($receitaAte[0]->Receitas + $tranferencias_EntradaAte[0]->Saida) -
-                ($despesaAte[0]->Despesas + $cartaoPagoAte[0]->Valor + $tranferencias_SaidaAte[0]->Saida);
+            $conta->Saldo = $conta->Saldo_Inicial +
+                ($receitaAte + $tranferencias_EntradaAte) -
+                ($despesaAte + $cartaoPagoAte + $tranferencias_SaidaAte);
 
-/*
-            if ($conta->ID_Conta == 5) {
-                echo( $conta->Descricao );
-
-                echo('---');
-                echo( '$conta->Despesas' );
-                echo(':');
-                echo( $conta->Despesas );
-                echo('---');
-
-                if ($cartaoPagoMes->count() > 0){
-                    echo('---');
-                    echo( '$cartaoPagoMes[0]->Valor' );
-                    echo(':');
-                    echo( $cartaoPagoMes[0]->Valor );
-                    echo('---');
-                }
-
-                echo('---');
-                echo( '$tranferencias_SaidaMes[0]->Saida' );
-                echo(':');
-                echo( $tranferencias_SaidaMes[0]->Saida );
-                echo('---');
-
-                echo('---');
-                echo( '$conta->Receitas' );
-                echo(':');
-                echo( $conta->Receitas );
-                echo('---');
-
-                echo('---');
-                echo( '$tranferencias_EntradaMes[0]->Saida' );
-                echo(':');
-                echo( $tranferencias_EntradaMes[0]->Saida );
-                echo('---');
-
-                echo('---');
-                echo( '$receitaAte[0]->Saldo_inicial' );
-                echo(':');
-                echo( $receitaAte[0]->Saldo_inicial );
-                echo('---');
-
-                echo('---');
-                echo( '$receitaAte[0]->Receitas' );
-                echo(':');
-                echo( $receitaAte[0]->Receitas );
-                echo('---');
-
-                echo('---');
-                echo( '$tranferencias_EntradaAte[0]->Saida' );
-                echo(':');
-                echo( $tranferencias_EntradaAte[0]->Saida );
-                echo('---');
-
-                echo('---');
-                echo( '$despesaAte[0]->Despesas' );
-                echo(':');
-                echo( $despesaAte[0]->Despesas );
-                echo('---');
-
-                echo('---');
-                echo( '$cartaoPagoAte[0]->Valor' );
-                echo(':');
-                echo( $cartaoPagoAte[0]->Valor );
-                echo('---');
-
-                echo('---');
-                echo( '$tranferencias_SaidaAte[0]->Saida' );
-                echo(':');
-                echo( $tranferencias_SaidaAte[0]->Saida );
-                echo('---');
-            }
-*/
             //Saldo do mês corrente
-            $conta->SaldoMes = $receitaMes[0]->Receitas + $tranferencias_EntradaMes[0]->Saida
-                            - $despesaMes[0]->Despesas - $cartaoPagoMes[0]->Valor - $tranferencias_SaidaMes[0]->Saida;
+            $conta->SaldoMes = $receitaMes + $tranferencias_EntradaMes
+                    - $despesaMes - $cartaoPagoMes - $tranferencias_SaidaMes;
+
+            /*
+            //if ($conta->ID_Conta == 5) {
+            if(0==0){
+                echo($conta->Nome);
+
+                echo('---');
+                echo('$conta->Despesas');
+                echo(':');
+                echo($conta->Despesas);
+                echo('---');
+
+                echo('---');
+                echo('$despesaMes2');
+                echo(':');
+                echo($despesaMes );
+                echo('---');
+
+                echo('---');
+                echo('$cartaoPagoMes[0]->Valor');
+                echo(':');
+                echo($cartaoPagoMes);
+                echo('---');
+
+                echo('---');
+                echo('$tranferencias_SaidaMes');
+                echo(':');
+                echo($tranferencias_SaidaMes);
+                echo('---');
+
+                echo('---');
+                echo('$receitaMes');
+                echo(':');
+                echo($receitaMes);
+                echo('---');
+
+                echo('---');
+                echo('$tranferencias_EntradaMes');
+                echo(':');
+                echo($tranferencias_EntradaMes);
+                echo('---');
+
+                echo('---');
+                echo('$conta->Saldo_Inicial');
+                echo(':');
+                echo($conta->Saldo_Inicial);
+                echo('---');
+
+                echo('---');
+                echo('$receitaAte');
+                echo(':');
+                echo($receitaAte);
+                echo('---');
+
+                echo('---');
+                echo('$tranferencias_EntradaAte');
+                echo(':');
+                echo($tranferencias_EntradaAte);
+                echo('---');
+
+                echo('---');
+                echo('$despesaAte');
+                echo(':');
+                echo($despesaAte);
+                echo('---');
+
+                echo('$cartaoPagoAte');
+                echo(':');
+                echo($cartaoPagoAte);
+                echo('---');
+
+                echo('---');
+                echo('$tranferencias_SaidaAte');
+                echo(':');
+                echo($tranferencias_SaidaAte);
+                echo('<br>');
+            }
+            */
         }
 
 
@@ -290,7 +163,6 @@ class Conta extends Model
     }
 
     public function showAll(){
-
         //$contas = DB::table('conta')->paginate(99999);
         $contas = Conta::where(function ($query) {
             $query->select('*');
