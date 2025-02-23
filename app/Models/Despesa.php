@@ -87,7 +87,7 @@ class Despesa extends Model
                     ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
             })
             ->orderBy('Data','DESC');
-            //->toSql(); dd($despesasSemCartao);
+            //dd($despesasSemCartao->toSql());
 
             return $despesasSemCartao->get();
     }
@@ -113,7 +113,7 @@ class Despesa extends Model
             if (! is_null($conta) ){
                 $cartaoPago->where('conta.ID_Conta', $conta);
             }
-
+        //dd($cartaoPago->toSql());
         return $cartaoPago->get();
     }
 

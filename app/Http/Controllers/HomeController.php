@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 
 class HomeController extends Controller
 {
@@ -25,4 +26,37 @@ class HomeController extends Controller
     {
         return view('home');
     }
+
+    public function showAll(Request $request){
+        $dateFilter = $request->date_filter;
+
+        if (is_null($dateFilter) ) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+                Carbon::now()->isoFormat('MM');
+        }
+        $dt = Carbon::now();
+        $dt->setDateFrom($dateFilter . '-15');
+        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+
+        $despesas = (new \App\Models\Despesa)->show($start_date, $end_date);
+        $receitas = (new \App\Models\Receita)->show($start_date, $end_date);
+
+        return view('home', [
+            'despesas' => $despesas->sum('Valor'),
+            'receitas' => $receitas->sum('Valor')
+        ]);
+
+
+        /*
+        return view('despesaListar', [
+            'despesas' => $despesas->sum('Valor'),
+            'pendente' => $despesas->where('Efetivada','=',0)->sum('Valor'),
+            'pago' => $despesas->where('Efetivada','=',1)->sum('Valor'),
+            'contas' => $contas,
+            'categorias' => $categorias
+        ]);
+*/
+    }
+
 }

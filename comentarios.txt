@@ -7,7 +7,7 @@ FALTA
     Se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
     Na hora de adcionar despesa de cartão tem que colocar no mês seguinte e ver a questão do dia de fechamento
 
-* ajustar os controller e os Models para unificar funções (Exemplo: despesa)
+* ajustar os controller e os Models para unificar funções (Exemplo: despesa) => já ajustei os principais
 * Fazer a tela de dash Board
 
 * fazer um extrato consolidado

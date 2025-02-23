@@ -167,7 +167,7 @@ class Conta extends Model
         $contas = Conta::where(function ($query) {
             $query->select('*');
             //$query->where('Arquivada',0);
-            $query->orderBy('Banco','ASC');
+            $query->orderBy('Nome','ASC');
         })->get();
         return $contas;
     }

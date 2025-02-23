@@ -45,7 +45,7 @@
                 <select class="custom-select" id="Conta_Origem" name="Conta_Origem">
                     <option selected data-default>- Selecione uma conta -</option>
                     @foreach($contas as $conta)
-                        <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
+                        <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
                     @endforeach
                 </select>
             </div>
@@ -58,7 +58,7 @@
                 <select class="custom-select" id="Conta_Destino" name="Conta_Destino">
                     <option selected data-default>- Selecione uma conta -</option>
                     @foreach($contas as $conta)
-                        <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Descricao }}  </option>
+                        <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
                     @endforeach
                 </select>
             </div>

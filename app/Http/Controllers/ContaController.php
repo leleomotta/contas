@@ -103,8 +103,6 @@ class ContaController extends Controller
     public function update(Request $request, int $ID_Conta)
     {
         $conta = Conta::find($ID_Conta);
-
-
         $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;

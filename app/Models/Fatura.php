@@ -89,7 +89,7 @@ class Fatura extends Model
             Fatura::where(function ($query) use ($ID_Cartao,$Ano_Mes) {
                 $query->where('ID_Cartao', '=', $ID_Cartao)
                     ->where('Ano_Mes', '=', $Ano_Mes);
-            })->update(['fechada'=>'0','Data_fechamento'=>null ] );
+            })->update(['fechada'=>'0','Data_fechamento'=>null,'Conta_fechamento'=>null ] );
 
         }
 
