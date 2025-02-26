@@ -13,7 +13,7 @@
                 <div class="card">
                 </div>
                 <!-- Seletor de mês/ano -->
-                <div class="col-2 mx-auto">
+                <div class="col-md-auto mx-auto">
                     <div class="input-group date" id="divData" data-target-input="nearest">
 
                         <div class="input-group-append" onclick="voltaData()">
@@ -43,41 +43,57 @@
                                 <div class="info-box-content">
                                     <span class="info-box-text">Receitas</span>
                                     <span class="info-box-number">
-                        {{ 'R$ ' .  str_replace("_",'.',
-                                    str_replace(".",',',
-                                    str_replace(",",'_',
-                                    number_format($receitas, 2
-                                    )))) }}
+                                        {{ 'R$ ' .  str_replace("_",'.',
+                                                    str_replace(".",',',
+                                                    str_replace(",",'_',
+                                                    number_format($receitas->sum('Valor'), 2
+                                                    )))) }}
                                     </span>
                                 </div>
                             </div>
 
                             <div class="info-box col-4">
-                                <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                                <span class="info-box-icon bg-red"><i class="fa fa-coins"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Despesas</span>
                                     <span class="info-box-number">
-                        {{ 'R$ ' .  str_replace("_",'.',
-                                    str_replace(".",',',
-                                    str_replace(",",'_',
-                                    number_format($despesas, 2
-                                    )))) }}
+                                        {{ 'R$ ' .  str_replace("_",'.',
+                                                    str_replace(".",',',
+                                                    str_replace(",",'_',
+                                                    number_format($despesas->sum('Valor'), 2
+                                                    )))) }}
                                     </span>
                                 </div>
                             </div>
 
                             <div class="info-box col-4">
-                                <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                                <span class="info-box-icon bg-yellow"><i class="fa fa-coins"></i></span>
                                 <div class="info-box-content">
                                     <span class="info-box-text">Saldo</span>
                                     <span class="info-box-number">
-                        {{ 'R$ ' .  str_replace("_",'.',
-                                    str_replace(".",',',
-                                    str_replace(",",'_',
-                                    number_format($receitas - $despesas, 2
-                                    )))) }}
+                                        {{ 'R$ ' .  str_replace("_",'.',
+                                                    str_replace(".",',',
+                                                    str_replace(",",'_',
+                                                    number_format($receitas->sum('Valor') - $despesas->sum('Valor'), 2
+                                                    )))) }}
                                     </span>
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="row" id="div1">
+                            <div class="info-box col-4">
+                                <canvas id="Receitas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+
+                            <div class="info-box col-4">
+                                <canvas id="Despesas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                            </div>
+
+                            <div class="info-box col-4">
+
                             </div>
                         </div>
                     </div>
@@ -98,24 +114,11 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css">
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
+
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
 @stop
 
 @section('js')
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            var calendarEl = document.getElementById('calendar');
-            var calendar = new FullCalendar.Calendar(calendarEl, {
-                initialView: 'dayGridMonth'
-            });
-            calendar.render();
-        });
-    </script>
-
-
-
-
 
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -204,4 +207,119 @@
 
     </script>
     <!-- INPUT DATE -->
+
+
+    <!-- ChartJS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+    <script>
+        function gerar_cor_hexadecimal()
+        {
+            return '#' + parseInt((Math.random() * 0xFFFFFF))
+                .toString(16)
+                .padStart(6, '0');
+        }
+        //$questoesAno = DB::table('questao')->selectRaw('Ano, count(Ano) as Quantidade')->groupBy('Ano')->get();
+        //agrupar o receitas por tipo e depois ir colocando nos lugares do gráfico, somando os valores
+        $(function () {
+            //RECEITAS
+            // Get context with jQuery - using jQuery's .get() method.
+            @php
+                $ordenado = $receitas->sortBy(function($categoria){
+                    return $categoria->NomeCategoria;
+                });
+                $receitasSoma = $ordenado->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
+                $chaves = $receitasSoma->keys();
+                $valores = $receitasSoma->values();
+            @endphp
+
+            var ReceitasData        = {
+                labels: [
+                    //dd($chaves[0]); // "Outros"
+                    @for ($i = 0; $i < $chaves->count() ; $i++)
+                        "{{ $chaves[$i] }}" ,
+                    @endfor
+
+                ],
+                datasets: [
+                    {
+                        data: [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                                {{ $valores[$i] }} ,
+                            @endfor
+                        ],
+                        backgroundColor : [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                                gerar_cor_hexadecimal(),
+                            @endfor
+                        ],
+                    }
+                ]
+            }
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $('#Receitas').get(0).getContext('2d')
+            var pieData        = ReceitasData;
+            var pieOptions     = {
+                maintainAspectRatio : false,
+                responsive : true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var Receitas = new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: pieData,
+                options: pieOptions
+            })
+            //RECEITAS
+
+            //DESPESAS
+            // Get context with jQuery - using jQuery's .get() method.
+            @php
+                $despesasSoma = $despesas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
+                $chaves = $despesasSoma->keys();
+                $valores = $despesasSoma->values();
+            @endphp
+
+            var DespesasData        = {
+                labels: [
+                    //dd($chaves[0]); // "Outros"
+                    @for ($i = 0; $i < $chaves->count() ; $i++)
+                        "{{ $chaves[$i] }}" ,
+                    @endfor
+
+                ],
+                datasets: [
+                    {
+                        data: [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                                {{ $valores[$i] }} ,
+                            @endfor
+                        ],
+                        backgroundColor : [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                            gerar_cor_hexadecimal(),
+                            @endfor
+                        ],
+                    }
+                ]
+            }
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $('#Despesas').get(0).getContext('2d')
+            var pieData        = DespesasData;
+            var pieOptions     = {
+                maintainAspectRatio : false,
+                responsive : true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var Despesas = new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: pieData,
+                options: pieOptions
+            })
+            //DESPESAS
+
+        })
+</script>
+
+
 @stop

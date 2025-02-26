@@ -12,11 +12,8 @@
 
             <div class="card">
                 <div class="card-header d-flex p-0">
-
-                    <h3 class="card-title p-3">Contas</h3>
-
                     <!-- Seletor de mês/ano -->
-                    <div class="col-2 mx-auto">
+                    <div class="col-md-auto mx-auto">
                         <div class="input-group date" id="divData" data-target-input="nearest">
 
                             <div class="input-group-append" onclick="voltaData()">

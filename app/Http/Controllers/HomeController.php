@@ -42,11 +42,18 @@ class HomeController extends Controller
         $despesas = (new \App\Models\Despesa)->show($start_date, $end_date);
         $receitas = (new \App\Models\Receita)->show($start_date, $end_date);
 
-        return view('home', [
-            'despesas' => $despesas->sum('Valor'),
-            'receitas' => $receitas->sum('Valor')
-        ]);
 
+        //$receitas = $receitas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
+        //$despesas = $despesas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
+        //$bunda = $despesas->values();
+        //dd($bunda[11]);
+        //$chaves = $despesas->keys();
+        //dd($chaves[0]); // "Outros"
+
+        return view('home', [
+            'despesas' => $despesas,
+            'receitas' => $receitas
+        ]);
 
         /*
         return view('despesaListar', [
