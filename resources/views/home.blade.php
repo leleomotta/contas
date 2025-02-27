@@ -91,15 +91,18 @@
                             <canvas id="Receitas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                         </div>
                     </div>
+
                     <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box">
                             <canvas id="Despesas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                         </div>
                     </div>
+
                     <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box">
                         </div>
                     </div>
+
                 </div>
 
                     <!-- THE CALENDAR -->

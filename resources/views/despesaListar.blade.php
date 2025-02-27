@@ -137,103 +137,103 @@
                 <!-- /Seletor de mês/ano -->
 
                 <!-- Listagem-->
-                <div class="card-body">
-                <table id="example1" class="table table-bordered table-hover">
-                    <thead>
-                        <tr>
-                            <th style="width: 50px">Efetivada</th>
-                            <th style="text-align: center">Data</th>
-                            <th style="text-align: center">Descrição</th>
-                            <th style="text-align: center">Valor</th>
-                            <th style="text-align: center">Conta</th>
-                            <th style="text-align: center">Categoria</th>
-                            <th style="width: 110px">&nbsp;</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    @foreach($despesas as $despesa)
-                        <tr>
-                            <td>
-                                @if ($despesa->Efetivada == 1)
+                <div class="card-body table-responsive p-0">
+                    <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
+                        <thead>
+                            <tr>
+                                <th style="width: 50px">Efetivada</th>
+                                <th style="text-align: center">Data</th>
+                                <th style="text-align: center">Descrição</th>
+                                <th style="text-align: center">Valor</th>
+                                <th style="text-align: center">Conta</th>
+                                <th style="text-align: center">Categoria</th>
+                                <th style="width: 110px">&nbsp;</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach($despesas as $despesa)
+                            <tr>
+                                <td>
+                                    @if ($despesa->Efetivada == 1)
 
-                                    <img src="{{URL::asset('/storage/V.bmp')}}" >
-                                @else
-                                    <img src="{{URL::asset('/storage/X.bmp')}}" >
-                                @endif
-                            </td>
-                            <td style="text-align: center">{{ date('d/m/Y', strtotime($despesa->Data)) }}</td>
-                            <td>{{ $despesa->Descricao  }}</td>
-                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($despesa->Valor, 2
-                                            )))) }}</td>
-                            <td>{{$despesa->Banco}}</td>
-                            <td>{{$despesa->NomeCategoria}}</td>
-                            <td>
-                                <div class="row">
-                                    @unless ($despesa->Descricao == "Cartão")
-                                        <div class="col-3">
-                                            @if ($despesa->Efetivada == 1)
-                                                <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                        <img src="{{URL::asset('/storage/V.bmp')}}"  alt="Efetivada">
+                                    @else
+                                        <img src="{{URL::asset('/storage/X.bmp')}}"  alt="Em aberto">
+                                    @endif
+                                </td>
+                                <td style="text-align: center">{{ date('d/m/Y', strtotime($despesa->Data)) }}</td>
+                                <td>{{ $despesa->Descricao  }}</td>
+                                <td>{{ 'R$ ' .  str_replace("_",'.',
+                                                str_replace(".",',',
+                                                str_replace(",",'_',
+                                                number_format($despesa->Valor, 2
+                                                )))) }}</td>
+                                <td>{{$despesa->Banco}}</td>
+                                <td>{{$despesa->NomeCategoria}}</td>
+                                <td>
+                                    <div class="row">
+                                        @unless ($despesa->Descricao == "Cartão")
+                                            <div class="col-3">
+                                                @if ($despesa->Efetivada == 1)
+                                                    <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                        <button type="submit" class="btn btn-danger"
+                                                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                onclick="return confirm('Deseja realmente desefetivar esta despesa?')">
+                                                            <span class="fa fa-window-close"></span>
+                                                        </button>
+                                                    </form>
+                                                @else
+                                                    <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                        <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
+                                                        <button type="submit" class="btn btn-success"
+                                                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
+                                                                onclick="return confirm('Deseja realmente efetivar esta despesa?')">
+                                                            <span class="fa fa-check"></span>
+                                                        </button>
+                                                    </form>
+                                                @endif
+                                            </div>
+
+                                            <div class="col-3">
+                                                <form id="edita" role="form" action="{{ route('despesas.edit', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
+                                                    <button type="submit" class="btn btn-primary"
+                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                                        <span class="fa fa-edit"></span>
+                                                    </button>
+                                                </form>
+                                            </div>
+
+                                            <div class="col-3">
+                                                <form action="{{ route('despesas.destroy', ['ID_Despesa'=> $despesa->ID_Despesa])  }}" method="POST">
+                                                    @csrf
+                                                    @method('delete')
+                                                    <input type="hidden" name="ID_Despesa" value="{{ $despesa->ID_Despesa }}">
                                                     <button type="submit" class="btn btn-danger"
                                                             style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                            onclick="return confirm('Deseja realmente desefetivar esta despesa?')">
-                                                        <span class="fa fa-window-close"></span>
+                                                            onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                        <span class="fa fa-trash"></span>
                                                     </button>
                                                 </form>
-                                            @else
-                                                <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
-                                                    <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
-                                                    <button type="submit" class="btn btn-success"
-                                                            style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                            onclick="return confirm('Deseja realmente efetivar esta despesa?')">
-                                                        <span class="fa fa-check"></span>
-                                                    </button>
-                                                </form>
-                                            @endif
-                                        </div>
-
-                                        <div class="col-3">
-                                            <form id="edita" role="form" action="{{ route('despesas.edit', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
-                                                <button type="submit" class="btn btn-primary"
-                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                    <span class="fa fa-edit"></span>
-                                                </button>
-                                            </form>
-                                        </div>
-
-                                        <div class="col-3">
-                                            <form action="{{ route('despesas.destroy', ['ID_Despesa'=> $despesa->ID_Despesa])  }}" method="POST">
-                                                @csrf
-                                                @method('delete')
-                                                <input type="hidden" name="ID_Despesa" value="{{ $despesa->ID_Despesa }}">
-                                                <button type="submit" class="btn btn-danger"
-                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                    <span class="fa fa-trash"></span>
-                                                </button>
-                                            </form>
-                                        </div>
-                                    @endunless
-                                </div>
-                            </td>
-                        </tr>
-                    @endforeach
-                    </tbody>
-                    <tfoot>
-                        <tr>
-                            <th style="width: 50px">Efetivada</th>
-                            <th style="text-align: center">Data</th>
-                            <th style="text-align: center">Descrição</th>
-                            <th style="text-align: center">Valor</th>
-                            <th style="text-align: center">Conta</th>
-                            <th style="text-align: center">Categoria</th>
-                            <th style="width: 110px">&nbsp;</th>
-                        </tr>
-                    </tfoot>
-                </table>
-            </div>
+                                            </div>
+                                        @endunless
+                                    </div>
+                                </td>
+                            </tr>
+                        @endforeach
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th style="width: 50px">Efetivada</th>
+                                <th style="text-align: center">Data</th>
+                                <th style="text-align: center">Descrição</th>
+                                <th style="text-align: center">Valor</th>
+                                <th style="text-align: center">Conta</th>
+                                <th style="text-align: center">Categoria</th>
+                                <th style="width: 110px">&nbsp;</th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
                 <!-- /Listagem-->
 
             </div>

@@ -139,8 +139,8 @@
 
 
                 <!-- Listagem-->
-                <div class="card-body">
-                <table id="example1" class="table table-bordered table-hover">
+                <div class="card-body table-responsive p-0">
+                    <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                     <thead>
                         <tr>
                             <th style="width: 50px">Efetivada</th>
@@ -235,9 +235,8 @@
                         </tr>
                     </tfoot>
                 </table>
-            </div>
+                </div>
                 <!-- /Listagem-->
-
             </div>
         </div>
     </div>

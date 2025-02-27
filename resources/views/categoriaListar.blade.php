@@ -26,19 +26,19 @@
                         <li class="nav-item"><a class="nav-link" href="#tab_2" data-toggle="tab">Receitas</a></li>
                     </ul>
                 </div><!-- /.card-header -->
+
                 <div class="card-body">
                     <div class="tab-content">
                         <div class="tab-pane active" id="tab_1">
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-hover">
+                            <div class="card-body table-responsive p-0">
+                                <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                                     <thead>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th style="width: 110px">&nbsp;</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th style="width: 110px">&nbsp;</th>
+                                        </tr>
                                     </thead>
                                     <tbody>
-
                                         @foreach($despesas as $despesa)
                                             <tr bgcolor="{{ $despesa->Cor  }}">
                                                 <td>{{ $despesa->Nome }}</td>
@@ -83,21 +83,20 @@
                                                 </td>
                                             </tr>
                                         @endforeach
-
                                     </tbody>
                                     <tfoot>
-                                    <tr>
-                                        <th>Nome</th>
-                                        <th style="width: 110px">&nbsp;</th>
-                                    </tr>
+                                        <tr>
+                                            <th>Nome</th>
+                                            <th style="width: 110px">&nbsp;</th>
+                                        </tr>
                                     </tfoot>
                                 </table>
                             </div>
                         </div>
                         <!-- /.tab-pane -->
                         <div class="tab-pane" id="tab_2">
-                            <div class="card-body">
-                                <table id="example1" class="table table-bordered table-hover">
+                            <div class="card-body table-responsive p-0">
+                                <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                                     <thead>
                                     <tr>
                                         <th>Nome</th>
