@@ -35,75 +35,77 @@
                 <!-- /Seletor de mês/ano -->
 
                 <!-- Listagem-->
-                <div class="card-body">
-                    <div class="card-body">
-                        <div class="row" id="div1">
-                            <div class="info-box col-4">
-                                <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Receitas</span>
-                                    <span class="info-box-number">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Receitas</span>
+                                <span class="info-box-number">
                                         {{ 'R$ ' .  str_replace("_",'.',
                                                     str_replace(".",',',
                                                     str_replace(",",'_',
                                                     number_format($receitas->sum('Valor'), 2
                                                     )))) }}
                                     </span>
-                                </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="info-box col-4">
-                                <span class="info-box-icon bg-red"><i class="fa fa-coins"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Despesas</span>
-                                    <span class="info-box-number">
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-red"><i class="fa fa-coins"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Despesas</span>
+                                <span class="info-box-number">
                                         {{ 'R$ ' .  str_replace("_",'.',
                                                     str_replace(".",',',
                                                     str_replace(",",'_',
                                                     number_format($despesas->sum('Valor'), 2
                                                     )))) }}
                                     </span>
-                                </div>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="info-box col-4">
-                                <span class="info-box-icon bg-yellow"><i class="fa fa-coins"></i></span>
-                                <div class="info-box-content">
-                                    <span class="info-box-text">Saldo</span>
-                                    <span class="info-box-number">
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                            <span class="info-box-icon bg-yellow"><i class="fa fa-coins"></i></span>
+                            <div class="info-box-content">
+                                <span class="info-box-text">Saldo</span>
+                                <span class="info-box-number">
                                         {{ 'R$ ' .  str_replace("_",'.',
                                                     str_replace(".",',',
                                                     str_replace(",",'_',
                                                     number_format($receitas->sum('Valor') - $despesas->sum('Valor'), 2
                                                     )))) }}
                                     </span>
-                                </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="card-body">
-                        <div class="row" id="div1">
-                            <div class="info-box col-4">
-                                <canvas id="Receitas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                            </div>
-
-                            <div class="info-box col-4">
-                                <canvas id="Despesas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
-                            </div>
-
-                            <div class="info-box col-4">
-
-                            </div>
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                            <canvas id="Receitas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                         </div>
                     </div>
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                            <canvas id="Despesas" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6 col-12">
+                        <div class="info-box">
+                        </div>
+                    </div>
+                </div>
 
                     <!-- THE CALENDAR -->
                     <!--<div id="calendar"></div> -->
-                </div>
-                <!-- /Listagem-->
-
             </div>
+                <!-- /Listagem-->
         </div>
     </div>
 @stop
