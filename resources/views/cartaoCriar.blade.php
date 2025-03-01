@@ -28,10 +28,26 @@
                 <label>Bandeira</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
+                        <span class="input-group-text"><i class="fa fa-credit-card"></i></span>
                     </div>
                     <input type="text" name="Bandeira" class="form-control" id="Bandeira" placeholder="Digite uma bandeira para o cartão">
                 </div>
+
+                    <label>Dia de fechamento da fatura</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="text" name="Dia_Fechamento_Fatura" class="form-control" id="Dia_Fechamento_Fatura" placeholder="Digite um dia de fechamento para a fatura.">
+                    </div>
+
+                    <label>Dia de vencimento</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                        </div>
+                        <input type="text" name="Dia_Vencimento" class="form-control" id="Dia_Vencimento" placeholder="Digite um dia de vencimento da fatura.">
+                    </div>
 
                 <label>Conta</label>
                 <div class="input-group">
@@ -40,9 +56,9 @@
                     </div>
                     <select class="custom-select" id="Conta" name="Conta">
                         <option selected data-default>- Selecione uma conta -</option>
-                        @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
-                        @endforeach
+                            @foreach($contas as $conta)
+                                <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
+                            @endforeach
                     </select>
                 </div>
 

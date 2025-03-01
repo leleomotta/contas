@@ -168,12 +168,23 @@
                     <div class="card-body row">
 
                         <div class="col-12">
-                            <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                                <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
-                                <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
-                                    <span class="fa fa-plus"></span>
-                                </button>
-                            </form>
+                            @if ($faturas->count() <> 0 )
+                                @if ($fatura->Fechada == 0)
+                                    <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                                        <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+                                        <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
+                                            <span class="fa fa-plus"></span>
+                                        </button>
+                                    </form>
+                                @endif
+                            @else
+                                <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                                    <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+                                    <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
+                                        <span class="fa fa-plus"></span>
+                                    </button>
+                                </form>
+                            @endif
                         </div>
 
                         <div class="col-12">

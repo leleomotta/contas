@@ -22,6 +22,9 @@ FALTA
 created_at timestamp
 updated_at timestamp
 alter TABLE transferencia add COLUMN Obervacao varchar (255) after valor
+
+
+alter table cartao add COLUMN Dia_Fechamento_Fatura int(2) after Dia_Vencimento
 -----------------
 
 Recorrentes:

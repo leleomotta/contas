@@ -92,6 +92,34 @@ class Despesa extends Model
             return $despesasSemCartao->get();
     }
 
+    public function despesasDeCartao($start_date, $end_date, $conta){
+        $despesasSemCartao = DB::table('despesa')
+            ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
+                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
+            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria');
+        if (! is_null($start_date) ) {
+            $despesasSemCartao->where('Data', '>=', $start_date);
+        }
+        if (! is_null($end_date) ) {
+            $despesasSemCartao->where('Data', '<=', $end_date);
+        }
+
+        if (! is_null($conta) ){
+            $despesasSemCartao->where('conta.ID_Conta', $conta);
+        }
+        $despesasSemCartao->whereExists(function($query)
+        {
+            $query->select(DB::raw(1))
+                ->from('fatura')
+                ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
+        })
+            ->orderBy('Data','DESC');
+        //dd($despesasSemCartao->toSql());
+
+        return $despesasSemCartao->get();
+    }
+
     public function cartaoPago($start_date, $end_date, $conta){
         $cartaoPago =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),

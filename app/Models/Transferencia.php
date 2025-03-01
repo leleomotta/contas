@@ -56,27 +56,11 @@ class Transferencia extends Model
         return $contasDestino->get();
     }
 
-
-    public function tranferenciasSaida($start_date, $end_date, $contaOrigem){
-        $tranferenciasSaida = DB::table('transferencia')
-            ->select('transferencia.ID_Transferencia', 'transferencia.Data',
-                'transferencia.Valor', 'transferencia.Observacao');
-            if (! is_null($start_date) ) {
-                $tranferenciasSaida->where('Data', '>=', $start_date);
-            }
-            if (!is_null($end_date)) {
-                $tranferenciasSaida->where('Data', '<=', $end_date);
-            }
-            if (!is_null($contaOrigem)) {
-                $tranferenciasSaida->where('transferencia.ID_Conta_Origem', '=', $contaOrigem);
-            }
-        return $tranferenciasSaida->get();
-    }
-
     public function tranferenciasEntrada($start_date, $end_date, $contaDestino){
         $tranferenciasEntrada = DB::table('transferencia')
             ->select('transferencia.ID_Transferencia', 'transferencia.Data',
-                'transferencia.Valor', 'transferencia.Observacao');
+                'transferencia.Valor', 'transferencia.Observacao', 'conta.Nome', 'conta.Banco')
+            ->join('conta', 'transferencia.ID_Conta_Origem', '=', 'conta.ID_Conta');
         if (! is_null($start_date) ) {
             $tranferenciasEntrada->where('Data', '>=', $start_date);
         }
@@ -86,8 +70,26 @@ class Transferencia extends Model
         if (!is_null($contaDestino)) {
             $tranferenciasEntrada->where('transferencia.ID_Conta_Destino', '=', $contaDestino);
         }
+        $tranferenciasEntrada->orderBy('Data', 'DESC');
         return $tranferenciasEntrada->get();
     }
 
+    public function tranferenciasSaida($start_date, $end_date, $contaOrigem){
+        $tranferenciasSaida = DB::table('transferencia')
+            ->select('transferencia.ID_Transferencia', 'transferencia.Data',
+                'transferencia.Valor', 'transferencia.Observacao', 'conta.Nome', 'conta.Banco')
+            ->join('conta', 'transferencia.ID_Conta_Destino', '=', 'conta.ID_Conta');
+            if (! is_null($start_date) ) {
+                $tranferenciasSaida->where('Data', '>=', $start_date);
+            }
+            if (!is_null($end_date)) {
+                $tranferenciasSaida->where('Data', '<=', $end_date);
+            }
+            if (!is_null($contaOrigem)) {
+                $tranferenciasSaida->where('transferencia.ID_Conta_Origem', '=', $contaOrigem);
+            }
+        $tranferenciasSaida->orderBy('Data', 'DESC');
+        return $tranferenciasSaida->get();
+    }
 
 }
