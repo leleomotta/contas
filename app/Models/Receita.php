@@ -61,6 +61,7 @@ class Receita extends Model
                 'categoria.Nome as NomeCategoria', 'conta.Banco' )
             ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria');
+            //->where('Efetivada', 1);
             if (! is_null($start_date) ) {
                 $receitas->where('Data', '>=', $start_date);
             }

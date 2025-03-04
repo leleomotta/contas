@@ -126,8 +126,6 @@
                                                                                 </button>
                                                                             </div>
                                                                             <div class="modal-body">
-
-
                                                                                 <table id="Receitas" class="table table-bordered table-hover">
                                                                                     <thead>
                                                                                         <tr>
@@ -395,7 +393,6 @@
 
                                                                 <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
                                                                 @php
-                                                                    //bola gorda
                                                                     $despesas = $despesaMes;
                                                                     $despesas->each(function ($despesa) {
                                                                         $despesa->Valor = -$despesa->Valor;
@@ -406,7 +403,7 @@
                                                                     $entradas = $tranferencias_EntradaMes;
                                                                     $entradas = $entradas->map(function ($item) {
                                                                         $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                        $item->Categoria = 'Transf. Ent.'; // Adiciona a coluna 'city' com valor 'São Paulo'
+                                                                        $item->Categoria = 'Transf. Ent.';
                                                                         $item->Descricao = 'Transf. Ent.';
                                                                         $item->NomeCategoria = '-';
                                                                         return $item;
@@ -419,7 +416,7 @@
                                                                     $saidas = $tranferencias_SaidaMes;
                                                                     $saidas = $saidas->map(function ($item) {
                                                                         $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                        $item->Categoria = 'Transf. Saida'; // Adiciona a coluna 'city' com valor 'São Paulo'
+                                                                        $item->Categoria = 'Transf. Saida';
                                                                         $item->Descricao = 'Transf. Saida';
                                                                         $item->NomeCategoria = '-';
                                                                         return $item;
@@ -858,7 +855,106 @@
                                                                                             str_replace(",",'_',
                                                                                             number_format($conta->SaldoMes, 2
                                                                                             )))) }}</h5>
-                                                                            <span class="description-text">SALDO MÊS</span>
+                                                                            <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
+                                                                            @php
+                                                                                $despesas = $despesaMes;
+                                                                                $despesas->each(function ($despesa) {
+                                                                                    $despesa->Valor = -$despesa->Valor;
+                                                                                });
+                                                                                //junta despesas e receitas
+                                                                                $saldo = $despesas->merge($receitaMes);
+
+                                                                                $entradas = $tranferencias_EntradaMes;
+                                                                                $entradas = $entradas->map(function ($item) {
+                                                                                    $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                                    $item->Categoria = 'Transf. Ent.';
+                                                                                    $item->Descricao = 'Transf. Ent.';
+                                                                                    $item->NomeCategoria = '-';
+                                                                                    return $item;
+                                                                                });
+
+                                                                                //junta despesas e receitas com entradas
+                                                                                $saldo = $saldo->merge($entradas);
+                                                                                //
+
+                                                                                $saidas = $tranferencias_SaidaMes;
+                                                                                $saidas = $saidas->map(function ($item) {
+                                                                                    $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                                    $item->Categoria = 'Transf. Saida';
+                                                                                    $item->Descricao = 'Transf. Saida';
+                                                                                    $item->NomeCategoria = '-';
+                                                                                    return $item;
+                                                                                });
+                                                                                $saidas->each(function ($saida) {
+                                                                                    $saida->Valor = -$saida->Valor;
+                                                                                });
+
+                                                                                //junta despesas e receitas com entradas e saídas
+                                                                                $saldo = $saldo->merge($saidas);
+
+                                                                                $sorted = $saldo->sortBy(function($conta)
+                                                                                {
+                                                                                    return $conta->Data;
+                                                                                });
+                                                                            @endphp
+
+                                                                                <!-- Modal de detalhe -->
+                                                                            <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
+                                                                                <div class="modal-dialog  modal-lg">
+                                                                                    <div class="modal-content">
+                                                                                        <div class="modal-header">
+                                                                                            <h4 class="modal-title"> Saldo do mes </h4>
+                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                                <span aria-hidden="true">&times;</span>
+                                                                                            </button>
+                                                                                        </div>
+                                                                                        <div class="modal-body">
+                                                                                            <table id="Receitas" class="table table-bordered table-hover">
+                                                                                                <thead>
+                                                                                                <tr>
+                                                                                                    <th>Efetivada</th>
+                                                                                                    <th>Data</th>
+                                                                                                    <th>Descrição</th>
+                                                                                                    <th>Valor</th>
+                                                                                                    <th>Categoria</th>
+                                                                                                    <th>Banco</th>
+                                                                                                </tr>
+                                                                                                </thead>
+                                                                                                <tbody>
+                                                                                                @foreach($sorted as $valores)
+                                                                                                    <tr>
+                                                                                                        <td>{{ $valores->Efetivada }}</td>
+                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                        <td>{{ $valores->Descricao }}</td>
+                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
+                                                                                                                                str_replace(".",',',
+                                                                                                                                str_replace(",",'_',
+                                                                                                                                number_format($valores->Valor, 2
+                                                                                                                                )))) }}
+                                                                                                        </td>
+                                                                                                        <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                        <td>{{ $valores->Banco }}</td>
+                                                                                                    </tr>
+                                                                                                @endforeach
+                                                                                                </tbody>
+                                                                                                <tfoot>
+                                                                                                <tr>
+                                                                                                    <th>Efetivada</th>
+                                                                                                    <th>Data</th>
+                                                                                                    <th>Descrição</th>
+                                                                                                    <th>Valor</th>
+                                                                                                    <th>Categoria</th>
+                                                                                                    <th>Banco</th>
+                                                                                                </tr>
+                                                                                                </tfoot>
+                                                                                            </table>
+                                                                                        </div>
+                                                                                    </div>
+                                                                                    <!-- /.modal-content -->
+                                                                                </div>
+                                                                                <!-- /.modal-dialog -->
+                                                                            </div>
+                                                                            <!-- Modal de detalhe -->
                                                                         </div>
                                                                         <!-- /.description-block -->
                                                                     </div>

@@ -222,7 +222,7 @@ class ReceitaController extends Controller
         $contas = (new \App\Models\Conta)->showAll();
 
         //$categorias = (new \App\Models\Categoria)->show('R');
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
         return view('receitaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,

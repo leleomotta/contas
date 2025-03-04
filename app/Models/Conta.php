@@ -30,13 +30,13 @@ class Conta extends Model
             ->get();
 
         foreach($contas as $conta) {
-            $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
+            $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta)->where('Efetivada', 1)->sum('Valor');
 
-            $receitaAte = (new \App\Models\Receita)->receitas(null,$end_date,$conta->ID_Conta)->sum('Valor');
+            $receitaAte = (new \App\Models\Receita)->receitas(null,$end_date,$conta->ID_Conta)->where('Efetivada', 1)->sum('Valor');
 
-            $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
+            $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta)->where('Efetivada', 1)->sum('Valor');
 
-            $despesaAte  = (new \App\Models\Despesa)->despesasSemCartao(null,$end_date,$conta->ID_Conta)->sum('Valor');
+            $despesaAte  = (new \App\Models\Despesa)->despesasSemCartao(null,$end_date,$conta->ID_Conta)->where('Efetivada', 1)->sum('Valor');
 
             $cartaoPagoMes = (new \App\Models\Despesa)->cartaoPago($start_date,$end_date,$conta->ID_Conta)->sum('Valor');
 
