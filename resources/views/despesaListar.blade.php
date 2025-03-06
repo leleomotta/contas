@@ -173,7 +173,8 @@
                                 <td>
                                     <div class="row">
                                         @unless ($despesa->Descricao == "Cartão")
-                                            <div class="col-3">
+
+                                            <div class="col-md-3 col-sm-3 ">
                                                 @if ($despesa->Efetivada == 1)
                                                     <form id="efetiva" role="form" action="{{ route('despesas.efetiva', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
                                                         <button type="submit" class="btn btn-danger"
@@ -194,7 +195,7 @@
                                                 @endif
                                             </div>
 
-                                            <div class="col-3">
+                                            <div class="col-md-3 col-sm-3 ">
                                                 <form id="edita" role="form" action="{{ route('despesas.edit', ['ID_Despesa' =>$despesa->ID_Despesa])  }}" method="GET">
                                                     <button type="submit" class="btn btn-primary"
                                                             style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
@@ -203,7 +204,7 @@
                                                 </form>
                                             </div>
 
-                                            <div class="col-3">
+                                            <div class="col-md-3 col-sm-3 ">
                                                 <form action="{{ route('despesas.destroy', ['ID_Despesa'=> $despesa->ID_Despesa])  }}" method="POST">
                                                     @csrf
                                                     @method('delete')
@@ -252,24 +253,23 @@
 
         <div class="card-body">
             <div class="row" id="div1">
-                    <div class="info-box col-6">
-                        <span class="info-box-icon bg-warning"><i class="fa fa-lock"></i></span>
+                <div class="info-box col-md-6 col-sm-6 col-12">
+                    <span class="info-box-icon bg-warning"><i class="fa fa-lock"></i></span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Pendente</span>
-                            <span class="info-box-number">
-                                {{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($pendente, 2
-                                            )))) }}
-                            </span>
-                        </div>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Pendente</span>
+                        <span class="info-box-number">
+                            {{ 'R$ ' .  str_replace("_",'.',
+                                        str_replace(".",',',
+                                        str_replace(",",'_',
+                                        number_format($pendente, 2
+                                        )))) }}
+                        </span>
                     </div>
+                </div>
 
-                <div class="info-box col-6">
+                <div class="info-box col-md-6 col-sm-6 col-12">
                     <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
-
                     <div class="info-box-content">
                         <span class="info-box-text">Pago</span>
                         <span class="info-box-number">

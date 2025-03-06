@@ -172,7 +172,6 @@
                             <td>{{$receita->Banco}}</td>
                             <td>{{$receita->NomeCategoria}}</td>
                             <td>
-
                                 <div class="row">
                                     <div class="col-3">
                                         @if ($receita->Efetivada == 1)
@@ -216,9 +215,7 @@
                                             </button>
                                         </form>
                                     </div>
-
                                 </div>
-
                             </td>
                         </tr>
                     @endforeach
@@ -253,22 +250,22 @@
 
         <div class="card-body">
             <div class="row" id="div1">
-                    <div class="info-box col-6">
-                        <span class="info-box-icon bg-warning"><i class="fa fa-lock"></i></span>
+                <div class="info-box col-md-6 col-sm-6 col-12">
+                    <span class="info-box-icon bg-warning"><i class="fa fa-lock"></i></span>
 
-                        <div class="info-box-content">
-                            <span class="info-box-text">Pendente</span>
-                            <span class="info-box-number">
-                                {{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($pendente, 2
-                                            )))) }}
-                            </span>
-                        </div>
+                    <div class="info-box-content">
+                        <span class="info-box-text">Pendente</span>
+                        <span class="info-box-number">
+                            {{ 'R$ ' .  str_replace("_",'.',
+                                        str_replace(".",',',
+                                        str_replace(",",'_',
+                                        number_format($pendente, 2
+                                        )))) }}
+                        </span>
                     </div>
+                </div>
 
-                <div class="info-box col-6">
+                <div class="info-box col-md-6 col-sm-6 col-12">
                     <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
 
                     <div class="info-box-content">

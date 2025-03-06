@@ -153,6 +153,7 @@ class Despesa extends Model
             ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
 
             ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->where('fatura.Fechada', 1)
             ->groupBy('cartao.ID_Cartao','fatura.Ano_Mes');
 
             if (! is_null($start_date) ) {
