@@ -34,8 +34,10 @@ class CategoriaController extends Controller
         else{
             $categoria->Tipo = $request->TipoCat;
         }
+        $categoria->Icone = $request->Icone;
 
         $categoria->ID_Categoria_Pai = $request->ID_Categoria_Pai;
+
         $categoria->save();
         return redirect()->route('categorias.showAll');
 
@@ -56,16 +58,18 @@ class CategoriaController extends Controller
 
         return view('categoriaListar', [
             'despesas' => $despesas,
-            'receitas' => $receitas
+            'receitas' => $receitas,
+
         ]);
     }
 
     public function edit(int $ID_Categoria) {
         $categoria = Categoria::find($ID_Categoria);
+        $icones = (new \App\Models\Icone)->showAll();
 
         return view('categoriaEditar', [
-            'categoria' => $categoria
-
+            'categoria' => $categoria,
+            'icones' => $icones
         ]);
     }
 
@@ -79,6 +83,7 @@ class CategoriaController extends Controller
 
         $categoria->Nome = $request->Nome;
         $categoria->Cor = $request->corCategoria;
+        $categoria->Icone = $request->Icone;
 
         $categoria->save();
 
@@ -107,9 +112,12 @@ class CategoriaController extends Controller
 
     public function new(Request $request){
 
+        $icones = (new \App\Models\Icone)->showAll();
+
         return view('categoriaCriar', [
             'categoriaPai' => $request->ID_Categoria_Pai,
-            'TipoCategoria' => $request->Tipo
+            'TipoCategoria' => $request->Tipo,
+            'icones' => $icones
         ]);
     }
 

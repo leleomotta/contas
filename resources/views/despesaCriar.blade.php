@@ -47,14 +47,26 @@
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                            'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa">
                 </div>
+                <label>Categoria</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
+                    </div>
+
+                    <select id="Categoria" name="Categoria" class="form-control" data-live-search="true">
+                        <option selected data-default>- Selecione uma categoria -</option>
+                        @foreach($categorias as $categoria)
+                            <option value="{{$categoria->ID_Categoria}}" data-content="{{ $categoria->Icone . ' ' . $categoria->Nome}}"></option>
+                        @endforeach
+                    </select>
+                </div>
 
                 <label>Categoria</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                     </div>
-
-                    <select class="form-control select2" id="Categoria" name="Categoria">
+                    <select class="form-control select2" id="CategoriaOLD" name="CategoriaOLD">
                         @foreach($categorias as $categoria)
                             <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
                         @endforeach
@@ -73,8 +85,7 @@
                         @endforeach
                     </select>
                 </div>
-
-                <div class="form-group">
+                 <div class="form-group">
                     <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                         <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
                         <label class="custom-control-label" for="Efetivada">Efetivada</label>
@@ -106,14 +117,42 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
 
+    {{-- Latest compiled and minified CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <style>
+        .bootstrap-select > .dropdown-toggle, /* dropdown box */
+        .bootstrap-select > .dropdown-menu li a, /* all dropdown options */
+        .bootstrap-select > .dropdown-toggle:focus, /* dropdown :focus */
+        .bootstrap-select > .dropdown-toggle:hover /* dropdown :hover */
+        {
+            background-color: white;
+        }
+        .bootstrap-select > .dropdown-toggle {
+            border-color: lightgrey !important;
+            background-color: white !important;
+            color: black !important; /* Adiciona !important */
+        }
+        .bootstrap-select > .dropdown-menu li a {
+            color: black;
+        }
+    </style>
 @stop
 
 @section('js')
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
+
+
+
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
 
     <script>
+        $('#Categoria').selectpicker();
+
         //Date picker
         $('#Data').datetimepicker({
             format:'DD/MM/YYYY'
