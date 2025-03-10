@@ -61,7 +61,7 @@
                         </div>
                         <!--Contas e categorias-->
 
-                         <!--Texto e Datas-->
+                        <!--Texto e Datas-->
                         <div class="form-group">
                             <div class="row">
                                 <div class="form-row align-items-center">
@@ -140,18 +140,18 @@
                 <div class="card-body table-responsive p-0">
                     <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                         <thead>
-                            <tr>
-                                <th style="width: 50px">Efetivada</th>
-                                <th style="text-align: center">Data</th>
-                                <th style="text-align: center">Descrição</th>
-                                <th style="text-align: center">Valor</th>
-                                <th style="text-align: center">Conta</th>
-                                <th style="text-align: center">Categoria</th>
-                                <th style="width: 110px">&nbsp;</th>
-                            </tr>
+                        <tr>
+                            <th style="width: 50px">Efetivada</th>
+                            <th style="text-align: center">Data</th>
+                            <th style="text-align: center">Descrição</th>
+                            <th style="text-align: center">Valor</th>
+                            <th style="text-align: center">Conta</th>
+                            <th style="text-align: center">Categoria</th>
+                            <th style="width: 110px">&nbsp;</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach($despesas as $despesa)
+                        @foreach($despesas as $despesa)
                             <tr>
                                 <td>
                                     @if ($despesa->Efetivada == 1)
@@ -223,15 +223,15 @@
                         @endforeach
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <th style="width: 50px">Efetivada</th>
-                                <th style="text-align: center">Data</th>
-                                <th style="text-align: center">Descrição</th>
-                                <th style="text-align: center">Valor</th>
-                                <th style="text-align: center">Conta</th>
-                                <th style="text-align: center">Categoria</th>
-                                <th style="width: 110px">&nbsp;</th>
-                            </tr>
+                        <tr>
+                            <th style="width: 50px">Efetivada</th>
+                            <th style="text-align: center">Data</th>
+                            <th style="text-align: center">Descrição</th>
+                            <th style="text-align: center">Valor</th>
+                            <th style="text-align: center">Conta</th>
+                            <th style="text-align: center">Categoria</th>
+                            <th style="width: 110px">&nbsp;</th>
+                        </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -287,7 +287,7 @@
     </div>
     <!-- Rodapé -->
 
-    @stop
+@stop
 
 @section('css')
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
