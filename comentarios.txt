@@ -1,6 +1,7 @@
 FALTA
 
 *cartao =>
+    Na fatura ter uma oppção de não contabilizar a despesa para as recorrentes
     Na fatura, se ela esta fechada precisa colocar data de fechamento (a data está, a conta ainda não) e aa contta que fechou
     Possibilidade de ditar cartão
     Criar despesa parcelada

@@ -73,7 +73,8 @@
                                     <tbody>
                                     @foreach($receitas as $receita)
                                         <tr style="background-color: {{ $receita->Cor }};">
-                                            <td>{{ $receita->Nome }}</td>
+                                            <td> {!! $receita->Icone !!} {{ $receita->Nome }} </td>
+
                                             <td>
                                                 <div class="d-flex">
                                                     <a href="{{ route('categorias.edit', ['ID_Categoria' => $receita->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>

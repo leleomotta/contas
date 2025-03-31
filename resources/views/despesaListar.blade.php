@@ -169,7 +169,7 @@
                                                 number_format($despesa->Valor, 2
                                                 )))) }}</td>
                                 <td>{{$despesa->Banco}}</td>
-                                <td>{{$despesa->NomeCategoria}}</td>
+                                <td> {!! $despesa->Icone !!} {{$despesa->NomeCategoria}} </td>
                                 <td>
                                     <div class="row">
                                         @unless ($despesa->Descricao == "Cartão")

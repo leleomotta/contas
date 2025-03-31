@@ -100,6 +100,7 @@
 
                     <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box">
+                            Despesas do cartão
                         </div>
                     </div>
 

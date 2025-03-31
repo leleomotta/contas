@@ -47,28 +47,16 @@
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                            'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa">
                 </div>
-                <label>Categoria</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
-                    </div>
-
-                    <select id="Categoria" name="Categoria" class="form-control" data-live-search="true">
-                        <option selected data-default>- Selecione uma categoria -</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}" data-content="{{ $categoria->Icone . ' ' . $categoria->Nome}}"></option>
-                        @endforeach
-                    </select>
-                </div>
 
                 <label>Categoria</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                     </div>
-                    <select class="form-control select2" id="CategoriaOLD" name="CategoriaOLD">
+                    <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
+                        <option selected data-default>- Selecione uma categoria -</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
+                            <option value="{{$categoria->ID_Categoria}}" data-content="{{$categoria->Icone . ' ' . $categoria->Nome }}" > </option>
                         @endforeach
                     </select>
                 </div>
@@ -144,15 +132,11 @@
     <!-- (Optional) Latest compiled and minified JavaScript translation files -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
 
-
-
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
 
     <script>
-        $('#Categoria').selectpicker();
-
         //Date picker
         $('#Data').datetimepicker({
             format:'DD/MM/YYYY'
