@@ -72,7 +72,7 @@ class Conta extends Model
                     - $despesaMes - $cartaoPagoMes - $tranferencias_SaidaMes;
 
             /*
-            if ($conta->ID_Conta == 0) {
+            if ($conta->ID_Conta == 2) {
             //if(0==0){
                 echo($conta->Nome);
 

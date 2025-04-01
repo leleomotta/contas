@@ -151,7 +151,7 @@ class Despesa extends Model
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
                 'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco' )
 
-            ->join('icone', 'icone.ID_Icone', '=', DB::raw('0'))
+            ->leftJoin('icone', 'icone.ID_Icone', '=', DB::raw('0'))
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
             //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
             ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')

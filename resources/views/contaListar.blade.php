@@ -36,15 +36,15 @@
                     <!-- /Seletor de mês/ano -->
 
                     <ul class="nav nav-pills ml-auto p-2">
-                        <li class="nav-item"><a class="nav-link " href="#tab_1" data-toggle="tab">Ativas</a></li>
+                        <li class="nav-item"><a class="nav-link active" href="#tab_1" data-toggle="tab">Ativas</a></li>
                         <li class="nav-item"><a class="nav-link " href="#tab_2" data-toggle="tab">Inativas</a></li>
-                        <li class="nav-item"><a class="nav-link active" href="#tab_3" data-toggle="tab">Tabela</a></li>
+                        <li class="nav-item"><a class="nav-link " href="#tab_3" data-toggle="tab">Tabela</a></li>
                     </ul>
                 </div><!-- /.card-header -->
                 <div class="card-body">
                     <div class="tab-content">
                         <!-- .tab-pane -->
-                        <div class="tab-pane " id="tab_1">
+                        <div class="tab-pane active" id="tab_1">
                             <div class="card-body">
                               @foreach($contasAtivas->chunk(3) as $ativas)
                                 <div class="row">
@@ -973,7 +973,7 @@
                         <!-- /.tab-pane -->
 
                         <!-- .tab-pane -->
-                        <div class="tab-pane active" id="tab_3">
+                        <div class="tab-pane " id="tab_3">
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
