@@ -28,13 +28,14 @@ class Categoria extends Model
         //aqui pegamos todos os pais
         $despesasPai = Categoria::where(function ($query) use ($tipoCategoria) {
             $query->select('*');
+
             $query->where('Tipo',$tipoCategoria);
             $query->WhereNull('ID_Categoria_Pai');
             //$query->orderBy('Nome','ASC');
-        })->orderBy('Nome','ASC')
+        })->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone' )
+            ->orderBy('Nome','ASC')
             //->toSql(); dd($despesasPai);
             ->get();
-
 
         //aqui apenas criamos o dataset vazio
         $despesas = Categoria::where(function ($query) {

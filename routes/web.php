@@ -70,7 +70,6 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('categorias',[CategoriaController::class, 'showAll'])->name('categorias.showAll');
     Route::get('categorias/novo',[CategoriaController::class, 'new'])->name('categorias.new');
     Route::post('categorias/salvar',[CategoriaController::class, 'store'])->name('categorias.store');
-
     Route::delete('categorias/apagar/{ID_Categoria}',[CategoriaController::class, 'destroy'])->name('categorias.destroy');
     Route::get('categorias/editar/{ID_Categoria}',[CategoriaController::class, 'edit'])->name('categorias.edit');
     Route::put('categorias/atualiza/{ID_Categoria}',[CategoriaController::class, 'update'])->name('categorias.update');

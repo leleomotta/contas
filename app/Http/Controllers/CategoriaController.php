@@ -64,7 +64,12 @@ class CategoriaController extends Controller
     }
 
     public function edit(int $ID_Categoria) {
-        $categoria = Categoria::find($ID_Categoria);
+        //$categoria = Categoria::find($ID_Categoria);
+        $categoria = Categoria::leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+            ->where('categoria.ID_Categoria', $ID_Categoria)
+            ->select('categoria.*', 'icone.*')
+            ->first();
+
         $icones = (new \App\Models\Icone)->showAll();
 
         return view('categoriaEditar', [
@@ -83,7 +88,7 @@ class CategoriaController extends Controller
 
         $categoria->Nome = $request->Nome;
         $categoria->Cor = $request->corCategoria;
-        $categoria->Icone = $request->Icone;
+        $categoria->ID_Icone = $request->Icone;
 
         $categoria->save();
 

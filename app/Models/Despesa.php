@@ -68,9 +68,10 @@ class Despesa extends Model
     public function despesasSemCartao($start_date, $end_date, $conta){
         $despesasSemCartao = DB::table('despesa')
             ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
-                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'categoria.Icone as Icone', 'conta.Banco' )
+                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco' )
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria');
+            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
             //->where('Efetivada', 1);
             if (! is_null($start_date) ) {
                 $despesasSemCartao->where('Data', '>=', $start_date);

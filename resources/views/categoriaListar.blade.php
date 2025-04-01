@@ -30,8 +30,7 @@
                                     <tbody>
                                     @foreach($despesas as $despesa)
                                         <tr style="background-color: {{ $despesa->Cor }};">
-                                            <td> {!! $despesa->Icone !!} {{ $despesa->Nome }} </td>
-
+                                            <td><i class="{{ $despesa->Link }}"></i> {{ $despesa->Nome }}</td>
                                             <td>
                                                 <div class="d-flex">
                                                     <a href="{{ route('categorias.edit', ['ID_Categoria' => $despesa->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>
@@ -73,8 +72,7 @@
                                     <tbody>
                                     @foreach($receitas as $receita)
                                         <tr style="background-color: {{ $receita->Cor }};">
-                                            <td> {!! $receita->Icone !!} {{ $receita->Nome }} </td>
-
+                                            <td><i class="{{ $receita->Link }}"></i> {{ $receita->Nome }}</td>
                                             <td>
                                                 <div class="d-flex">
                                                     <a href="{{ route('categorias.edit', ['ID_Categoria' => $receita->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>

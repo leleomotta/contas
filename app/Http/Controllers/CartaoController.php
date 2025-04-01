@@ -44,8 +44,8 @@ class CartaoController extends Controller
     public function edit_despesa(Request $request) {
         $despesa = Despesa::find($request->ID_Despesa);
         $fatura = Fatura::find($request->ID_Despesa);
-
         $categorias = (new \App\Models\Categoria)->show('D');
+
 
         return view('fatura_despesaEditar', [
             'despesa' => $despesa,
@@ -198,10 +198,24 @@ class CartaoController extends Controller
     }
 
     public function store_despesa(Request $request){
-        // despesa
-        //dd($request);
-        $cartao = Cartao::find($request->ID_Cartao);
 
+        //aqui vamos tentar eviotar criar despesa em cartão já fechado
+        $Ano_Mes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+
+        // Busca a fatura correspondente
+        $fatura = Fatura::where('ID_Cartao', $request->ID_Cartao)
+            ->where('Ano_Mes', $Ano_Mes)
+            ->first();
+
+        // Verifica se a fatura existe e está finalizada
+        if ($fatura && $fatura->Fechada) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors(['Fatura ' . $Ano_Mes .' já está finalizada. Não é possível adicionar novas despesas.']);
+        }
+        //até aqui
+
+        $cartao = Cartao::find($request->ID_Cartao);
         $despesa = new Despesa();
 
         $despesa->Descricao = $request->Descricao;
@@ -218,7 +232,7 @@ class CartaoController extends Controller
         $fatura->ID_Cartao = $request->ID_Cartao;
         $fatura->ID_Despesa = $despesa->ID_Despesa;
         $fatura->Fechada = 0;
-        $fatura->Ano_Mes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+        $fatura->Ano_Mes = $Ano_Mes;
 
         $fatura->save();
 

@@ -32,8 +32,8 @@
                     <select name="Icone" id="Icone" class="form-control selectpicker" data-live-search="true">
                         <option value="">Selecione um ícone</option>
                         @foreach($icones as $icone)
-                            <option value="{{$icone->Link}}" data-content="{{$icone->Link . ' ' . $icone->Descricao }}"
-                                    @if(old('Icone', $categoria->Icone) === $icone->Link) selected @endif>
+                            <option value="{{$icone->ID_Icone}}" data-content="<i class='{{ $icone->Link }}'></i> {{ $icone->Descricao }}"
+                                    @if(old('Icone', $categoria->ID_Icone) === $icone->ID_Icone) selected @endif>
                             </option>
                         @endforeach
                     </select>

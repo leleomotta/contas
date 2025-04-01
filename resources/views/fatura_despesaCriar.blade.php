@@ -7,6 +7,16 @@
 @stop
 
 @section('content')
+    {{-- Mostra mensagens de erro, se houver --}}
+    @if($errors->any())
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                @foreach($errors->all() as $erro)
+                    <li>{{ $erro }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
     <form id="cadastro" role="form" action="{{ route('cartoes.store_despesa') }}" method="post" enctype="multipart/form-data">
         @csrf
         <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
@@ -25,7 +35,7 @@
                         </div>
                         <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy"
+                               placeholder="dd/mm/yyyy" value="{{ old('Data', '') }}"
                         />
                     </div>
                 </div>
@@ -35,7 +45,8 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa">
+                    <input type="text" name="Descricao" class="form-control" id="Descricao" value="{{ old('Descricao') }}"
+                           placeholder="Digite uma descrição para a despesa">
                 </div>
 
                 <label >Valor</label>
@@ -46,29 +57,34 @@
                     <input type="text" class="form-control text-left" id="Valor" name="Valor"
                            data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
-                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa">
+                           'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa" value="{{ old('Valor') }}">
                 </div>
 
-                <label>Categoria</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
+                    <label>Categoria</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-list-alt"></i></span>
+                        </div>
+                        <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
+                            <option disabled {{ old('Categoria') ? '' : 'selected' }}>- Selecione uma categoria -</option>
+                            @foreach($categorias as $categoria)
+                                <option value="{{ $categoria->ID_Categoria }}"
+                                        data-content="<i class='{{ $categoria->Link }}'></i> {{ $categoria->Nome }}"
+                                    {{ old('Categoria') == $categoria->ID_Categoria ? 'selected' : '' }}>
+                                    {{ $categoria->Nome }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select class="custom-select" id="Categoria" name="Categoria">
-                        <option selected data-default>- Selecione uma categoria -</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
-                        @endforeach
-                    </select>
-                </div>
 
                 <label>Fatura</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
                     </div>
-                    <input type="number" id="Ano" name="Ano" min="1970" max="2999" value="{{ \Carbon\Carbon::now()->format('Y') }}">
-                    <input type="number" id="Mes" name="Mes" min="1" max="12" value="{{ \Carbon\Carbon::now()->isoFormat('MM') }}">
+                    <input type="number" id="Ano" name="Ano" value="{{ old('Ano', \Carbon\Carbon::now()->format('Y')) }}">
+                    <input type="number" id="Mes" name="Mes" value="{{ old('Mes', \Carbon\Carbon::now()->format('m')) }}">
+
 
                 </div>
             </div>
@@ -96,9 +112,34 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
 
+    {{-- Latest compiled and minified CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <style>
+        .bootstrap-select > .dropdown-toggle, /* dropdown box */
+        .bootstrap-select > .dropdown-menu li a, /* all dropdown options */
+        .bootstrap-select > .dropdown-toggle:focus, /* dropdown :focus */
+        .bootstrap-select > .dropdown-toggle:hover /* dropdown :hover */
+        {
+            background-color: white;
+        }
+        .bootstrap-select > .dropdown-toggle {
+            border-color: lightgrey !important;
+            background-color: white !important;
+            color: black !important; /* Adiciona !important */
+        }
+        .bootstrap-select > .dropdown-menu li a {
+            color: black;
+        }
+    </style>
+
 @stop
 
 @section('js')
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
+
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>

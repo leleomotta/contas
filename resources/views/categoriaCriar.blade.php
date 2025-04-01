@@ -47,7 +47,10 @@
                 <select name="Icone" id="Icone" class="form-control selectpicker" data-live-search="true">
                     <option value="">Selecione um ícone</option>
                     @foreach($icones as $icone)
-                        <option value="{{$icone->Link}}" data-content="{{$icone->Link . ' ' . $icone->Descricao }}" > </option>
+                        <option value="{{$icone->ID_Icone}}"
+                            data-content="<i class='{{ $icone->Link }}'></i> {{ $icone->Descricao }}"
+                        >
+                        </option>
                     @endforeach
                 </select>
             </div>

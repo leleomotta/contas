@@ -65,7 +65,9 @@
                         <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
                             <option selected data-default>- Selecione uma categoria -</option>
                             @foreach($categorias as $categoria)
-                                <option value="{{$categoria->ID_Categoria}}" data-content="{{$categoria->Icone . ' ' . $categoria->Nome }}" > </option>
+                                <option value="{{$categoria->ID_Categoria}}"
+                                        data-content="<i class='{{ $categoria->Link }}'></i> {{ $categoria->Nome }}">
+                                </option>
                             @endforeach
                         </select>
                     </div>

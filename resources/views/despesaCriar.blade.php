@@ -56,7 +56,10 @@
                     <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
                         <option selected data-default>- Selecione uma categoria -</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}" data-content="{{$categoria->Icone . ' ' . $categoria->Nome }}" > </option>
+                            <option value="{{$categoria->ID_Categoria}}"
+                                    data-content="<i class='{{ $categoria->Link }}'></i> {{ $categoria->Nome }}"
+                            >
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -69,7 +72,8 @@
                     <select class="custom-select" id="Conta" name="Conta">
                         <option selected data-default>- Selecione uma conta -</option>
                         @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
+                            <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}
+                            </option>
                         @endforeach
                     </select>
                 </div>

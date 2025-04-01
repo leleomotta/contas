@@ -58,7 +58,8 @@
                                                 str_replace(",",'_',
                                                 number_format($fatura->Valor, 2
                                                 )))) }}</td>
-                                <td>{{$fatura->NomeCategoria}}</td>
+
+                                <td><i class="{{ $fatura->Icone }}"></i> {{ $fatura->NomeCategoria }}</td>
                                 <td>
 
                                     <div class="row">
