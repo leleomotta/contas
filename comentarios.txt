@@ -9,12 +9,10 @@ FALTA
     Na hora de adcionar despesa de cartão tem que colocar no mês seguinte e ver a questão do dia de fechamento
 
 * ajustar os controller e os Models para unificar funções (Exemplo: despesa) => já ajustei os principais
-* Fazer a tela de dash Board
 
 * fazer um extrato consolidado
 * fazer receitas e despeas recorrentes
 * na tela das contas colocar o seletor de mês para ter despesas e receitas exatas => mellhoro colocar no dashboard?
-
 
 * na efetivação da despesa pode conferir a data?
 * limpar os javascripts das páginas

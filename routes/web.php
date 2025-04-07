@@ -54,36 +54,35 @@ Route::get('/', function () {
 
 Route::group(['middleware'=>['auth']], function(){
 
-
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'showAll'])->name('home.showAll');
 
-//----------------- CARTÃO -----------------
+    //----------------- CARTÃO -----------------
     Route::get('cartoes',[CartaoController::class, 'showAll'])->name('cartoes.showAll');
     Route::get('cartoes/novo',[CartaoController::class, 'new'])->name('cartoes.new');
     Route::post('cartoes/salvar',[CartaoController::class, 'store'])->name('cartoes.store');
     //Route::delete('cartoes/apagar/{ID_Receita}',[CartaoController::class, 'destroy'])->name('cartoes.destroy');
     //Route::get('cartoes/editar/{ID_Receita}',[CartaoController::class, 'edit'])->name('cartoes.edit');
     //Route::put('cartoes/atualiza/{ID_Receita}',[CartaoController::class, 'update'])->name('cartoes.update');
-//----------------- CARTÃO -----------------
+    //----------------- CARTÃO -----------------
 
-//----------------- CATEGORIAS -----------------
+    //----------------- CATEGORIAS -----------------
     Route::get('categorias',[CategoriaController::class, 'showAll'])->name('categorias.showAll');
     Route::get('categorias/novo',[CategoriaController::class, 'new'])->name('categorias.new');
     Route::post('categorias/salvar',[CategoriaController::class, 'store'])->name('categorias.store');
     Route::delete('categorias/apagar/{ID_Categoria}',[CategoriaController::class, 'destroy'])->name('categorias.destroy');
     Route::get('categorias/editar/{ID_Categoria}',[CategoriaController::class, 'edit'])->name('categorias.edit');
     Route::put('categorias/atualiza/{ID_Categoria}',[CategoriaController::class, 'update'])->name('categorias.update');
-//----------------- CATEGORIAS -----------------
+    //----------------- CATEGORIAS -----------------
 
-//----------------- CONTAS -----------------
+    //----------------- CONTAS -----------------
     Route::get('contas',[ContaController::class, 'showAll'])->name('contas.showAll');
     Route::get('contas/novo',[ContaController::class, 'new'])->name('contas.new');
     Route::post('contas/salvar',[ContaController::class, 'store'])->name('contas.store');
     Route::get('contas/editar/{ID_Conta}',[ContaController::class, 'edit'])->name('contas.edit');
     Route::put('contas/atualiza/{ID_Conta}',[ContaController::class, 'update'])->name('contas.update');
-//----------------- CONTAS -----------------
+    //----------------- CONTAS -----------------
 
-//----------------- DESPESAS -----------------
+    //----------------- DESPESAS -----------------
     Route::get('despesas',[DespesaController::class, 'showAll'])->name('despesas.showAll');
     Route::get('despesas/novo',[DespesaController::class, 'new'])->name('despesas.new');
     Route::post('despesas/salvar',[DespesaController::class, 'store'])->name('despesas.store');
@@ -92,9 +91,9 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('despesas/efetiva/{ID_Despesa}',[DespesaController::class, 'efetiva'])->name('despesas.efetiva');
     Route::get('despesas/editar/{ID_Despesa}',[DespesaController::class, 'edit'])->name('despesas.edit');
     Route::put('despesas/atualiza/{ID_Despesa}',[DespesaController::class, 'update'])->name('despesas.update');
-//----------------- DESPESAS -----------------
+    //----------------- DESPESAS -----------------
 
-//----------------- FATURA -----------------
+    //----------------- FATURA -----------------
     //FATURA PRA MIM É Cartão. Vai ficar no controle do CartaoController por pragmatismo
     Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');
     Route::get('fatura/despesa/novo',[CartaoController::class, 'new_despesa'])->name('cartoes.new_despesa');
@@ -104,9 +103,9 @@ Route::group(['middleware'=>['auth']], function(){
     Route::put('fatura/despesas/atualiza/{ID_Despesa}',[CartaoController::class, 'update_despesa'])->name('cartoes.update_despesa');
     Route::get('fatura/fechar',[CartaoController::class, 'fatura_fechar'])->name('cartoes.fatura_fechar');
     Route::get('fatura/reabrir',[CartaoController::class, 'fatura_reabrir'])->name('cartoes.fatura_reabrir');
-//----------------- FATURA -----------------
+    //----------------- FATURA -----------------
 
-//----------------- RECEITAS -----------------
+    //----------------- RECEITAS -----------------
     Route::get('receitas',[ReceitaController::class, 'showAll'])->name('receitas.showAll');
     Route::get('receitas/novo',[ReceitaController::class, 'new'])->name('receitas.new');
     Route::post('receitas/salvar',[ReceitaController::class, 'store'])->name('receitas.store');
@@ -115,18 +114,16 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'efetiva'])->name('receitas.efetiva');
     Route::get('receitas/editar/{ID_Receita}',[ReceitaController::class, 'edit'])->name('receitas.edit');
     Route::put('receitas/atualiza/{ID_Receita}',[ReceitaController::class, 'update'])->name('receitas.update');
-//----------------- RECEITAS -----------------
+    //----------------- RECEITAS -----------------
 
-
-//----------------- TRANSFERENCIAS -----------------
+    //----------------- TRANSFERENCIAS -----------------
     Route::get('transferencias',[TransferenciaController::class, 'showAll'])->name('transferencias.showAll');
     Route::get('transferencias/novo',[TransferenciaController::class, 'new'])->name('transferencias.new');
     Route::post('transferencias/salvar',[TransferenciaController::class, 'store'])->name('transferencias.store');
     Route::delete('transferencias/apagar/{ID_Transferencia}',[TransferenciaController::class, 'destroy'])->name('transferencias.destroy');
     Route::get('transferencias/editar/{ID_Transferencia}',[TransferenciaController::class, 'edit'])->name('transferencias.edit');
     Route::put('transferencias/atualiza/{ID_Transferencia}',[TransferenciaController::class, 'update'])->name('transferencias.update');
-
-//----------------- TRANSFERENCIAS -----------------
+    //----------------- TRANSFERENCIAS -----------------
 
 });
 /*

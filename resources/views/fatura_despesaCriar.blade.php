@@ -35,7 +35,8 @@
                         </div>
                         <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
                                data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy" value="{{ old('Data', '') }}"
+                               placeholder="dd/mm/yyyy"
+                               value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
                         />
                     </div>
                 </div>
@@ -82,9 +83,10 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
                     </div>
-                    <input type="number" id="Ano" name="Ano" value="{{ old('Ano', \Carbon\Carbon::now()->format('Y')) }}">
-                    <input type="number" id="Mes" name="Mes" value="{{ old('Mes', \Carbon\Carbon::now()->format('m')) }}">
-
+                    <input type="number" id="Ano" name="Ano" min="1900" max="2500"
+                           value="{{ old('Ano', \Carbon\Carbon::now()->format('Y')) }}">
+                    <input type="number" id="Mes" name="Mes" min="1" max="12"
+                           value="{{ old('Mes', \Carbon\Carbon::now()->format('m')) }}">
 
                 </div>
             </div>
