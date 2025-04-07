@@ -15,11 +15,7 @@ class Icone extends Model
 
     public function showAll()
     {
-        $icones = Icone::where(function ($query) {
-            $query->select('*');
-            //$query->where('Arquivada',0);
-            //$query->orderBy('Nome','ASC');
-        })->get();
+        $icones = Icone::orderBy('Descricao', 'ASC')->get(); // ou ->get() para resultados reais
         return $icones;
     }
 }

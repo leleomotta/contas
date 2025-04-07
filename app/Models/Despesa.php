@@ -68,7 +68,8 @@ class Despesa extends Model
     public function despesasSemCartao($start_date, $end_date, $conta){
         $despesasSemCartao = DB::table('despesa')
             ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
-                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco' )
+                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
+                'categoria.Cor')
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
@@ -149,7 +150,8 @@ class Despesa extends Model
         $cartaoPago =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
-                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco' )
+                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
+                DB::raw("'#C8C8C8' as Cor"))
 
             ->leftJoin('icone', 'icone.ID_Icone', '=', DB::raw('0'))
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
@@ -176,7 +178,8 @@ class Despesa extends Model
     public function cartaoAberto($Ano_Mes){
         $cartaoAberto =DB::table('fatura')
             ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
-                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco' )
+                'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
+                DB::raw("'#C8C8C8' as Cor"))
             ->leftJoin('icone', 'icone.ID_Icone', '=', DB::raw('0'))
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
             //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')

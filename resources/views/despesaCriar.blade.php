@@ -57,7 +57,8 @@
                         <option selected data-default>- Selecione uma categoria -</option>
                         @foreach($categorias as $categoria)
                             <option value="{{$categoria->ID_Categoria}}"
-                                    data-content="<i class='{{ $categoria->Link }}'></i> {{ $categoria->Nome }}"
+                                    data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
+                                <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'
                             >
                             </option>
                         @endforeach
@@ -86,7 +87,7 @@
 
             </div>
 
-                <div class="card-footer">
+            <div class="card-footer">
                 <div class="float-right">
                     <button type="submit" class="btn btn-success">Cadastrar</button>
                 </div>
@@ -126,6 +127,21 @@
         }
         .bootstrap-select > .dropdown-menu li a {
             color: black;
+        }
+        .icone-circulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50% !important; /* garante que fique redondo */
+            margin-right: 10px;
+            color: black;
+            font-size: 16px;
+        }
+
+        .icone-circulo i {
+            margin: 0;
         }
     </style>
 @stop

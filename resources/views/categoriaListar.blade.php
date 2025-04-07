@@ -28,28 +28,34 @@
                                     </tr>
                                     </thead>
                                     <tbody>
-                                    @foreach($despesas as $despesa)
-                                        <tr style="background-color: {{ $despesa->Cor }};">
-                                            <td><i class="{{ $despesa->Link }}"></i> {{ $despesa->Nome }}</td>
-                                            <td>
-                                                <div class="d-flex">
-                                                    <a href="{{ route('categorias.edit', ['ID_Categoria' => $despesa->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>
-                                                    <form action="{{ route('categorias.destroy', ['ID_Categoria' => $despesa->ID_Categoria]) }}" method="POST" class="mr-1">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <button type="button" class="btn btn-danger btn-sm delete-btn" title="Excluir"><i class="fa fa-trash"></i></button>
-                                                    </form>
-                                                    @if(is_null($despesa->ID_Categoria_Pai))
-                                                        <form action="{{ route('categorias.new') }}" method="GET">
-                                                            <input type="hidden" name="ID_Categoria_Pai" value="{{ $despesa->ID_Categoria }}">
-                                                            <input type="hidden" name="Tipo" value="D">
-                                                            <button type="submit" class="btn btn-success btn-sm" title="Adicionar Subcategoria"><i class="fa fa-plus"></i></button>
+                                        @foreach($despesas as $despesa)
+                                            <tr>
+                                                <td>
+                                                    <span class="icone-circulo" style="background-color: {{ $despesa->Cor }};">
+                                                        <i class="{{ $despesa->Link }}"></i>
+                                                    </span>
+                                                    {{ $despesa->Nome }}
+                                                </td>
+
+                                                <td>
+                                                    <div class="d-flex">
+                                                        <a href="{{ route('categorias.edit', ['ID_Categoria' => $despesa->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>
+                                                        <form action="{{ route('categorias.destroy', ['ID_Categoria' => $despesa->ID_Categoria]) }}" method="POST" class="mr-1">
+                                                            @csrf
+                                                            @method('delete')
+                                                            <button type="button" class="btn btn-danger btn-sm delete-btn" title="Excluir"><i class="fa fa-trash"></i></button>
                                                         </form>
-                                                    @endif
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
+                                                        @if(is_null($despesa->ID_Categoria_Pai))
+                                                            <form action="{{ route('categorias.new') }}" method="GET">
+                                                                <input type="hidden" name="ID_Categoria_Pai" value="{{ $despesa->ID_Categoria }}">
+                                                                <input type="hidden" name="Tipo" value="D">
+                                                                <button type="submit" class="btn btn-success btn-sm" title="Adicionar Subcategoria"><i class="fa fa-plus"></i></button>
+                                                            </form>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
                                     </tbody>
                                     <tfoot>
                                     <tr>
@@ -71,8 +77,14 @@
                                     </thead>
                                     <tbody>
                                     @foreach($receitas as $receita)
-                                        <tr style="background-color: {{ $receita->Cor }};">
-                                            <td><i class="{{ $receita->Link }}"></i> {{ $receita->Nome }}</td>
+                                        <tr>
+                                            <td>
+                                                <span class="icone-circulo" style="background-color: {{ $receita->Cor }};">
+                                                    <i class="{{ $receita->Link }}"></i>
+                                                </span>
+                                                {{ $receita->Nome }}
+                                            </td>
+
                                             <td>
                                                 <div class="d-flex">
                                                     <a href="{{ route('categorias.edit', ['ID_Categoria' => $receita->ID_Categoria]) }}" class="btn btn-primary btn-sm mr-1" title="Editar"><i class="fa fa-edit"></i></a>
@@ -113,6 +125,24 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css">
     <link href="//cdn.jsdelivr.net/npm/@sweetalert2/theme-dark@4/dark.css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <style>
+        .icone-circulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            color: black;
+            font-size: 16px;
+        }
+
+        .icone-circulo i {
+            margin: 0;
+        }
+    </style>
+
 @stop
 
 @section('js')

@@ -47,8 +47,9 @@
                 <select name="Icone" id="Icone" class="form-control selectpicker" data-live-search="true">
                     <option value="">Selecione um ícone</option>
                     @foreach($icones as $icone)
-                        <option value="{{$icone->ID_Icone}}"
-                            data-content="<i class='{{ $icone->Link }}'></i> {{ $icone->Descricao }}"
+                        <option value="{{ $icone->ID_Icone }}"
+                                data-content='<span class="icone-circulo" style="background-color: {{ '#C8C8C8'}};">
+                                <i class="{{ $icone->Link }}"></i></span> {{ $icone->Descricao }}'
                         >
                         </option>
                     @endforeach
@@ -92,6 +93,22 @@
         }
         .bootstrap-select > .dropdown-menu li a {
             color: black;
+        }
+
+         .icone-circulo {
+             display: inline-flex;
+             align-items: center;
+             justify-content: center;
+             width: 30px;
+             height: 30px;
+             border-radius: 50% !important; /* garante que fique redondo */
+             margin-right: 10px;
+             color: black;
+             font-size: 16px;
+         }
+
+        .icone-circulo i {
+            margin: 0;
         }
     </style>
 @stop

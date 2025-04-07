@@ -169,7 +169,12 @@
                                                 number_format($despesa->Valor, 2
                                                 )))) }}</td>
                                 <td>{{$despesa->Banco}}</td>
-                                <td><i class="{{ $despesa->Icone }}"></i> {{ $despesa->NomeCategoria }}</td>
+                                <td>
+                                    <span class="icone-circulo" style="background-color: {{ $despesa->Cor }};">
+                                        <i class="{{ $despesa->Icone }}"></i>
+                                    </span>
+                                    {{ $despesa->NomeCategoria }}
+                                </td>
 
                                 <td>
                                     <div class="row">
@@ -301,6 +306,23 @@
     {{-- daterange picker --}}
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css">
+    <style>
+        .icone-circulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            color: black;
+            font-size: 16px;
+        }
+
+        .icone-circulo i {
+            margin: 0;
+        }
+    </style>
 @stop
 
 @section('js')

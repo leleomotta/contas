@@ -51,7 +51,8 @@ class Categoria extends Model
             $X = Categoria::where(function ($query) use ($desp) {
                 $query->select('*');
                 $query->where('ID_Categoria_Pai',$desp->ID_Categoria);
-            })->orderBy('Nome','ASC')
+            })->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone' )
+                ->orderBy('Nome','ASC')
                 //->toSql(); dd($X);
                 ->get();
 
