@@ -122,11 +122,12 @@
                             <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                         </div>
 
-                        <input type="text" class="form-control datetimepicker-input" data-target="#divData" id="Data" name="Data"
-                               data-inputmask-alias="datetime" data-inputmask-inputformat="yyyy-mm" data-mask
-                               placeholder="yyyy-mm"  data-toggle="datetimepicker"
-                               style="text-align:center;"
-                        />
+                        <input type="text" class="form-control datetimepicker-input"
+                               id="Data" name="Data"
+                               data-target="#divData"
+                               data-toggle="datetimepicker"
+                               placeholder="aaaa-mm"
+                               style="text-align:center;" />
 
                         <div class="input-group-append" onclick="avancaData()">
                             <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
@@ -350,7 +351,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
             var data = ano + '-' + mes;
 
@@ -371,7 +372,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
 
             var data = ano + '-' + mes;
@@ -381,6 +382,13 @@
 
             window.location.href = url;
 
+        }
+
+        function redirecionaParaDataSelecionada() {
+            const data = document.getElementById('Data').value;
+            let url = '{{ route("receitas.showAll", ["date_filter" => "DATA"]) }}';
+            url = url.replace('DATA', data);
+            window.location.href = url;
         }
 
         function habilitaCampos() {
@@ -414,15 +422,25 @@
 
     <!-- INPUT DATE -->
     <script>
+        let ultimaData = $('#Data').val();
         //Date picker
         $('#divData').datetimepicker({
-            //format:'DD/MM/YYYY',
-            format:'YYYY/MM',
-            viewMode: "months",
-            minViewMode: "months",
+            format: 'YYYY-MM',
+            viewMode: 'months',
+            minViewMode: 'months',
+            locale: 'pt-br',
+            defaultDate: moment(), // já inicia com data atual
+        });
+        $('#divData').on('hide.datetimepicker', function () {
+            const novaData = $('#Data').val();
 
-        })
-        $('[data-mask]').inputmask();
+            if (novaData !== ultimaData) {
+                ultimaData = novaData;
+                redirecionaParaDataSelecionada();
+            }
+        });
+        $('[data-mask]').inputmask(); // mantenha para os outros
+        $('#Data').inputmask('remove'); // remove do campo do seletor de mês
 
     </script>
     <!-- INPUT DATE -->

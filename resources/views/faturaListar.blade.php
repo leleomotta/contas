@@ -22,11 +22,12 @@
                             <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                         </div>
 
-                        <input type="text" class="form-control datetimepicker-input" data-target="#divData" id="Data" name="Data"
-                               data-inputmask-alias="datetime" data-inputmask-inputformat="yyyy-mm" data-mask
-                               placeholder="yyyy-mm"  data-toggle="datetimepicker"
-                               style="text-align:center;"
-                        />
+                        <input type="text" class="form-control datetimepicker-input"
+                               id="Data" name="Data"
+                               data-target="#divData"
+                               data-toggle="datetimepicker"
+                               placeholder="aaaa-mm"
+                               style="text-align:center;" />
 
                         <div class="input-group-append" onclick="avancaData()">
                             <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
@@ -358,6 +359,13 @@
 
         }
 
+        function redirecionaParaDataSelecionada() {
+            const data = document.getElementById('Data').value;
+            let url = '{{ route("cartoes.fatura", ["Ano_Mes" => "DATA"]) }}';
+            url = url.replace('DATA', data);
+            window.location.href = url;
+        }
+
         window.onload = function() {
             const urlParams = new URLSearchParams(window.location.search);
             const myParam = urlParams.get('Ano_Mes');
@@ -382,26 +390,35 @@
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.9/dist/jquery.inputmask.min.js"></script>
 
     <script>
         //Date picker
+        let ultimaData = $('#Data').val();
+        //Date picker
         $('#divData').datetimepicker({
-            //format:'DD/MM/YYYY',
-            format:'YYYY-MM',
-            viewMode: "months",
-            minViewMode: "months",
+            format: 'YYYY-MM',
+            viewMode: 'months',
+            minViewMode: 'months',
+            locale: 'pt-br',
+            defaultDate: moment(), // já inicia com data atual
+        });
+        $('#divData').on('hide.datetimepicker', function () {
+            const novaData = $('#Data').val();
 
-        })
+            if (novaData !== ultimaData) {
+                ultimaData = novaData;
+                redirecionaParaDataSelecionada();
+            }
+        });
+        $('[data-mask]').inputmask(); // mantenha para os outros
+        $('#Data').inputmask('remove'); // remove do campo do seletor de mês
 
         $('#Data_Fechamento').datetimepicker({
             format:'DD/MM/YYYY',
         })
+
     </script>
 
-    <!-- INPUT DATE -->
-    <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.9/dist/jquery.inputmask.min.js"></script>
-    <script>
-        $('input').inputmask();
-    </script>
 
 @stop
