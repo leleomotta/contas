@@ -21,11 +21,12 @@
                                 <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                             </div>
 
-                            <input type="text" class="form-control datetimepicker-input" data-target="#divData" id="Data" name="Data"
-                                   data-inputmask-alias="datetime" data-inputmask-inputformat="yyyy-mm" data-mask
-                                   placeholder="yyyy-mm"  data-toggle="datetimepicker"
-                                   style="text-align:center;"
-                            />
+                            <input type="text" class="form-control datetimepicker-input"
+                                   id="Data" name="Data"
+                                   data-target="#divData"
+                                   data-toggle="datetimepicker"
+                                   placeholder="aaaa-mm"
+                                   style="text-align:center;" />
 
                             <div class="input-group-append" onclick="avancaData()">
                                 <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
@@ -46,88 +47,82 @@
                         <!-- .tab-pane -->
                         <div class="tab-pane active" id="tab_1">
                             <div class="card-body">
-                              @foreach($contasAtivas->chunk(3) as $ativas)
-                                <div class="row">
-                                    @foreach($ativas as $conta)
-                                        <div class="col-md-4">
-                                            <!-- Widget: user widget style 1 -->
-                                            <div class="card card-widget widget-user" >
-                                                @php
-                                                    if (empty($_GET)) {
-                                                         $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-                                                    }
-                                                    else{
-                                                        $dateFilter = $_GET['date_filter'];
-                                                    }
-                                                    $dt = Carbon::now();
-                                                    $dt->setDateFrom($dateFilter . '-15');
-                                                    $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-                                                    $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-                                                    $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
-                                                    $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
-                                                    $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
-                                                    $despesaMes = $despesaMes->merge($cartaoPagoMes);
-                                                    $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
-                                                    $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
-                                                @endphp
+                                @foreach($contasAtivas->chunk(3) as $ativas)
+                                    <div class="row">
+                                        @foreach($ativas as $conta)
+                                            <div class="col-md-4">
+                                                <!-- Widget: user widget style 1 -->
+                                                <div class="card card-widget widget-user" >
+                                                    @php
+                                                        if (empty($_GET)) {
+                                                             $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+                                                        }
+                                                        else{
+                                                            $dateFilter = $_GET['date_filter'];
+                                                        }
+                                                        $dt = Carbon::now();
+                                                        $dt->setDateFrom($dateFilter . '-15');
+                                                        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+                                                        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
+                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
+                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
+                                                        $despesaMes = $despesaMes->merge($cartaoPagoMes);
+                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
+                                                        $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
+                                                    @endphp
 
-                                                    <!-- Add the bg color to the header using any of the bg-* classes -->
-                                                <!-- <div class="widget-user-header bg-info"> -->
+                                                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                                                    <!-- <div class="widget-user-header bg-info"> -->
 
-                                                <div class="widget-user-header text-white"
+                                                    <div class="widget-user-header text-white"
                                                          style="background:{{ $conta->Cor }}">
-                                                    <h3 class="widget-user-username">{{ $conta->ID_Conta . ' - ' . $conta->Nome }}</h3>
-                                                    <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
-                                                </div>
-
-                                                <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
-                                                    <div class="widget-user-image">
-                                                        @if (! $conta->Imagem == null)
-                                                            <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
-                                                        @else
-                                                            <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
-                                                        @endif
+                                                        <h3 class="widget-user-username">{{ $conta->ID_Conta . ' - ' . $conta->Nome }}</h3>
+                                                        <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
                                                     </div>
-                                                </a>
 
-                                                <div class="card-footer">
-                                                    <div class="row">
-                                                        <div class="col-sm-4 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->Saldo, 2
-                                                                                )))) }} </h5>
-                                                                <span class="description-text">SALDO ATUAL</span>
-                                                            </div>
-                                                            <!-- /.description-block -->
+                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
+                                                        <div class="widget-user-image">
+                                                            @if (! $conta->Imagem == null)
+                                                                <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
+                                                            @else
+                                                                <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
+                                                            @endif
                                                         </div>
-                                                        <!-- /.col -->
-                                                        <div class="col-sm-4 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->Receitas, 2
-                                                                                )))) }}</h5>
-                                                                <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
+                                                    </a>
 
-                                                                <!-- Modal de detalhe -->
-                                                                <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
-                                                                    <div class="modal-dialog  modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h4 class="modal-title"> Receitas </h4>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <table id="Receitas" class="table table-bordered table-hover">
-                                                                                    <thead>
+                                                    <div class="card-footer">
+                                                        <div class="row">
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Saldo, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span class="description-text">SALDO ATUAL</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
+
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Receitas </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Receitas" class="table table-bordered table-hover">
+                                                                                        <thead>
                                                                                         <tr>
                                                                                             <th>Efetivada</th>
                                                                                             <th>Data</th>
@@ -136,25 +131,20 @@
                                                                                             <th>Categoria</th>
                                                                                             <th>Banco</th>
                                                                                         </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                    @foreach($receitaMes as $valores)
-                                                                                        <tr>
-                                                                                            <td>{{ $valores->Efetivada }}</td>
-                                                                                            <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                            <td>{{ $valores->Descricao }}</td>
-                                                                                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                            </td>
-                                                                                            <td>{{ $valores->NomeCategoria }}</td>
-                                                                                            <td>{{ $valores->Banco }}</td>
-                                                                                        </tr>
-                                                                                    @endforeach
-                                                                                    </tbody>
-                                                                                    <tfoot>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($receitaMes as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
                                                                                         <tr>
                                                                                             <th>Efetivada</th>
                                                                                             <th>Data</th>
@@ -163,346 +153,312 @@
                                                                                             <th>Categoria</th>
                                                                                             <th>Banco</th>
                                                                                         </tr>
-                                                                                    </tfoot>
-                                                                                </table>
+                                                                                        </tfoot>
+                                                                                    </table>
 
+                                                                                </div>
                                                                             </div>
+                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-content -->
+                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- /.modal-dialog -->
+                                                                    <!-- Modal de detalhe -->
+
                                                                 </div>
-                                                                <!-- Modal de detalhe -->
-
+                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.description-block -->
-                                                        </div>
-                                                        <!-- /.col -->
-                                                        <div class="col-sm-4">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->Despesas, 2
-                                                                                )))) }}</h5>
-                                                                <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
 
-                                                                <!-- Modal de detalhe -->
-                                                                <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
-                                                                    <div class="modal-dialog  modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h4 class="modal-title"> Despesas </h4>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <table id="Despesas" class="table table-bordered table-hover">
-                                                                                    <thead>
-                                                                                    <tr>
-                                                                                        <th>Efetivada</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Descrição</th>
-                                                                                        <th>Valor</th>
-                                                                                        <th>Categoria</th>
-                                                                                        <th>Banco</th>
-                                                                                    </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                    @foreach($despesaMes as $valores)
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Despesas </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Despesas" class="table table-bordered table-hover">
+                                                                                        <thead>
                                                                                         <tr>
-                                                                                            <td>{{ $valores->Efetivada }}</td>
-                                                                                            <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                            <td>{{ $valores->Descricao }}</td>
-                                                                                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                            </td>
-                                                                                            <td>{{ $valores->NomeCategoria }}</td>
-                                                                                            <td>{{ $valores->Banco }}</td>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
                                                                                         </tr>
-                                                                                    @endforeach
-                                                                                    </tbody>
-                                                                                    <tfoot>
-                                                                                    <tr>
-                                                                                        <th>Efetivada</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Descrição</th>
-                                                                                        <th>Valor</th>
-                                                                                        <th>Categoria</th>
-                                                                                        <th>Banco</th>
-                                                                                    </tr>
-                                                                                    </tfoot>
-                                                                                </table>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($despesaMes as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
                                                                             </div>
+                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-content -->
+                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- /.modal-dialog -->
+                                                                    <!-- Modal de detalhe -->
                                                                 </div>
-                                                                <!-- Modal de detalhe -->
+                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.description-block -->
+
                                                         </div>
+                                                        <!-- /.row -->
+                                                        <div class="row">
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
 
-                                                    </div>
-                                                    <!-- /.row -->
-                                                    <div class="row">
-                                                        <div class="col-sm-4 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->Entradas, 2
-                                                                                )))) }}  </h5>
-                                                                <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
-
-                                                                <!-- Modal de detalhe -->
-                                                                <div class="modal fade" id="entra{{$conta->ID_Conta}}">
-                                                                    <div class="modal-dialog  modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h4 class="modal-title"> Transferências de Entrada </h4>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <table id="Entradas" class="table table-bordered table-hover">
-                                                                                    <thead>
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="entra{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Transferências de Entrada </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Entradas" class="table table-bordered table-hover">
+                                                                                        <thead>
                                                                                         <tr>
                                                                                             <th>Conta Origem</th>
                                                                                             <th>Data</th>
                                                                                             <th>Valor</th>
                                                                                         </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
+                                                                                        </thead>
+                                                                                        <tbody>
                                                                                         @foreach($tranferencias_EntradaMes as $transferencia)
                                                                                             <tr>
                                                                                                 <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
                                                                                                 <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
-
-                                                                                                <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($transferencia->Valor, 2
-                                                                                                                                )))) }}
-                                                                                                </td>
+                                                                                                <td>{{ 'R$ ' . number_format($transferencia->Valor, 2, ',', '.') }}</td>
                                                                                             </tr>
                                                                                         @endforeach
-                                                                                    </tbody>
-                                                                                    <tfoot>
+                                                                                        </tbody>
+                                                                                        <tfoot>
                                                                                         <tr>
                                                                                             <th>Conta Origem</th>
                                                                                             <th>Data</th>
                                                                                             <th>Valor</th>
                                                                                         </tr>
-                                                                                    </tfoot>
-                                                                                </table>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
                                                                             </div>
+                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-content -->
+                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- /.modal-dialog -->
+                                                                    <!-- Modal de detalhe -->
+
                                                                 </div>
-                                                                <!-- Modal de detalhe -->
-
+                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.description-block -->
-                                                        </div>
-                                                        <!-- /.col -->
-                                                        <div class="col-sm-4 border-right">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->Saidas, 2
-                                                                                )))) }}</h5>
-                                                                <span class="description-text"></span>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span class="description-text"></span>
 
-                                                                <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
+                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
 
-                                                                <!-- Modal de detalhe -->
-                                                                <div class="modal fade" id="sai{{$conta->ID_Conta}}">
-                                                                    <div class="modal-dialog  modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h4 class="modal-title"> Transferências de Saída </h4>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <table id="Saidas" class="table table-bordered table-hover">
-                                                                                    <thead>
-                                                                                    <tr>
-                                                                                        <th>Conta Origem</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Valor</th>
-                                                                                    </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                    @foreach($tranferencias_SaidaMes as $transferencia)
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="sai{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Transferências de Saída </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Saidas" class="table table-bordered table-hover">
+                                                                                        <thead>
                                                                                         <tr>
-                                                                                            <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
-                                                                                            <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
-
-                                                                                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($transferencia->Valor, 2
-                                                                                                                                )))) }}
-                                                                                            </td>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
                                                                                         </tr>
-                                                                                    @endforeach
-                                                                                    </tbody>
-                                                                                    <tfoot>
-                                                                                    <tr>
-                                                                                        <th>Conta Origem</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Valor</th>
-                                                                                    </tr>
-                                                                                    </tfoot>
-                                                                                </table>
-                                                                            </div>
-                                                                        </div>
-                                                                        <!-- /.modal-content -->
-                                                                    </div>
-                                                                    <!-- /.modal-dialog -->
-                                                                </div>
-                                                                <!-- Modal de detalhe -->
-
-                                                            </div>
-                                                            <!-- /.description-block -->
-                                                        </div>
-                                                        <!-- /.col -->
-                                                        <div class="col-sm-4">
-                                                            <div class="description-block">
-                                                                <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                                str_replace(".",',',
-                                                                                str_replace(",",'_',
-                                                                                number_format($conta->SaldoMes, 2
-                                                                                )))) }}</h5>
-
-                                                                <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
-                                                                @php
-                                                                    $despesas = $despesaMes;
-                                                                    $despesas->each(function ($despesa) {
-                                                                        $despesa->Valor = -$despesa->Valor;
-                                                                    });
-                                                                    //junta despesas e receitas
-                                                                    $saldo = $despesas->merge($receitaMes);
-
-                                                                    $entradas = $tranferencias_EntradaMes;
-                                                                    $entradas = $entradas->map(function ($item) {
-                                                                        $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                        $item->Categoria = 'Transf. Ent.';
-                                                                        $item->Descricao = 'Transf. Ent.';
-                                                                        $item->NomeCategoria = '-';
-                                                                        return $item;
-                                                                    });
-
-                                                                    //junta despesas e receitas com entradas
-                                                                    $saldo = $saldo->merge($entradas);
-                                                                    //
-
-                                                                    $saidas = $tranferencias_SaidaMes;
-                                                                    $saidas = $saidas->map(function ($item) {
-                                                                        $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                        $item->Categoria = 'Transf. Saida';
-                                                                        $item->Descricao = 'Transf. Saida';
-                                                                        $item->NomeCategoria = '-';
-                                                                        return $item;
-                                                                    });
-                                                                    $saidas->each(function ($saida) {
-                                                                        $saida->Valor = -$saida->Valor;
-                                                                    });
-
-                                                                    //junta despesas e receitas com entradas e saídas
-                                                                    $saldo = $saldo->merge($saidas);
-
-                                                                    $sorted = $saldo->sortBy(function($conta)
-                                                                    {
-                                                                        return $conta->Data;
-                                                                    });
-                                                                @endphp
-
-                                                                <!-- Modal de detalhe -->
-                                                                <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
-                                                                    <div class="modal-dialog  modal-lg">
-                                                                        <div class="modal-content">
-                                                                            <div class="modal-header">
-                                                                                <h4 class="modal-title"> Saldo do mes </h4>
-                                                                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                    <span aria-hidden="true">&times;</span>
-                                                                                </button>
-                                                                            </div>
-                                                                            <div class="modal-body">
-                                                                                <table id="Receitas" class="table table-bordered table-hover">
-                                                                                    <thead>
-                                                                                    <tr>
-                                                                                        <th>Efetivada</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Descrição</th>
-                                                                                        <th>Valor</th>
-                                                                                        <th>Categoria</th>
-                                                                                        <th>Banco</th>
-                                                                                    </tr>
-                                                                                    </thead>
-                                                                                    <tbody>
-                                                                                    @foreach($sorted as $valores)
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($tranferencias_SaidaMes as $transferencia)
+                                                                                            <tr>
+                                                                                                <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($transferencia->Valor, 2, ',', '.') }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
                                                                                         <tr>
-                                                                                            <td>{{ $valores->Efetivada }}</td>
-                                                                                            <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                            <td>{{ $valores->Descricao }}</td>
-                                                                                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                            </td>
-                                                                                            <td>{{ $valores->NomeCategoria }}</td>
-                                                                                            <td>{{ $valores->Banco }}</td>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
                                                                                         </tr>
-                                                                                    @endforeach
-                                                                                    </tbody>
-                                                                                    <tfoot>
-                                                                                    <tr>
-                                                                                        <th>Efetivada</th>
-                                                                                        <th>Data</th>
-                                                                                        <th>Descrição</th>
-                                                                                        <th>Valor</th>
-                                                                                        <th>Categoria</th>
-                                                                                        <th>Banco</th>
-                                                                                    </tr>
-                                                                                    </tfoot>
-                                                                                </table>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
                                                                             </div>
+                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-content -->
+                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- /.modal-dialog -->
-                                                                </div>
-                                                                <!-- Modal de detalhe -->
-                                                            </div>
-                                                            <!-- /.description-block -->
-                                                        </div>
+                                                                    <!-- Modal de detalhe -->
 
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
+                                                                    </h5>
+
+                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
+                                                                    @php
+                                                                        $despesas = $despesaMes;
+                                                                        $despesas->each(function ($despesa) {
+                                                                            $despesa->Valor = -$despesa->Valor;
+                                                                        });
+                                                                        //junta despesas e receitas
+                                                                        $saldo = $despesas->merge($receitaMes);
+
+                                                                        $entradas = $tranferencias_EntradaMes;
+                                                                        $entradas = $entradas->map(function ($item) {
+                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                            $item->Categoria = 'Transf. Ent.';
+                                                                            $item->Descricao = 'Transf. Ent.';
+                                                                            $item->NomeCategoria = '-';
+                                                                            return $item;
+                                                                        });
+
+                                                                        //junta despesas e receitas com entradas
+                                                                        $saldo = $saldo->merge($entradas);
+                                                                        //
+
+                                                                        $saidas = $tranferencias_SaidaMes;
+                                                                        $saidas = $saidas->map(function ($item) {
+                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                            $item->Categoria = 'Transf. Saida';
+                                                                            $item->Descricao = 'Transf. Saida';
+                                                                            $item->NomeCategoria = '-';
+                                                                            return $item;
+                                                                        });
+                                                                        $saidas->each(function ($saida) {
+                                                                            $saida->Valor = -$saida->Valor;
+                                                                        });
+
+                                                                        //junta despesas e receitas com entradas e saídas
+                                                                        $saldo = $saldo->merge($saidas);
+
+                                                                        $sorted = $saldo->sortBy(function($conta)
+                                                                        {
+                                                                            return $conta->Data;
+                                                                        });
+                                                                    @endphp
+
+                                                                        <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Saldo do mes </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Receitas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($sorted as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+
+                                                        </div>
                                                     </div>
                                                 </div>
+                                                <!-- /.widget-user -->
                                             </div>
-                                            <!-- /.widget-user -->
-                                        </div>
-                                    @endforeach
-                                </div>
-                              @endforeach
+                                        @endforeach
+                                    </div>
+                                @endforeach
                             </div>
                         </div>
                         <!-- /.tab-pane -->
@@ -512,460 +468,415 @@
                             <div class="card-body">
                                 @foreach($contasArquivadas->chunk(3) as $inativas)
                                     <div class="row">
-                                            @foreach($inativas as $conta)
-                                                <div class="col-md-4">
-                                                        <!-- Widget: user widget style 1 -->
-                                                        <div class="card card-widget widget-user" >
-                                                            @php
-                                                                if (empty($_GET)) {
-                                                                     $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-                                                                }
-                                                                else{
-                                                                    $dateFilter = $_GET['date_filter'];
-                                                                }
-                                                                $dt = Carbon::now();
-                                                                $dt->setDateFrom($dateFilter . '-15');
-                                                                $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-                                                                $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-                                                                $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
-                                                                $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
-                                                                $despesaMes = $despesaMes->merge($cartaoPagoMes);
+                                        @foreach($inativas as $conta)
+                                            <div class="col-md-4">
+                                                <!-- Widget: user widget style 1 -->
+                                                <div class="card card-widget widget-user" >
+                                                    @php
+                                                        if (empty($_GET)) {
+                                                             $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+                                                        }
+                                                        else{
+                                                            $dateFilter = $_GET['date_filter'];
+                                                        }
+                                                        $dt = Carbon::now();
+                                                        $dt->setDateFrom($dateFilter . '-15');
+                                                        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+                                                        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
+                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
+                                                        $despesaMes = $despesaMes->merge($cartaoPagoMes);
 
-                                                                $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
+                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
 
-                                                                $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
+                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
 
-                                                                $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
-                                                            @endphp
-                                                            <!-- Add the bg color to the header using any of the bg-* classes -->
-                                                            <!-- <div class="widget-user-header bg-info"> -->
+                                                        $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
+                                                    @endphp
+                                                        <!-- Add the bg color to the header using any of the bg-* classes -->
+                                                    <!-- <div class="widget-user-header bg-info"> -->
 
-                                                            <div class="widget-user-header text-white"
-                                                                 style="background:{{ $conta->Cor }}">
-                                                                <h3 class="widget-user-username">{{ $conta->ID_Conta . ' - ' . $conta->Nome }}</h3>
-                                                                <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
-                                                            </div>
-
-                                                            <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
-                                                                <div class="widget-user-image">
-
-                                                                    @if (! $conta->Imagem == null)
-                                                                        <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
-                                                                    @else
-                                                                        <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
-                                                                    @endif
-                                                                </div>
-                                                            </a>
-
-                                                            <div class="card-footer">
-                                                                <div class="row">
-                                                                    <div class="col-sm-4 border-right">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->Saldo, 2
-                                                                                            )))) }} </h5>
-                                                                            <span class="description-text">SALDO ATUAL</span>
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-                                                                    <!-- /.col -->
-                                                                    <div class="col-sm-4 border-right">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->Receitas, 2
-                                                                                            )))) }}</h5>
-
-                                                                            <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
-
-                                                                            <!-- Modal de detalhe -->
-                                                                            <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
-                                                                                <div class="modal-dialog  modal-lg">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title"> Receitas </h4>
-                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="modal-body">
-                                                                                            <table id="Receitas" class="table table-bordered table-hover">
-                                                                                                <thead>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                @foreach($receitaMes as $valores)
-                                                                                                    <tr>
-                                                                                                        <td>{{ $valores->Efetivada }}</td>
-                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                                        <td>{{ $valores->Descricao }}</td>
-                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                                        </td>
-                                                                                                        <td>{{ $valores->NomeCategoria }}</td>
-                                                                                                        <td>{{ $valores->Banco }}</td>
-                                                                                                    </tr>
-                                                                                                @endforeach
-                                                                                                </tbody>
-                                                                                                <tfoot>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </tfoot>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- /.modal-content -->
-                                                                                </div>
-                                                                                <!-- /.modal-dialog -->
-                                                                            </div>
-                                                                            <!-- Modal de detalhe -->
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-                                                                    <!-- /.col -->
-                                                                    <div class="col-sm-4">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->Despesas, 2
-                                                                                            )))) }}</h5>
-                                                                            <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
-
-                                                                            <!-- Modal de detalhe -->
-                                                                            <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
-                                                                                <div class="modal-dialog  modal-lg">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title"> Despesas </h4>
-                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="modal-body">
-
-
-                                                                                            <table id="Despesas" class="table table-bordered table-hover">
-                                                                                                <thead>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                @foreach($despesaMes as $valores)
-                                                                                                    <tr>
-                                                                                                        <td>{{ $valores->Efetivada }}</td>
-                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                                        <td>{{ $valores->Descricao }}</td>
-                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                                        </td>
-                                                                                                        <td>{{ $valores->NomeCategoria }}</td>
-                                                                                                        <td>{{ $valores->Banco }}</td>
-                                                                                                    </tr>
-                                                                                                @endforeach
-                                                                                                </tbody>
-                                                                                                <tfoot>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </tfoot>
-                                                                                            </table>
-
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- /.modal-content -->
-                                                                                </div>
-                                                                                <!-- /.modal-dialog -->
-                                                                            </div>
-                                                                            <!-- Modal de detalhe -->
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-
-                                                                </div>
-                                                                <!-- /.row -->
-                                                                <div class="row">
-                                                                    <div class="col-sm-4 border-right">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->Entradas, 2
-                                                                                            )))) }} </h5>
-                                                                            <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
-
-                                                                            <!-- Modal de detalhe -->
-                                                                            <div class="modal fade" id="entra{{$conta->ID_Conta}}">
-                                                                                <div class="modal-dialog  modal-lg">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title"> Transferências de Entrada </h4>
-                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="modal-body">
-                                                                                            <table id="Entradas" class="table table-bordered table-hover">
-                                                                                                <thead>
-                                                                                                <tr>
-                                                                                                    <th>Conta Origem</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Valor</th>
-                                                                                                </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                @foreach($tranferencias_EntradaMes as $transferencia)
-                                                                                                    <tr>
-                                                                                                        <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
-                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
-
-                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                            str_replace(".",',',
-                                                                                                                            str_replace(",",'_',
-                                                                                                                            number_format($transferencia->Valor, 2
-                                                                                                                            )))) }}
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                @endforeach
-                                                                                                </tbody>
-                                                                                                <tfoot>
-                                                                                                <tr>
-                                                                                                    <th>Conta Origem</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Valor</th>
-                                                                                                </tr>
-                                                                                                </tfoot>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- /.modal-content -->
-                                                                                </div>
-                                                                                <!-- /.modal-dialog -->
-                                                                            </div>
-                                                                            <!-- Modal de detalhe -->
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-                                                                    <!-- /.col -->
-                                                                    <div class="col-sm-4 border-right">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->Saidas, 2
-                                                                                            )))) }}</h5>
-                                                                            <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
-
-                                                                            <!-- Modal de detalhe -->
-                                                                            <div class="modal fade" id="sai{{$conta->ID_Conta}}">
-                                                                                <div class="modal-dialog  modal-lg">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title"> Transferências de Saída </h4>
-                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="modal-body">
-                                                                                            <table id="Saidas" class="table table-bordered table-hover">
-                                                                                                <thead>
-                                                                                                <tr>
-                                                                                                    <th>Conta Origem</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Valor</th>
-                                                                                                </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                @foreach($tranferencias_SaidaMes as $transferencia)
-                                                                                                    <tr>
-                                                                                                        <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
-                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
-
-                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($transferencia->Valor, 2
-                                                                                                                                )))) }}
-                                                                                                        </td>
-                                                                                                    </tr>
-                                                                                                @endforeach
-                                                                                                </tbody>
-                                                                                                <tfoot>
-                                                                                                <tr>
-                                                                                                    <th>Conta Origem</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Valor</th>
-                                                                                                </tr>
-                                                                                                </tfoot>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- /.modal-content -->
-                                                                                </div>
-                                                                                <!-- /.modal-dialog -->
-                                                                            </div>
-                                                                            <!-- Modal de detalhe -->
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-                                                                    <!-- /.col -->
-                                                                    <div class="col-sm-4">
-                                                                        <div class="description-block">
-                                                                            <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                                                                {{ 'R$ ' .  str_replace("_",'.',
-                                                                                            str_replace(".",',',
-                                                                                            str_replace(",",'_',
-                                                                                            number_format($conta->SaldoMes, 2
-                                                                                            )))) }}</h5>
-                                                                            <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
-                                                                            @php
-                                                                                $despesas = $despesaMes;
-                                                                                $despesas->each(function ($despesa) {
-                                                                                    $despesa->Valor = -$despesa->Valor;
-                                                                                });
-                                                                                //junta despesas e receitas
-                                                                                $saldo = $despesas->merge($receitaMes);
-
-                                                                                $entradas = $tranferencias_EntradaMes;
-                                                                                $entradas = $entradas->map(function ($item) {
-                                                                                    $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                                    $item->Categoria = 'Transf. Ent.';
-                                                                                    $item->Descricao = 'Transf. Ent.';
-                                                                                    $item->NomeCategoria = '-';
-                                                                                    return $item;
-                                                                                });
-
-                                                                                //junta despesas e receitas com entradas
-                                                                                $saldo = $saldo->merge($entradas);
-                                                                                //
-
-                                                                                $saidas = $tranferencias_SaidaMes;
-                                                                                $saidas = $saidas->map(function ($item) {
-                                                                                    $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
-                                                                                    $item->Categoria = 'Transf. Saida';
-                                                                                    $item->Descricao = 'Transf. Saida';
-                                                                                    $item->NomeCategoria = '-';
-                                                                                    return $item;
-                                                                                });
-                                                                                $saidas->each(function ($saida) {
-                                                                                    $saida->Valor = -$saida->Valor;
-                                                                                });
-
-                                                                                //junta despesas e receitas com entradas e saídas
-                                                                                $saldo = $saldo->merge($saidas);
-
-                                                                                $sorted = $saldo->sortBy(function($conta)
-                                                                                {
-                                                                                    return $conta->Data;
-                                                                                });
-                                                                            @endphp
-
-                                                                                <!-- Modal de detalhe -->
-                                                                            <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
-                                                                                <div class="modal-dialog  modal-lg">
-                                                                                    <div class="modal-content">
-                                                                                        <div class="modal-header">
-                                                                                            <h4 class="modal-title"> Saldo do mes </h4>
-                                                                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                                                                <span aria-hidden="true">&times;</span>
-                                                                                            </button>
-                                                                                        </div>
-                                                                                        <div class="modal-body">
-                                                                                            <table id="Receitas" class="table table-bordered table-hover">
-                                                                                                <thead>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </thead>
-                                                                                                <tbody>
-                                                                                                @foreach($sorted as $valores)
-                                                                                                    <tr>
-                                                                                                        <td>{{ $valores->Efetivada }}</td>
-                                                                                                        <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
-                                                                                                        <td>{{ $valores->Descricao }}</td>
-                                                                                                        <td>{{ 'R$ ' .  str_replace("_",'.',
-                                                                                                                                str_replace(".",',',
-                                                                                                                                str_replace(",",'_',
-                                                                                                                                number_format($valores->Valor, 2
-                                                                                                                                )))) }}
-                                                                                                        </td>
-                                                                                                        <td>{{ $valores->NomeCategoria }}</td>
-                                                                                                        <td>{{ $valores->Banco }}</td>
-                                                                                                    </tr>
-                                                                                                @endforeach
-                                                                                                </tbody>
-                                                                                                <tfoot>
-                                                                                                <tr>
-                                                                                                    <th>Efetivada</th>
-                                                                                                    <th>Data</th>
-                                                                                                    <th>Descrição</th>
-                                                                                                    <th>Valor</th>
-                                                                                                    <th>Categoria</th>
-                                                                                                    <th>Banco</th>
-                                                                                                </tr>
-                                                                                                </tfoot>
-                                                                                            </table>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                    <!-- /.modal-content -->
-                                                                                </div>
-                                                                                <!-- /.modal-dialog -->
-                                                                            </div>
-                                                                            <!-- Modal de detalhe -->
-                                                                        </div>
-                                                                        <!-- /.description-block -->
-                                                                    </div>
-
-                                                                </div>
-                                                            </div>
-                                                        </div>
-                                                        <!-- /.widget-user -->
+                                                    <div class="widget-user-header text-white"
+                                                         style="background:{{ $conta->Cor }}">
+                                                        <h3 class="widget-user-username">{{ $conta->ID_Conta . ' - ' . $conta->Nome }}</h3>
+                                                        <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
                                                     </div>
-                                            @endforeach
-                                        </div>
+
+                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
+                                                        <div class="widget-user-image">
+
+                                                            @if (! $conta->Imagem == null)
+                                                                <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
+                                                            @else
+                                                                <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
+                                                            @endif
+                                                        </div>
+                                                    </a>
+
+                                                    <div class="card-footer">
+                                                        <div class="row">
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Saldo, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span class="description-text">SALDO ATUAL</span>
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
+                                                                    </h5>
+
+                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
+
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Receitas </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Receitas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($receitaMes as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
+
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Despesas </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+
+
+                                                                                    <table id="Despesas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($despesaMes as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+
+                                                        </div>
+                                                        <!-- /.row -->
+                                                        <div class="row">
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
+
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="entra{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Transferências de Entrada </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Entradas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($tranferencias_EntradaMes as $transferencia)
+                                                                                            <tr>
+                                                                                                <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($transferencia->Valor, 2, ',', '.') }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4 border-right">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
+
+                                                                    <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="sai{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Transferências de Saída </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Saidas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($tranferencias_SaidaMes as $transferencia)
+                                                                                            <tr>
+                                                                                                <td>{{ $transferencia->Nome .' - ' . $transferencia->Banco  }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($transferencia->Data)) }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($transferencia->Valor, 2, ',', '.') }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Conta Origem</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Valor</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+                                                            <!-- /.col -->
+                                                            <div class="col-sm-4">
+                                                                <div class="description-block">
+                                                                    <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
+                                                                        {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
+                                                                    </h5>
+                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
+                                                                    @php
+                                                                        $despesas = $despesaMes;
+                                                                        $despesas->each(function ($despesa) {
+                                                                            $despesa->Valor = -$despesa->Valor;
+                                                                        });
+                                                                        //junta despesas e receitas
+                                                                        $saldo = $despesas->merge($receitaMes);
+
+                                                                        $entradas = $tranferencias_EntradaMes;
+                                                                        $entradas = $entradas->map(function ($item) {
+                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                            $item->Categoria = 'Transf. Ent.';
+                                                                            $item->Descricao = 'Transf. Ent.';
+                                                                            $item->NomeCategoria = '-';
+                                                                            return $item;
+                                                                        });
+
+                                                                        //junta despesas e receitas com entradas
+                                                                        $saldo = $saldo->merge($entradas);
+                                                                        //
+
+                                                                        $saidas = $tranferencias_SaidaMes;
+                                                                        $saidas = $saidas->map(function ($item) {
+                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                            $item->Categoria = 'Transf. Saida';
+                                                                            $item->Descricao = 'Transf. Saida';
+                                                                            $item->NomeCategoria = '-';
+                                                                            return $item;
+                                                                        });
+                                                                        $saidas->each(function ($saida) {
+                                                                            $saida->Valor = -$saida->Valor;
+                                                                        });
+
+                                                                        //junta despesas e receitas com entradas e saídas
+                                                                        $saldo = $saldo->merge($saidas);
+
+                                                                        $sorted = $saldo->sortBy(function($conta)
+                                                                        {
+                                                                            return $conta->Data;
+                                                                        });
+                                                                    @endphp
+
+                                                                        <!-- Modal de detalhe -->
+                                                                    <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
+                                                                        <div class="modal-dialog  modal-lg">
+                                                                            <div class="modal-content">
+                                                                                <div class="modal-header">
+                                                                                    <h4 class="modal-title"> Saldo do mes </h4>
+                                                                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                                                        <span aria-hidden="true">&times;</span>
+                                                                                    </button>
+                                                                                </div>
+                                                                                <div class="modal-body">
+                                                                                    <table id="Receitas" class="table table-bordered table-hover">
+                                                                                        <thead>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </thead>
+                                                                                        <tbody>
+                                                                                        @foreach($sorted as $valores)
+                                                                                            <tr>
+                                                                                                <td>{{ $valores->Efetivada }}</td>
+                                                                                                <td style="text-align: center">{{ date('d/m/Y', strtotime($valores->Data)) }}</td>
+                                                                                                <td>{{ $valores->Descricao }}</td>
+                                                                                                <td>{{ 'R$ ' . number_format($valores->Valor, 2, ',', '.') }}</td>
+                                                                                                <td>{{ $valores->NomeCategoria }}</td>
+                                                                                                <td>{{ $valores->Banco }}</td>
+                                                                                            </tr>
+                                                                                        @endforeach
+                                                                                        </tbody>
+                                                                                        <tfoot>
+                                                                                        <tr>
+                                                                                            <th>Efetivada</th>
+                                                                                            <th>Data</th>
+                                                                                            <th>Descrição</th>
+                                                                                            <th>Valor</th>
+                                                                                            <th>Categoria</th>
+                                                                                            <th>Banco</th>
+                                                                                        </tr>
+                                                                                        </tfoot>
+                                                                                    </table>
+                                                                                </div>
+                                                                            </div>
+                                                                            <!-- /.modal-content -->
+                                                                        </div>
+                                                                        <!-- /.modal-dialog -->
+                                                                    </div>
+                                                                    <!-- Modal de detalhe -->
+                                                                </div>
+                                                                <!-- /.description-block -->
+                                                            </div>
+
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!-- /.widget-user -->
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 @endforeach
 
                             </div>
@@ -977,16 +888,16 @@
                             <div class="card-body">
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
-                                        <tr>
-                                            <th style="text-align: center">Conta</th>
-                                            <th style="text-align: center">Ano/Mês</th>
-                                            <th style="text-align: center">Saldo Atual</th>
-                                            <th style="text-align: center">Receitas</th>
-                                            <th style="text-align: center">Despesas</th>
-                                            <th style="text-align: center">Transf. Entrada</th>
-                                            <th style="text-align: center">Transf. Saida</th>
-                                            <th style="text-align: center">Saldo Mes</th>
-                                        </tr>
+                                    <tr>
+                                        <th style="text-align: center">Conta</th>
+                                        <th style="text-align: center">Ano/Mês</th>
+                                        <th style="text-align: center">Saldo Atual</th>
+                                        <th style="text-align: center">Receitas</th>
+                                        <th style="text-align: center">Despesas</th>
+                                        <th style="text-align: center">Transf. Entrada</th>
+                                        <th style="text-align: center">Transf. Saida</th>
+                                        <th style="text-align: center">Saldo Mes</th>
+                                    </tr>
                                     </thead>
                                     <tbody>
 
@@ -997,75 +908,51 @@
                                             return $conta->ID_Conta;
                                         });
                                     @endphp
-                                        @foreach($sorted as $conta)
+                                    @foreach($sorted as $conta)
 
-                                                <tr>
-                                                <td>
-                                                    {{ $conta->ID_Conta . ' - ' . $conta->Nome . ' - ' . $conta->Banco }}
-                                                </td>
-                                                <td>
-                                                    {{ $conta->Ano_Mes }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                str_replace(".",',',
-                                                                str_replace(",",'_',
-                                                                number_format($conta->Saldo, 2
-                                                                )))) }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                str_replace(".",',',
-                                                                str_replace(",",'_',
-                                                                number_format($conta->Receitas, 2
-                                                                )))) }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                               str_replace(".",',',
-                                                               str_replace(",",'_',
-                                                               number_format($conta->Despesas, 2
-                                                               )))) }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                str_replace(".",',',
-                                                                str_replace(",",'_',
-                                                                number_format($conta->Entradas, 2
-                                                                )))) }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                str_replace(".",',',
-                                                                str_replace(",",'_',
-                                                                number_format($conta->Saidas, 2
-                                                                )))) }}
-                                                </td>
-                                                <td>
-                                                    {{ 'R$ ' .  str_replace("_",'.',
-                                                                str_replace(".",',',
-                                                                str_replace(",",'_',
-                                                                number_format($conta->SaldoMes, 2
-                                                                )))) }}
-                                                </td>
+                                        <tr>
+                                            <td>
+                                                {{ $conta->ID_Conta . ' - ' . $conta->Nome . ' - ' . $conta->Banco }}
+                                            </td>
+                                            <td>
+                                                {{ $conta->Ano_Mes }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->Saldo, 2, ',', '.') }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
+                                            </td>
+                                            <td>
+                                                {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
+                                            </td>
 
-                                            </tr>
+                                        </tr>
 
-                                        @endforeach
+                                    @endforeach
 
                                     </tbody>
 
                                     <tfoot>
-                                        <tr>
-                                            <th style="text-align: center">Conta</th>
-                                            <th style="text-align: center">Ano/Mês</th>
-                                            <th style="text-align: center">Saldo Atual</th>
-                                            <th style="text-align: center">Receitas</th>
-                                            <th style="text-align: center">Despesas</th>
-                                            <th style="text-align: center">Transf. Entrada</th>
-                                            <th style="text-align: center">Transf. Saida</th>
-                                            <th style="text-align: center">Saldo Mes</th>
-                                        </tr>
+                                    <tr>
+                                        <th style="text-align: center">Conta</th>
+                                        <th style="text-align: center">Ano/Mês</th>
+                                        <th style="text-align: center">Saldo Atual</th>
+                                        <th style="text-align: center">Receitas</th>
+                                        <th style="text-align: center">Despesas</th>
+                                        <th style="text-align: center">Transf. Entrada</th>
+                                        <th style="text-align: center">Transf. Saida</th>
+                                        <th style="text-align: center">Saldo Mes</th>
+                                    </tr>
                                     </tfoot>
                                 </table>
                             </div>
@@ -1081,7 +968,7 @@
 
 
 
-    @stop
+@stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
@@ -1101,8 +988,9 @@
 @section('js')
     <script>
         function voltaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes - 1;
             if (mes === 0) {
                 mes = 12;
@@ -1111,7 +999,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
             var data = ano + '-' + mes;
 
@@ -1122,8 +1010,9 @@
         }
 
         function avancaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes + 1;
             if (mes === 13) {
                 mes = 1;
@@ -1132,7 +1021,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
 
             var data = ano + '-' + mes;
@@ -1142,6 +1031,13 @@
 
             window.location.href = url;
 
+        }
+
+        function redirecionaParaDataSelecionada() {
+            const data = document.getElementById('Data').value;
+            let url = '{{ route("despesas.showAll", ["date_filter" => "DATA"]) }}';
+            url = url.replace('DATA', data);
+            window.location.href = url;
         }
 
         window.onload = function() {
@@ -1172,14 +1068,23 @@
 
     <!-- INPUT DATE -->
     <script>
+        let ultimaData = $('#Data').val();
         //Date picker
         $('#divData').datetimepicker({
-            //format:'DD/MM/YYYY',
-            format:'YYYY/MM',
-            viewMode: "months",
-            minViewMode: "months",
+            format: 'YYYY-MM',
+            viewMode: 'months',
+            minViewMode: 'months',
+            locale: 'pt-br',
+            defaultDate: moment(), // já inicia com data atual
+        });
+        $('#divData').on('hide.datetimepicker', function () {
+            const novaData = $('#Data').val();
 
-        })
+            if (novaData !== ultimaData) {
+                ultimaData = novaData;
+                redirecionaParaDataSelecionada();
+            }
+        });
         $('[data-mask]').inputmask();
     </script>
     <!-- INPUT DATE -->
