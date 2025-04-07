@@ -56,11 +56,15 @@ class Receita extends Model
     public function receitas($start_date, $end_date, $conta){
         $receitas = DB::table('receita')
             //->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
-            ->select('receita.ID_Receita', 'receita.Efetivada', 'receita.Data',
+            ->select(
+                'receita.ID_Receita', 'receita.Efetivada', 'receita.Data',
                 'receita.Descricao', 'receita.Valor',
-                'categoria.Nome as NomeCategoria', 'conta.Banco' )
+                DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
+                'icone.Link as Icone', 'conta.Banco', 'categoria.Cor')
             ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria');
+            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
             //->where('Efetivada', 1);
             if (! is_null($start_date) ) {
                 $receitas->where('Data', '>=', $start_date);

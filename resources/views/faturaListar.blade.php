@@ -58,8 +58,12 @@
                                                 str_replace(",",'_',
                                                 number_format($fatura->Valor, 2
                                                 )))) }}</td>
-
-                                <td><i class="{{ $fatura->Icone }}"></i> {{ $fatura->NomeCategoria }}</td>
+                                <td>
+                                    <span class="icone-circulo" style="background-color: {{ $fatura->Cor }};">
+                                        <i class="{{ $fatura->Icone }}"></i>
+                                    </span>
+                                    {{ $fatura->NomeCategoria }}
+                                </td>
                                 <td>
 
                                     <div class="row">
@@ -286,6 +290,23 @@
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
+    <style>
+        .icone-circulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            margin-right: 10px;
+            color: black;
+            font-size: 16px;
+        }
+
+        .icone-circulo i {
+            margin: 0;
+        }
+    </style>
 @stop
 
 @section('js')

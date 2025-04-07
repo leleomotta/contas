@@ -67,12 +67,14 @@ class Despesa extends Model
 
     public function despesasSemCartao($start_date, $end_date, $conta){
         $despesasSemCartao = DB::table('despesa')
-            ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
-                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
-                'categoria.Cor')
+            ->select(
+                'despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data', 'despesa.Efetivada',
+                DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
+                'icone.Link as Icone', 'conta.Banco', 'categoria.Cor')
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
             //->where('Efetivada', 1);
             if (! is_null($start_date) ) {
                 $despesasSemCartao->where('Data', '>=', $start_date);
@@ -192,8 +194,5 @@ class Despesa extends Model
 
         return $cartaoAberto->get();
     }
-
-
-
 }
 

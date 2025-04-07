@@ -161,7 +161,7 @@ class ReceitaController extends Controller
 
         $contas = (new \App\Models\Conta)->showAll();
 
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
+        $categorias = (new \App\Models\Categoria)->show('R');
 
         return view('receitaEditar', [
             'receita' => $receita,
@@ -221,8 +221,8 @@ class ReceitaController extends Controller
     public function new(){
         $contas = (new \App\Models\Conta)->showAll();
 
-        //$categorias = (new \App\Models\Categoria)->show('R');
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
+        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
+        $categorias = (new \App\Models\Categoria)->show('R');
         return view('receitaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,

@@ -61,10 +61,14 @@
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                     </div>
-                    <select class="custom-select" id="Categoria" name="Categoria">
+                    <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
                         <option selected data-default>- Selecione uma categoria -</option>
                         @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}"> {{$categoria->Nome}}  </option>
+                            <option value="{{$categoria->ID_Categoria}}"
+                                    data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
+                                <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'
+                            >
+                            </option>
                         @endforeach
                     </select>
                 </div>
@@ -113,9 +117,48 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.7.1/css/bootstrap-datepicker.min.css" rel="stylesheet"/>
 
+    {{-- Latest compiled and minified CSS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
+    <style>
+        .bootstrap-select > .dropdown-toggle, /* dropdown box */
+        .bootstrap-select > .dropdown-menu li a, /* all dropdown options */
+        .bootstrap-select > .dropdown-toggle:focus, /* dropdown :focus */
+        .bootstrap-select > .dropdown-toggle:hover /* dropdown :hover */
+        {
+            background-color: white;
+        }
+        .bootstrap-select > .dropdown-toggle {
+            border-color: lightgrey !important;
+            background-color: white !important;
+            color: black !important; /* Adiciona !important */
+        }
+        .bootstrap-select > .dropdown-menu li a {
+            color: black;
+        }
+        .icone-circulo {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 30px;
+            height: 30px;
+            border-radius: 50% !important; /* garante que fique redondo */
+            margin-right: 10px;
+            color: black;
+            font-size: 16px;
+        }
+
+        .icone-circulo i {
+            margin: 0;
+        }
+    </style>
 @stop
 
 @section('js')
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+    <!-- (Optional) Latest compiled and minified JavaScript translation files -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
+
     <script>
         $("#Categoria").val( {{ $receita['ID_Categoria'] }} );
         $("#Conta").val( {{ $receita['ID_Conta'] }} );

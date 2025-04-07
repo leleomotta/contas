@@ -159,7 +159,6 @@ class DespesaController extends Controller
 
         $contas = (new \App\Models\Conta)->showAll();
 
-        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
         $categorias = (new \App\Models\Categoria)->show('D');
 
         return view('despesaEditar', [

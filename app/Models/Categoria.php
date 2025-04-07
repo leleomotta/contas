@@ -14,7 +14,6 @@ class Categoria extends Model
 
     protected $primaryKey = 'ID_Categoria';
 
-
     public function showAll(){
             $filtros = DB::table('categoria')
                 ->select('*' )
@@ -26,49 +25,29 @@ class Categoria extends Model
 
     public function show(string $tipoCategoria){
         //aqui pegamos todos os pais
-        $despesasPai = Categoria::where(function ($query) use ($tipoCategoria) {
-            $query->select('*');
-
-            $query->where('Tipo',$tipoCategoria);
-            $query->WhereNull('ID_Categoria_Pai');
-            //$query->orderBy('Nome','ASC');
-        })->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone' )
-            ->orderBy('Nome','ASC')
-            //->toSql(); dd($despesasPai);
+        $despesasPai = Categoria::where('Tipo', $tipoCategoria)
+            ->whereNull('ID_Categoria_Pai')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+            ->orderBy('Nome', 'ASC')
             ->get();
 
-        //aqui apenas criamos o dataset vazio
-        $despesas = Categoria::where(function ($query) {
-            $query->select('*');
-            $query->where('Tipo','X');
-        })->get();
-
+        $despesas = collect(); // mais limpo que usar um where fake
 
         //percorre, adciona o atual, depois os possíveis filhos e assim vai
-        foreach($despesasPai as $desp) {
-            $despesas = $despesas->add($desp);
-            //procura filhos da despesa específica
-            $X = Categoria::where(function ($query) use ($desp) {
-                $query->select('*');
-                $query->where('ID_Categoria_Pai',$desp->ID_Categoria);
-            })->leftjoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone' )
-                ->orderBy('Nome','ASC')
-                //->toSql(); dd($X);
+        foreach ($despesasPai as $desp) {
+            $despesas->push($desp);
+
+            $filhos = Categoria::where('ID_Categoria_Pai', $desp->ID_Categoria)
+                ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+                ->orderBy('Nome', 'ASC')
                 ->get();
 
-            //confere se tem os filhos e adciona na mão para poder colocar o ->
-            if (!($X == NULL)){
-                foreach($X as $Y) {
-                    $Y['Nome'] = '-> '  . $Y['Nome'];
-                    $despesas = $despesas->add($Y);
-                }
+            foreach ($filhos as $filho) {
+                $filho->Nome = $desp->Nome . ' -> ' . $filho->Nome;
+                $despesas->push($filho);
             }
-
-
         }
+
         return  $despesas;
     }
-
-
-
 }
