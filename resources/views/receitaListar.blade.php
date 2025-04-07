@@ -165,11 +165,7 @@
                             </td>
                             <td style="text-align: center">{{ date('d/m/Y', strtotime($receita->Data)) }}</td>
                             <td>{{ $receita->Descricao  }}</td>
-                            <td>{{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($receita->Valor, 2
-                                            )))) }}</td>
+                            <td>{{ 'R$ ' . number_format($receita->Valor, 2, ',', '.') }}</td>
                             <td>{{$receita->Banco}}</td>
                             <td>
                                 <span class="icone-circulo" style="background-color: {{ $receita->Cor }};">
@@ -178,52 +174,42 @@
                                 {{ $receita->NomeCategoria }}
                             </td>
 
-                            <td>
-                                <div class="row">
-                                    <div class="col-3">
+                            <td class="text-center">
+                                <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
+                                    <form id="efetiva_{{ $receita->ID_Receita }}" role="form" action="{{ route('receitas.efetiva', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET" class="m-0 p-0">
                                         @if ($receita->Efetivada == 1)
-                                            <form id="efetiva" role="form" action="{{ route('receitas.efetiva', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
-                                                <button type="submit" class="btn btn-danger"
-                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                        onclick="return confirm('Deseja realmente desefetivar esta receita?')">
-                                                    <span class="fa fa-window-close"></span>
-                                                </button>
-                                            </form>
+                                            <button type="submit" class="btn btn-sm btn-danger"
+                                                    title="Desefetivar"
+                                                    onclick="return confirm('Deseja realmente desefetivar esta receita?')">
+                                                <i class="fa fa-window-close"></i>
+                                            </button>
                                         @else
-                                            <form id="efetiva" role="form" action="{{ route('receitas.efetiva', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
-                                                <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
-                                                <button type="submit" class="btn btn-success"
-                                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                        onclick="return confirm('Deseja realmente efetivar esta receita?')">
-                                                    <span class="fa fa-check"></span>
-                                                </button>
-                                            </form>
+                                            <input type="hidden" name="date_filter" value="{{ app('request')->input('date_filter') }}">
+                                            <button type="submit" class="btn btn-sm btn-success"
+                                                    title="Efetivar"
+                                                    onclick="return confirm('Deseja realmente efetivar esta receita?')">
+                                                <i class="fa fa-check"></i>
+                                            </button>
                                         @endif
-                                    </div>
+                                    </form>
 
-                                    <div class="col-3">
-                                        <form id="edita" role="form" action="{{ route('receitas.edit', ['ID_Receita' =>$receita->ID_Receita])  }}" method="GET">
-                                            <button type="submit" class="btn btn-primary"
-                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                <span class="fa fa-edit"></span>
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <form id="edita" role="form" action="{{ route('receitas.edit', ['ID_Receita' => $receita->ID_Receita]) }}" method="GET" class="m-0 p-0">
+                                        <button type="submit" class="btn btn-sm btn-primary" title="Editar">
+                                            <i class="fa fa-edit"></i>
+                                        </button>
+                                    </form>
 
-                                    <div class="col-3">
-                                        <form action="{{ route('receitas.destroy', ['ID_Receita'=> $receita->ID_Receita])  }}" method="POST">
-                                            @csrf
-                                            @method('delete')
-                                            <input type="hidden" name="ID_Receita" value="{{ $receita->ID_Receita }}">
-                                            <button type="submit" class="btn btn-danger"
-                                                    style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                    onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                <span class="fa fa-trash"></span>
-                                            </button>
-                                        </form>
-                                    </div>
+                                    <form action="{{ route('receitas.destroy', ['ID_Receita'=> $receita->ID_Receita]) }}" method="POST" class="m-0 p-0">
+                                        @csrf
+                                        @method('delete')
+                                        <button type="submit" class="btn btn-sm btn-danger" title="Excluir"
+                                                onclick="return confirm('Deseja realmente excluir este registro?')">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </form>
                                 </div>
                             </td>
+
                         </tr>
                     @endforeach
                     </tbody>
@@ -263,11 +249,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Pendente</span>
                         <span class="info-box-number">
-                            {{ 'R$ ' .  str_replace("_",'.',
-                                        str_replace(".",',',
-                                        str_replace(",",'_',
-                                        number_format($pendente, 2
-                                        )))) }}
+                            {{ 'R$ ' . number_format($pendente, 2, ',', '.') }}
                         </span>
                     </div>
                 </div>
@@ -278,11 +260,7 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Recebido</span>
                         <span class="info-box-number">
-                            {{ 'R$ ' .  str_replace("_",'.',
-                                            str_replace(".",',',
-                                            str_replace(",",'_',
-                                            number_format($recebido, 2
-                                            )))) }}
+                            {{ 'R$ ' . number_format($recebido, 2, ',', '.') }}
                         </span>
                     </div>
                 </div>
@@ -341,8 +319,10 @@
         });
 
         function voltaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
+
             mes = mes - 1;
             if (mes === 0) {
                 mes = 12;
@@ -362,8 +342,9 @@
         }
 
         function avancaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes + 1;
             if (mes === 13) {
                 mes = 1;

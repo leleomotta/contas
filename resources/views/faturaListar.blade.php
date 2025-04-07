@@ -65,45 +65,33 @@
                                     </span>
                                     {{ $fatura->NomeCategoria }}
                                 </td>
-                                <td>
 
-                                    <div class="row">
-                                        <div class="col-3">
-                                            @if ($faturas->count() <> 0 )
-                                                @if ($fatura->Fechada == 0)
-                                                    <form id="edita" role="form" action="{{ route('cartoes.edit_despesa', ['ID_Despesa' =>$fatura->ID_Despesa])  }}" method="GET">
-                                                        <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
-                                                        <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
-                                                        <button type="submit" class="btn btn-primary"
-                                                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                                                            <span class="fa fa-edit"></span>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </div>
+                                <td class="text-center">
+                                    <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
+                                        @if ($faturas->count() != 0 && $fatura->Fechada == 0)
+                                            <form id="edita" role="form" action="{{ route('cartoes.edit_despesa', ['ID_Despesa' => $fatura->ID_Despesa]) }}" method="GET" class="m-0 p-0">
+                                                <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
+                                                <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
+                                                <button type="submit" class="btn btn-sm btn-primary" title="Editar">
+                                                    <i class="fa fa-edit"></i>
+                                                </button>
+                                            </form>
 
-                                        <div class="col-3">
-                                            @if ($faturas->count() <> 0 )
-                                                @if ($fatura->Fechada == 0)
-                                                    <form action="{{ route('cartoes.destroy_despesa', ['ID_Despesa'=> $fatura->ID_Despesa])  }}" method="POST">
-                                                        @csrf
-                                                        @method('delete')
-                                                        <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
-                                                        <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
-
-                                                        <button type="submit" class="btn btn-danger"
-                                                                style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;"
-                                                                onclick="return confirm('Deseja realmente excluir este registro?')">
-                                                            <span class="fa fa-trash"></span>
-                                                        </button>
-                                                    </form>
-                                                @endif
-                                            @endif
-                                        </div>
+                                            <form action="{{ route('cartoes.destroy_despesa', ['ID_Despesa'=> $fatura->ID_Despesa]) }}" method="POST" class="m-0 p-0">
+                                                @csrf
+                                                @method('delete')
+                                                <input type="hidden" name="ID_Despesa" value="{{ $fatura->ID_Despesa }}">
+                                                <input type="hidden" name="ID_Cartao" value="{{ $fatura->ID_Cartao }}">
+                                                <button type="submit" class="btn btn-sm btn-danger" title="Excluir"
+                                                        onclick="return confirm('Deseja realmente excluir este registro?')">
+                                                    <i class="fa fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        @endif
                                     </div>
-
                                 </td>
+
+
                             </tr>
                         @endforeach
                         </tbody>
@@ -172,7 +160,6 @@
             <div class="col-md-6 col-sm-6 col-12" id="Botoes">
                 <div class="info-box">
                     <div class="card-body row">
-
                         <div class="col-12">
                             @if ($faturas->count() <> 0 )
                                 @if ($fatura->Fechada == 0)
@@ -268,16 +255,10 @@
                                 @endif
                             @endif
                         </div>
-
                     </div>
                 </div>
-
             </div>
-
         </div>
-
-
-
     </div>
     <!-- Rodapé -->
 
@@ -314,8 +295,9 @@
     <script>
 
         function voltaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
 
             mes = mes - 1;
             if (mes === 0) {
@@ -338,8 +320,9 @@
         }
 
         function avancaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes + 1;
             if (mes === 13) {
                 mes = 1;
@@ -417,8 +400,5 @@
         $('#Data_Fechamento').datetimepicker({
             format:'DD/MM/YYYY',
         })
-
     </script>
-
-
 @stop
