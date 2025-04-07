@@ -20,11 +20,12 @@
                             <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                         </div>
 
-                        <input type="text" class="form-control datetimepicker-input" data-target="#divData" id="Data" name="Data"
-                               data-inputmask-alias="datetime" data-inputmask-inputformat="yyyy-mm" data-mask
-                               placeholder="yyyy-mm"  data-toggle="datetimepicker"
-                               style="text-align:center;"
-                        />
+                        <input type="text" class="form-control datetimepicker-input"
+                               id="Data" name="Data"
+                               data-target="#divData"
+                               data-toggle="datetimepicker"
+                               placeholder="aaaa-mm"
+                               style="text-align:center;" />
 
                         <div class="input-group-append" onclick="avancaData()">
                             <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
@@ -100,7 +101,7 @@
 
                     <div class="col-md-4 col-sm-6 col-12">
                         <div class="info-box">
-                            Despesas do cartão
+                            <canvas id="Cartao" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
                         </div>
                     </div>
 
@@ -134,8 +135,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-daterangepicker/3.0.5/daterangepicker.js"></script>
     <script>
         function voltaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes - 1;
             if (mes === 0) {
                 mes = 12;
@@ -144,7 +146,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
             var data = ano + '-' + mes;
 
@@ -155,8 +157,9 @@
         }
 
         function avancaData() {
-            var ano = parseInt( document.getElementById('Data').value.substring(0,4) );
-            var mes = parseInt( document.getElementById('Data').value.substring(5,8) );
+            const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
+            let ano = parseInt(anoStr);
+            let mes = parseInt(mesStr);
             mes = mes + 1;
             if (mes === 13) {
                 mes = 1;
@@ -165,7 +168,7 @@
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '/' + mes;
+            document.getElementById('Data').value = ano + '-' + mes;
 
 
             var data = ano + '-' + mes;
@@ -175,6 +178,13 @@
 
             window.location.href = url;
 
+        }
+
+        function redirecionaParaDataSelecionada() {
+            const data = document.getElementById('Data').value;
+            let url = '{{ route("home.showAll", ["date_filter" => "DATA"]) }}';
+            url = url.replace('DATA', data);
+            window.location.href = url;
         }
 
         window.onload = function() {
@@ -202,13 +212,23 @@
     <!-- INPUT DATE -->
     <script>
         //Date picker
+        let ultimaData = $('#Data').val();
+        //Date picker
         $('#divData').datetimepicker({
-            //format:'DD/MM/YYYY',
-            format:'YYYY/MM',
-            viewMode: "months",
-            minViewMode: "months",
+            format: 'YYYY-MM',
+            viewMode: 'months',
+            minViewMode: 'months',
+            locale: 'pt-br',
+            defaultDate: moment(), // já inicia com data atual
+        });
+        $('#divData').on('hide.datetimepicker', function () {
+            const novaData = $('#Data').val();
 
-        })
+            if (novaData !== ultimaData) {
+                ultimaData = novaData;
+                redirecionaParaDataSelecionada();
+            }
+        });
         $('[data-mask]').inputmask();
 
     </script>
@@ -323,9 +343,6 @@
                 options: pieOptions
             })
             //DESPESAS
-
         })
 </script>
-
-
 @stop
