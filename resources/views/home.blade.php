@@ -107,10 +107,10 @@
 
                 </div>
 
-                    <!-- THE CALENDAR -->
-                    <!--<div id="calendar"></div> -->
+                <!-- THE CALENDAR -->
+                <!--<div id="calendar"></div> -->
             </div>
-                <!-- /Listagem-->
+            <!-- /Listagem-->
         </div>
     </div>
 @stop
@@ -275,7 +275,7 @@
                         ],
                         backgroundColor : [
                             @for ($i = 0; $i < $chaves->count() ; $i++)
-                                gerar_cor_hexadecimal(),
+                            gerar_cor_hexadecimal(),
                             @endfor
                         ],
                     }
@@ -343,6 +343,53 @@
                 options: pieOptions
             })
             //DESPESAS
+
+            //CARTÃO
+            // Get context with jQuery - using jQuery's .get() method.
+            @php
+                $despesasCartaoSoma = $despesasCartao->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
+                $chaves = $despesasCartaoSoma->keys();
+                $valores = $despesasCartaoSoma->values();
+            @endphp
+
+            var CartaoData        = {
+                labels: [
+                    //dd($chaves[0]); // "Outros"
+                    @for ($i = 0; $i < $chaves->count() ; $i++)
+                        "{{ $chaves[$i] }}" ,
+                    @endfor
+
+                ],
+                datasets: [
+                    {
+                        data: [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                                {{ $valores[$i] }} ,
+                            @endfor
+                        ],
+                        backgroundColor : [
+                            @for ($i = 0; $i < $chaves->count() ; $i++)
+                            gerar_cor_hexadecimal(),
+                            @endfor
+                        ],
+                    }
+                ]
+            }
+            // Get context with jQuery - using jQuery's .get() method.
+            var pieChartCanvas = $('#Cartao').get(0).getContext('2d')
+            var pieData        = CartaoData;
+            var pieOptions     = {
+                maintainAspectRatio : false,
+                responsive : true,
+            }
+            //Create pie or douhnut chart
+            // You can switch between pie and douhnut using the method below.
+            var Cartao = new Chart(pieChartCanvas, {
+                type: 'pie',
+                data: pieData,
+                options: pieOptions
+            })
+            //CARTÃO
         })
-</script>
+    </script>
 @stop

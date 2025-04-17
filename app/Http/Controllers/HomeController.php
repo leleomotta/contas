@@ -41,6 +41,9 @@ class HomeController extends Controller
 
         $despesas = (new \App\Models\Despesa)->show($start_date, $end_date);
         $receitas = (new \App\Models\Receita)->show($start_date, $end_date);
+        $despesasCartao = (new \App\Models\Despesa)->cartaoAberto( Carbon::createFromDate($start_date)->isoFormat('Y') .
+            '-' . Carbon::createFromDate($start_date)->isoFormat('MM') );
+        $despesasCartao = $despesasCartao->merge((new \App\Models\Despesa)->cartaoPago($start_date, $end_date, null));
 
 
         //$receitas = $receitas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
@@ -52,7 +55,8 @@ class HomeController extends Controller
 
         return view('home', [
             'despesas' => $despesas,
-            'receitas' => $receitas
+            'receitas' => $receitas,
+            'despesasCartao' => $despesasCartao
         ]);
 
         /*
