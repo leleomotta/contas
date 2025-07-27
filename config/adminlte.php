@@ -426,8 +426,15 @@ return [
                     'label_color' => 'success',
                 ],
                 [
-                    'text' => 'Adicionar',
+                    'text' => 'Adicionar Cartão',
                     'url' => '/cartoes/novo',
+                    'icon' => 'fa fa-plus nav-icon',
+                    //'label' => 3,
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Adicionar Despesa',
+                    'url' => '/fatura/despesa/novo',
                     'icon' => 'fa fa-plus nav-icon',
                     //'label' => 3,
                     'label_color' => 'success',

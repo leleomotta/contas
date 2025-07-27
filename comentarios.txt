@@ -28,3 +28,10 @@ alter table categoria add COLUMN Icone varchar(100) after cor
 
 Recorrentes:
 * Arquivo Excel
+
+-----------------
+Alterções banco 20250727
+ALTER TABLE `despesa`
+ADD COLUMN `ValorTotal` DECIMAL(10,2) NULL AFTER `Valor`,
+ADD COLUMN `Parcela` INT NULL AFTER `ValorTotal`,
+ADD COLUMN `TotalParcelas` INT NULL AFTER `Parcela`;

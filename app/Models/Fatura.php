@@ -43,6 +43,7 @@ class Fatura extends Model
             ->join('fatura', 'fatura.ID_Despesa', '=', 'despesa.ID_Despesa')
             ->where('fatura.ID_Cartao',$ID_Cartao)
             ->where('fatura.Ano_Mes',$Ano_Mes)
+            //->toSql(); dd($retorno);
             ->get();
 
         return $retorno->sum('Valor');

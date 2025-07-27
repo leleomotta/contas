@@ -41,16 +41,16 @@
                 <div class="card-body table-responsive p-0">
                     <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                         <thead>
-                            <tr>
-                                <th style="text-align: center">Data</th>
-                                <th style="text-align: center">Descrição</th>
-                                <th style="text-align: center">Valor</th>
-                                <th style="text-align: center">Categoria</th>
-                                <th style="width: 110px">&nbsp;</th>
-                            </tr>
+                        <tr>
+                            <th style="text-align: center">Data</th>
+                            <th style="text-align: center">Descrição</th>
+                            <th style="text-align: center">Valor</th>
+                            <th style="text-align: center">Categoria</th>
+                            <th style="width: 110px">&nbsp;</th>
+                        </tr>
                         </thead>
                         <tbody>
-                            @foreach($faturas as $fatura)
+                        @foreach($faturas as $fatura)
                             <tr>
                                 <td style="text-align: center">{{ date('d/m/Y', strtotime($fatura->Data)) }}</td>
                                 <td>{{ $fatura->Descricao  }}</td>
@@ -96,13 +96,13 @@
                         @endforeach
                         </tbody>
                         <tfoot>
-                            <tr>
-                                <th style="text-align: center">Data</th>
-                                <th style="text-align: center">Descrição</th>
-                                <th style="text-align: center">Valor</th>
-                                <th style="text-align: center">Categoria</th>
-                                <th style="width: 110px">&nbsp;</th>
-                            </tr>
+                        <tr>
+                            <th style="text-align: center">Data</th>
+                            <th style="text-align: center">Descrição</th>
+                            <th style="text-align: center">Valor</th>
+                            <th style="text-align: center">Categoria</th>
+                            <th style="width: 110px">&nbsp;</th>
+                        </tr>
                         </tfoot>
                     </table>
                 </div>
@@ -262,7 +262,7 @@
     </div>
     <!-- Rodapé -->
 
-    @stop
+@stop
 
 @section('css')
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}

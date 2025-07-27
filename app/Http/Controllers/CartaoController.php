@@ -68,6 +68,7 @@ class CartaoController extends Controller
 
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
+        $cartoes = Cartao::all();
 
         if ($request->session()->get('ID_Cartao') == null){
             $request->session()->put('ID_Cartao', $request->ID_Cartao);
@@ -77,9 +78,11 @@ class CartaoController extends Controller
         return view('faturaListar', [
             //'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
             //'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),
+
             'faturas' => $fatura->show($Ano_Mes,$request->session()->get('ID_Cartao')),
             'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->session()->get('ID_Cartao')),
-            'contas' => $contas
+            'contas' => $contas,
+            'cartoes' => $cartoes,
         ]);
     }
 
@@ -154,14 +157,16 @@ class CartaoController extends Controller
 
     public function new_despesa(){
         $contas = (new \App\Models\Conta)->showAll();
-
+        $cartoes = Cartao::all();
         //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
         $categorias = (new \App\Models\Categoria)->show('D');
 
         return view('fatura_despesaCriar', [
             'categorias' => $categorias,
             'contas' => $contas,
+            'cartoes' => $cartoes,
         ]);
+
     }
 
     public function show(Cartao $cartao)
@@ -197,48 +202,85 @@ class CartaoController extends Controller
         return redirect()->route('cartoes.showAll');
     }
 
-    public function store_despesa(Request $request){
-
-        //aqui vamos tentar eviotar criar despesa em cartão já fechado
-        $Ano_Mes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+    public function store_despesa(Request $request)
+    {
+        $Ano = $request->Ano;
+        $Mes = str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+        $Ano_Mes = $Ano . '-' . $Mes;
 
         // Busca a fatura correspondente
-        $fatura = Fatura::where('ID_Cartao', $request->ID_Cartao)
+        $faturaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
             ->where('Ano_Mes', $Ano_Mes)
             ->first();
 
         // Verifica se a fatura existe e está finalizada
-        if ($fatura && $fatura->Fechada) {
+        if ($faturaExistente && $faturaExistente->Fechada) {
             return redirect()->back()
                 ->withInput()
-                ->withErrors(['Fatura ' . $Ano_Mes .' já está finalizada. Não é possível adicionar novas despesas.']);
+                ->withErrors(['Fatura ' . $Ano_Mes . ' já está finalizada. Não é possível adicionar novas despesas.']);
         }
-        //até aqui
 
         $cartao = Cartao::find($request->ID_Cartao);
-        $despesa = new Despesa();
 
-        $despesa->Descricao = $request->Descricao;
-        $despesa->Valor =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Valor)));
-        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
-        $despesa->ID_Conta = $cartao->ID_Conta;
-        $despesa->ID_Categoria = $request->Categoria;
-        $request["Efetivada"] = 0;
-        $despesa->save();
+        $descricaoOriginal = $request->Descricao;
+        $valorStr = $request->Valor;
+        $valorTotal = floatval(str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $valorStr))));
+        $data = implode("-", array_reverse(explode("/", $request->Data)));
 
-        $fatura = new Fatura();
-        $fatura->ID_Cartao = $request->ID_Cartao;
-        $fatura->ID_Despesa = $despesa->ID_Despesa;
-        $fatura->Fechada = 0;
-        $fatura->Ano_Mes = $Ano_Mes;
+        $parcelada = $request->Parcelada === 'sim';
+        $numParcelas = $parcelada ? max((int) $request->NumeroParcelas, 1) : 1;
 
-        $fatura->save();
+        // Cálculo do valor base e ajuste de centavos
+        $valorBase = floor(($valorTotal / $numParcelas) * 100) / 100;
+        $diferenca = round($valorTotal - ($valorBase * $numParcelas), 2);
 
-        //$url ='/fatura?ID_Cartao=' . $request->ID_Cartao;
-        //return redirect::to($url);
-        return redirect()->route('cartoes.fatura',array('ID_Cartao' => $request->ID_Cartao) );
+        // Base para calcular fatura de cada parcela (ignora a data da compra e usa o campo Ano/Mes selecionado)
+        $dataBaseParcela = \Carbon\Carbon::createFromDate((int) $request->Ano, (int) $request->Mes, 1);
+
+        for ($i = 1; $i <= $numParcelas; $i++) {
+            $valorParcela = $valorBase;
+            if ($i <= $diferenca * 100) {
+                $valorParcela += 0.01;
+            }
+
+            // Define a data da fatura da parcela
+            $dataParcela = $dataBaseParcela->copy()->addMonths($i - 1);
+            $anoMesParcela = $dataParcela->format('Y-m');
+
+            // Verifica se a fatura da parcela está fechada
+            $faturaParcelaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
+                ->where('Ano_Mes', $anoMesParcela)
+                ->first();
+
+            if ($faturaParcelaExistente && $faturaParcelaExistente->Fechada) {
+                return redirect()->back()
+                    ->withInput()
+                    ->withErrors(['Fatura ' . $anoMesParcela . ' já está finalizada. Não é possível adicionar novas despesas.']);
+            }
+
+            // Cria a despesa
+            $despesa = new Despesa();
+            $despesa->Descricao = $parcelada ? "{$descricaoOriginal} ({$i}/{$numParcelas})" : $descricaoOriginal;
+            $despesa->Valor = $valorParcela;
+            $despesa->ValorTotal = $valorTotal;
+            $despesa->Parcela = $parcelada ? $i : null;
+            $despesa->TotalParcelas = $parcelada ? $numParcelas : null;
+            $despesa->Data = $data;
+            $despesa->ID_Conta = $cartao->ID_Conta;
+            $despesa->ID_Categoria = $request->Categoria;
+            $despesa->Efetivada = 0;
+            $despesa->save();
+
+            // Cria ou associa à fatura
+            $fatura = new Fatura();
+            $fatura->ID_Cartao = $request->ID_Cartao;
+            $fatura->ID_Despesa = $despesa->ID_Despesa;
+            $fatura->Fechada = 0;
+            $fatura->Ano_Mes = $anoMesParcela;
+            $fatura->save();
+        }
+
+        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
     }
 
     public function update(Request $request, Cartao $cartao)
@@ -246,25 +288,41 @@ class CartaoController extends Controller
         //
     }
 
-    public function update_despesa(Request $request){
+    public function update_despesa(Request $request)
+    {
         $despesa = Despesa::find($request->ID_Despesa);
-        $fatura = Fatura::find($request->ID_Despesa);
+        $fatura = Fatura::where('ID_Despesa', $request->ID_Despesa)->first();
 
-        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $novoAnoMes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+
+        // Verifica se está tentando mover para uma fatura fechada
+        $faturaNova = Fatura::where('ID_Cartao', $request->ID_Cartao)
+            ->where('Ano_Mes', $novoAnoMes)
+            ->where('ID_Despesa', '!=', $despesa->ID_Despesa)
+            ->first();
+
+        if ($faturaNova && $faturaNova->Fechada) {
+            return redirect()->back()
+                ->withInput()
+                ->withErrors([
+                    'A fatura de ' . $novoAnoMes . ' já está finalizada. Para alterar esta despesa, escolha um mês com fatura em aberto.'
+                ]);
+        }
+
+        $despesa->Data = implode("-", array_reverse(explode("/", $request->Data)));
         $despesa->Descricao = $request->Descricao;
-        $despesa->Valor =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Valor)));
-
+        $despesa->Valor = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
         $despesa->ID_Categoria = $request->Categoria;
 
-        $fatura->Ano_Mes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
+        $fatura->Ano_Mes = $novoAnoMes;
 
         $despesa->save();
         $fatura->save();
 
-        return redirect()->route('cartoes.fatura',array('ID_Cartao' => $request->ID_Cartao) );
+        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
     }
+
+
 
 
 }
