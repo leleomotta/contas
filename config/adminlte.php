@@ -390,6 +390,15 @@ return [
                     //'label' => 3,
                     'label_color' => 'success',
                 ],
+                [
+                    'text' => 'Adicionar Recorrencia',
+                    'url' => '/recorrencias/novo',
+                    //'url' => {{ route('') }},
+                    //'url' => route('contas.new') ,
+                    'icon' => 'fa fa-plus nav-icon',
+                    //'label' => 3,
+                    'label_color' => 'success',
+                ],
             ],
         ],
 

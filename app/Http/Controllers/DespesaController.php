@@ -4,7 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Categoria;
 use App\Models\Conta;
+use App\Models\Cartao;
 use App\Models\Despesa;
+use App\Models\Recorrencia;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
@@ -226,4 +228,52 @@ class DespesaController extends Controller
         ]);
 
     }
+
+    public function recorrencias_new()
+    {
+        // Recupera as categorias disponíveis
+        $categorias = Categoria::orderBy('Nome')->get();
+
+        // Recupera as contas bancárias
+        $contas = Conta::orderBy('Nome')->get();
+
+        // Recupera os cartões de crédito
+        $cartoes = Cartao::orderBy('Nome')->get();
+
+        return view('recorrenciaCriar', compact('categorias', 'contas', 'cartoes'));
+
+    }
+
+    public function recorrencias_store(Request $request)
+    {
+        $recorrencia = new Recorrencia();
+
+        $recorrencia->Descricao = $request->Descricao;
+        $recorrencia->Valor = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
+        $recorrencia->ID_Categoria = $request->ID_Categoria;
+        $recorrencia->ID_Conta = ($request->TipoPagamento === 'conta') ? $request->ID_Conta : null;
+        $recorrencia->ID_Cartao = ($request->TipoPagamento === 'cartao') ? $request->ID_Cartao : null;
+        $recorrencia->Dia_vencimento = $request->DiaVencimento;
+        $recorrencia->Periodicidade = $request->Periodicidade;
+
+        $recorrencia->Data_inicio = implode("-", array_reverse(explode("/", $request->DataInicio)));
+
+        if (!empty($request->DataFim)) {
+            $recorrencia->Data_fim = implode("-", array_reverse(explode("/", $request->DataFim)));
+        } else {
+            $recorrencia->Data_fim = null;
+        }
+
+        $recorrencia->Ativa = isset($request->Ativa) ? 1 : 0;
+
+        $recorrencia->save();
+
+        $url = '/recorrencias';
+        return redirect($url);
+
+//        return redirect()->route('recorrencias.new')->with('success', 'Recorrência cadastrada com sucesso!');
+
+    }
+
+
 }

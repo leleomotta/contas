@@ -4,6 +4,7 @@ use App\Http\Controllers\CartaoController;
 use App\Http\Controllers\CategoriaController;
 use App\Http\Controllers\DespesaController;
 use App\Http\Controllers\ReceitaController;
+use App\Http\Controllers\RecorrenciaController;
 use App\Http\Controllers\TransferenciaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -92,6 +93,12 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('despesas/editar/{ID_Despesa}',[DespesaController::class, 'edit'])->name('despesas.edit');
     Route::put('despesas/atualiza/{ID_Despesa}',[DespesaController::class, 'update'])->name('despesas.update');
     //----------------- DESPESAS -----------------
+
+    Route::get('recorrencias/novo',[DespesaController::class, 'recorrencias_new'])->name('recorrencias.new');
+    Route::post('recorrencias/salvar', [DespesaController::class, 'recorrencias_store'])->name('recorrencias.store');
+    Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
+
+
 
     //----------------- FATURA -----------------
     //FATURA PRA MIM É Cartão. Vai ficar no controle do CartaoController por pragmatismo
