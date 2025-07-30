@@ -59,6 +59,8 @@ ADD COLUMN Periodicidade VARCHAR(10) NOT NULL DEFAULT 'mensal' AFTER Dia_vencime
 ALTER TABLE recorrencia
 MODIFY COLUMN Periodicidade ENUM('Mensal', 'Anual', 'Semanal') NOT NULL DEFAULT 'Mensal';
 
+ALTER TABLE recorrencia
+MODIFY COLUMN Dia_vencimento VARCHAR(10) NOT NULL;
 
 
 alter table recorrencia add FOREIGN KEY (`ID_Categoria`) REFERENCES `categoria` (`ID_Categoria`);
