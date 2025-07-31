@@ -99,7 +99,6 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
 
 
-
     //----------------- FATURA -----------------
     //FATURA PRA MIM É Cartão. Vai ficar no controle do CartaoController por pragmatismo
     Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');

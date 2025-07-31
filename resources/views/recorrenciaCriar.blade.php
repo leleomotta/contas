@@ -254,13 +254,13 @@
                 grupo.html(`<label id="labelDia">Dia da semana</label>
                 <select class="form-control" name="DiaVencimento" id="DiaVencimento">
                     <option value="">- Selecione -</option>
-                    <option value="domingo">Domingo</option>
-                    <option value="segunda">Segunda</option>
-                    <option value="terca">Terça</option>
-                    <option value="quarta">Quarta</option>
-                    <option value="quinta">Quinta</option>
-                    <option value="sexta">Sexta</option>
-                    <option value="sabado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+                    <option value="Segunda">Segunda</option>
+                    <option value="Terca">Terça</option>
+                    <option value="Quarta">Quarta</option>
+                    <option value="Quinta">Quinta</option>
+                    <option value="Sexta">Sexta</option>
+                    <option value="Sábado">Sábado</option>
                 </select>`);
             }
 
