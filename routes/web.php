@@ -97,6 +97,11 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('recorrencias/novo',[DespesaController::class, 'recorrencias_new'])->name('recorrencias.new');
     Route::post('recorrencias/salvar', [DespesaController::class, 'recorrencias_store'])->name('recorrencias.store');
     Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
+    Route::get('recorrencias', [RecorrenciaController::class, 'showAll'])->name('recorrencias.showAll');
+    Route::get('recorrencias/editar/{ID_Recorrencia}', [RecorrenciaController::class, 'edit'])->name('recorrencias.edit');
+    Route::put('recorrencias/atualiza/{ID_Recorrencia}', [RecorrenciaController::class, 'update'])->name('recorrencias.update');
+    Route::delete('recorrencias/apagar/{ID_Recorrencia}', [RecorrenciaController::class, 'destroy'])->name('recorrencias.destroy');
+
 
 
     //----------------- FATURA -----------------

@@ -390,18 +390,29 @@ return [
                     //'label' => 3,
                     'label_color' => 'success',
                 ],
+
+            ],
+        ],
+        [
+            'text' => 'Recorrências',
+            'icon' => 'fas fa-sync-alt',
+            'submenu' => [
                 [
-                    'text' => 'Adicionar Recorrencia',
+                    'text' => 'Listar',
+                    //'url'  => route('recorrencias.showAll'),
+                    'url'  => '/recorrencias',
+                    'icon' => 'fa fa-list nav-icon',
+                    'label_color' => 'success',
+                ],
+                [
+                    'text' => 'Adicionar',
+                    //'url'  => route('recorrencias.create'),
                     'url' => '/recorrencias/novo',
-                    //'url' => {{ route('') }},
-                    //'url' => route('contas.new') ,
                     'icon' => 'fa fa-plus nav-icon',
-                    //'label' => 3,
                     'label_color' => 'success',
                 ],
             ],
         ],
-
         [
             'text' => 'Categorias',
             'icon' => 'fas fa-file-invoice',

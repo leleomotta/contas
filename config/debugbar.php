@@ -260,6 +260,7 @@ return [
         ],
         'logs' => [
             'file' => null,
+            'enabled' => true,
         ],
         'cache' => [
             'values' => true, // Collect cache values

@@ -2,15 +2,48 @@
 
 namespace App\Http\Controllers;
 
+use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\{Recorrencia, Despesa, Fatura, Cartao};
+use App\Models\{Recorrencia, Despesa, Fatura, Cartao, Conta, Categoria};
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
-
 class RecorrenciaController extends Controller
 {
+    // Exibe a lista de recorrências cadastradas
+    public function showAll(Request $request)
+    {
+        $contas = (new Conta)->showAll();
+        $categorias = (new Categoria)->showAll()->where('Tipo','=','D');
+
+
+        $dateFilter = $request->date_filter;
+        if (is_null($dateFilter)) {
+            $dateFilter = Carbon::now()->format('Y-m');
+        }
+
+        $dt = Carbon::parse($dateFilter . '-15');
+        $start_date = $dt->copy()->startOfMonth()->toDateString();
+        $end_date = $dt->copy()->endOfMonth()->toDateString();
+
+        $recorrencias = Recorrencia::with('categoria')
+            ->where(function ($query) use ($start_date, $end_date) {
+                $query->whereNull('Data_fim')
+                    ->orWhereBetween('Data_fim', [$start_date, $end_date]);
+            })
+            ->orderByDesc('ID_Recorrencia')
+            ->get();
+
+        return view('recorrenciaListar', [
+            'recorrencias' => $recorrencias,
+            'pendente' => 0,
+            'pago' => 0,
+            'contas' => $contas,
+            'categorias' => $categorias
+        ]);
+    }
+
     // Armazena uma nova recorrência no banco de dados
     public function store(Request $request)
     {
@@ -123,7 +156,8 @@ class RecorrenciaController extends Controller
                 $despesa->ID_Categoria = $recorrencia->ID_Categoria;
                 $despesa->Efetivada = 0;
                 Log::info("ID_Conta na recorrencia: " . $recorrencia->ID_Conta);
-                Log::info("Teste do vazio " . (!empty($recorrencia->ID_Conta) ? 'Sim' : 'Não'));
+                Log::info("ID_Cartao na recorrencia: " . $recorrencia->ID_Cartao);
+
                 // Define se a despesa é por conta
                 if (!is_null($recorrencia->ID_Conta)) {
                     // Se existe um valor definido (inclusive zero) para ID_Conta, considera como conta vinculada
@@ -137,12 +171,20 @@ class RecorrenciaController extends Controller
                     $cartao = Cartao::find($recorrencia->ID_Cartao);
                     if (!$cartao) continue;
 
-                    $diaFechamento = $cartao->Dia_Fechamento_Fatura;
+                    //$diaFechamento = $cartao->Dia_Fechamento_Fatura;
+                    $diaFechamento = $cartao->Dia_Fechamento_Fatura ?? 1;
+
+                    Log::info("Dia de fechamento da fatura: " . $diaFechamento );
 
                     // Define o mês de referência da fatura
                     $referencia = $dataAtual->copy();
+                    Log::info("Dia de referência: " . $referencia );
+                    Log::info("Data dentro do loop: " . $dataAtual->day );
+
+                    Log::info("Data do loop é maior que o dia de fechamento " . ($dataAtual->day > $diaFechamento ? 'True' : 'False'));
                     if ($dataAtual->day > $diaFechamento) {
                         $referencia->addMonth();
+                        Log::info("Nova referência: " . $referencia );
                     }
                     $anoMes = $referencia->format('Y-m');
 
@@ -160,4 +202,74 @@ class RecorrenciaController extends Controller
         // Retorna mensagem simples para exibir no navegador
         return response('Recorrências geradas com sucesso para ' . str_pad($mes, 2, '0', STR_PAD_LEFT) . '/' . $ano);
     }
+
+    public function edit(int $ID_Recorrencia)
+    {
+        // Busca a recorrência pelo ID
+        $recorrencia = Recorrencia::find($ID_Recorrencia);
+
+        // Busca todas as contas e categorias do tipo 'Despesa'
+        $contas = (new \App\Models\Conta)->showAll();
+        //$cartoes = (new \App\Models\Cartao)->showAll(); // Adicione se usar cartões
+        $cartoes = Cartao::orderBy('Nome')->get();
+        $categorias = (new \App\Models\Categoria)->show('D');
+
+
+        return view('recorrenciaEditar', [
+            'recorrencia' => $recorrencia,
+            'categorias' => $categorias,
+            'contas' => $contas,
+            'cartoes' => $cartoes
+        ]);
+    }
+
+    public function update(Request $request, int $ID_Recorrencia)
+    {
+        $recorrencia = Recorrencia::find($ID_Recorrencia);
+
+        // Atualiza campos básicos
+        $recorrencia->Descricao = $request->Descricao;
+        $recorrencia->Valor = str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
+        $recorrencia->ID_Categoria = $request->ID_Categoria;
+
+        // Atualiza conta/cartão
+        $recorrencia->ID_Conta = $request->ID_Conta ?? null;
+        $recorrencia->ID_Cartao = $request->ID_Cartao ?? null;
+
+        // Datas e periodicidade
+        $recorrencia->Periodicidade = $request->Periodicidade;
+        $recorrencia->Dia_vencimento = $request->DiaVencimento;
+        $recorrencia->Data_inicio = \Carbon\Carbon::createFromFormat('d/m/Y', $request->DataInicio)->format('Y-m-d');
+        $recorrencia->Data_fim = !empty($request->DataFim)
+            ? \Carbon\Carbon::createFromFormat('d/m/Y', $request->DataFim)->format('Y-m-d')
+            : null;
+
+        // Checkbox
+        $recorrencia->Ativa = isset($request->Ativa) ? 1 : 0;
+
+        $recorrencia->save();
+
+        return redirect()->route('recorrencias.showAll');
+    }
+
+    public function destroy(int $ID_Recorrencia)
+    {
+        $recorrencia = Recorrencia::find($ID_Recorrencia);
+
+        try {
+            \DB::beginTransaction();
+
+            $recorrencia->delete();
+
+            \DB::commit();
+
+            $url = '/recorrencias?date_filter=' . \Carbon\Carbon::now()->format('Y-m');
+            return redirect($url);
+
+        } catch (\Exception $e) {
+            \DB::rollBack();
+            return back()->with('error', 'Erro ao excluir recorrência.');
+        }
+    }
+
 }
