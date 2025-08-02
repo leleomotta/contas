@@ -101,7 +101,7 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('recorrencias/editar/{ID_Recorrencia}', [RecorrenciaController::class, 'edit'])->name('recorrencias.edit');
     Route::put('recorrencias/atualiza/{ID_Recorrencia}', [RecorrenciaController::class, 'update'])->name('recorrencias.update');
     Route::delete('recorrencias/apagar/{ID_Recorrencia}', [RecorrenciaController::class, 'destroy'])->name('recorrencias.destroy');
-
+    Route::post('recorrencias/toggleAtiva/{ID_Recorrencia}', [RecorrenciaController::class, 'toggleAtiva'])->name('recorrencias.toggleAtiva');
 
 
     //----------------- FATURA -----------------

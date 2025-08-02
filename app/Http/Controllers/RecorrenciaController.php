@@ -153,6 +153,7 @@ class RecorrenciaController extends Controller
                     $despesa->Data = $dataAtual->toDateString();
                     $despesa->ID_Categoria = $recorrencia->ID_Categoria;
                     $despesa->Efetivada = 0;
+                    $despesa->Recorrente = 1;
 
                     // Define se a despesa é por conta
                     if (!is_null($recorrencia->ID_Conta)) {
@@ -258,19 +259,37 @@ class RecorrenciaController extends Controller
         $recorrencia = Recorrencia::find($ID_Recorrencia);
 
         try {
-            \DB::beginTransaction();
+            DB::beginTransaction();
 
             $recorrencia->delete();
 
-            \DB::commit();
+            DB::commit();
 
             $url = '/recorrencias?date_filter=' . \Carbon\Carbon::now()->format('Y-m');
             return redirect($url);
 
         } catch (\Exception $e) {
-            \DB::rollBack();
+            DB::rollBack();
             return back()->with('error', 'Erro ao excluir recorrência.');
         }
     }
 
+    // Novo método para ativar/desativar a recorrência
+    public function toggleAtiva(int $ID_Recorrencia)
+    {
+        $recorrencia = Recorrencia::find($ID_Recorrencia);
+
+        if (!$recorrencia) {
+            return response()->json(['success' => false, 'message' => 'Recorrência não encontrada.'], 404);
+        }
+
+        $recorrencia->Ativa = !$recorrencia->Ativa; // Inverte o valor booleano
+        $recorrencia->save();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Status da recorrência atualizado com sucesso!',
+            'ativa' => $recorrencia->Ativa
+        ]);
+    }
 }

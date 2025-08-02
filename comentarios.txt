@@ -34,8 +34,8 @@ Alterções banco 20250727
 ALTER TABLE `despesa`
 ADD COLUMN `ValorTotal` DECIMAL(10,2) NULL AFTER `Valor`,
 ADD COLUMN `Parcela` INT NULL AFTER `ValorTotal`,
-ADD COLUMN `TotalParcelas` INT NULL AFTER `Parcela`;
-
+ADD COLUMN `TotalParcelas` INT NULL AFTER `Parcela`,
+ADD COLUMN `Recorrente` BOOLEAN DEFAULT FALSE AFTER `Efetivada`;
 
 CREATE TABLE `recorrencia` (
     `ID_Recorrencia` int(11) UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -66,4 +66,6 @@ MODIFY COLUMN Dia_vencimento VARCHAR(10) NOT NULL;
 alter table recorrencia add FOREIGN KEY (`ID_Categoria`) REFERENCES `categoria` (`ID_Categoria`);
 alter table recorrencia add FOREIGN KEY (`ID_Conta`) REFERENCES `conta` (`ID_Conta`);
 alter table recorrencia add FOREIGN KEY (`ID_Cartao`) REFERENCES `cartao` (`ID_Cartao`);
+
+
 

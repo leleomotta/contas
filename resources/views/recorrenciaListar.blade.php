@@ -41,10 +41,6 @@
 
     <!-- O restante do seu conteúdo da tabela -->
     <div class="row">
-        ...
-    </div>
-
-    <div class="row">
         <div class="col-12">
             <div class="card">
                 <div class="card-body table-responsive p-0">
@@ -68,11 +64,14 @@
                         @foreach($recorrencias as $rec)
                             <tr>
                                 <td>
-                                    @if ($rec->Ativa)
-                                        <img src="{{ URL::asset('/storage/V.bmp') }}" alt="Ativa">
-                                    @else
-                                        <img src="{{ URL::asset('/storage/X.bmp') }}" alt="Inativa">
-                                    @endif
+                                    <!-- Nova estrutura com data-attributes para o JS -->
+                                    <a href="#" class="toggle-ativa-btn" data-id="{{ $rec->ID_Recorrencia }}" data-ativa="{{ $rec->Ativa }}">
+                                        @if ($rec->Ativa)
+                                            <img id="status-{{ $rec->ID_Recorrencia }}" src="{{ URL::asset('/storage/V.bmp') }}" alt="Ativa">
+                                        @else
+                                            <img id="status-{{ $rec->ID_Recorrencia }}" src="{{ URL::asset('/storage/X.bmp') }}" alt="Inativa">
+                                        @endif
+                                    </a>
                                 </td>
                                 <td>{{ $rec->Descricao }}</td>
                                 <td>{{ 'R$ ' . number_format($rec->Valor, 2, ',', '.') }}</td>
@@ -236,5 +235,44 @@
             $('#mes').val(('0' + mesAtual).slice(-2));
             $('#ano').val(anoAtual);
         });
+
+        // Lógica para alternar o status da recorrência
+        $('.toggle-ativa-btn').on('click', function(e) {
+            e.preventDefault(); // Evita o comportamento padrão do link
+
+            const recorrenciaId = $(this).data('id');
+            const url = "{{ route('recorrencias.toggleAtiva', ['ID_Recorrencia' => 'ID_PLACEHOLDER']) }}".replace('ID_PLACEHOLDER', recorrenciaId);
+            const token = $('meta[name="csrf-token"]').attr('content'); // Certifique-se de ter a meta tag do CSRF
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': token,
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Erro na resposta da API');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    if (data.success) {
+                        const imgElement = $(`#status-${recorrenciaId}`);
+                        const newSrc = data.ativa ? "{{ URL::asset('/storage/V.bmp') }}" : "{{ URL::asset('/storage/X.bmp') }}";
+                        imgElement.attr('src', newSrc);
+                        imgElement.attr('alt', data.ativa ? 'Ativa' : 'Inativa');
+                    } else {
+                        console.error('Erro ao atualizar status:', data.message);
+                        alert('Erro ao atualizar status: ' + data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Erro na requisição:', error);
+                    alert('Erro na requisição. Por favor, tente novamente.');
+                });
+        });
+
     </script>
 @stop

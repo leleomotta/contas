@@ -14,11 +14,23 @@ use Illuminate\Support\Facades\Session;
 
 class CartaoController extends Controller
 {
+    /**
+     * Remove o recurso de cartão especificado do armazenamento.
+     *
+     * @param Cartao $cartao
+     * @return void
+     */
     public function destroy(Cartao $cartao)
     {
-        //
+        // Implemente a lógica para excluir um cartão
     }
 
+    /**
+     * Remove uma despesa associada a uma fatura.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function destroy_despesa(Request $request)
     {
         $despesa = Despesa::find($request->ID_Despesa);
@@ -30,9 +42,7 @@ class CartaoController extends Controller
 
             DB::commit();
 
-            //$url ='/fatura?ID_Cartao=' . $request->ID_Cartao;
-            //return redirect::to($url);
-            return redirect()->route('cartoes.fatura',array('ID_Cartao' => $request->ID_Cartao) );
+            return redirect()->route('cartoes.fatura', array('ID_Cartao' => $request->ID_Cartao) );
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -41,11 +51,17 @@ class CartaoController extends Controller
         }
     }
 
-    public function edit_despesa(Request $request) {
+    /**
+     * Exibe o formulário para editar uma despesa de fatura.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function edit_despesa(Request $request)
+    {
         $despesa = Despesa::find($request->ID_Despesa);
         $fatura = Fatura::find($request->ID_Despesa);
         $categorias = (new \App\Models\Categoria)->show('D');
-
 
         return view('fatura_despesaEditar', [
             'despesa' => $despesa,
@@ -54,111 +70,119 @@ class CartaoController extends Controller
         ]);
     }
 
+    /**
+     * Exibe a fatura de um cartão para um mês/ano específico.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function fatura(Request $request)
     {
-
-        if (is_null($request->Ano_Mes) ) {
-            $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
-        }
-        else
-        {
-            $Ano_Mes = $request->Ano_Mes;
-        }
+        $Ano_Mes = is_null($request->Ano_Mes)
+            ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
+            : $request->Ano_Mes;
 
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::all();
 
-        if ($request->session()->get('ID_Cartao') == null){
+        if (is_null($request->session()->get('ID_Cartao'))) {
             $request->session()->put('ID_Cartao', $request->ID_Cartao);
         }
 
-        //dd($fatura->count());
         return view('faturaListar', [
-            //'faturas' => $fatura->show($Ano_Mes,$request->ID_Cartao),
-            //'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->ID_Cartao),
-
-            'faturas' => $fatura->show($Ano_Mes,$request->session()->get('ID_Cartao')),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$request->session()->get('ID_Cartao')),
+            'faturas' => $fatura->show($Ano_Mes, $request->session()->get('ID_Cartao')),
+            'totalFatura' => $fatura->totalFatura($Ano_Mes, $request->session()->get('ID_Cartao')),
             'contas' => $contas,
             'cartoes' => $cartoes,
         ]);
     }
 
+    /**
+     * Fecha a fatura de um cartão e move as despesas para uma conta.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function fatura_fechar(Request $request)
     {
-        if (is_null($request->Ano_Mes) ) {
-            $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
-        }
-        else
-        {
-            $Ano_Mes = $request->Ano_Mes;
-        }
+        $Ano_Mes = is_null($request->Ano_Mes)
+            ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
+            : $request->Ano_Mes;
         $ID_Cartao = $request->ID_Cartao;
-        $Data = implode("-",array_reverse(explode("/",$request->Data_Fechamento)));
-
+        $Data = implode("-", array_reverse(explode("/", $request->Data_Fechamento)));
         $Conta = $request->Conta;
 
-        (new \App\Models\Fatura)->fatura_fechar($Ano_Mes,$ID_Cartao,$Data,$Conta);
+        (new Fatura)->fatura_fechar($Ano_Mes, $ID_Cartao, $Data, $Conta);
 
-        //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
 
         return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes,$ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao),
+            'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
+            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
             'contas' => $contas
         ]);
-
     }
 
+    /**
+     * Reabre uma fatura fechada.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
     public function fatura_reabrir(Request $request)
     {
-        if (is_null($request->Ano_Mes) ) {
-            $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
-        }
-        else
-        {
-            $Ano_Mes = $request->Ano_Mes;
-        }
+        $Ano_Mes = is_null($request->Ano_Mes)
+            ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
+            : $request->Ano_Mes;
         $ID_Cartao = $request->ID_Cartao;
 
-        (new \App\Models\Fatura)->fatura_reabrir($Ano_Mes,$ID_Cartao);
+        (new Fatura)->fatura_reabrir($Ano_Mes, $ID_Cartao);
 
-        //$fatura = (new \App\Models\Fatura)->show($Ano_Mes,$request->ID_Cartao);
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
 
         return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes,$ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes,$ID_Cartao),
+            'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
+            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
             'contas' => $contas
         ]);
-
     }
 
+    /**
+     * Exibe a listagem do recurso.
+     *
+     * @return void
+     */
     public function index()
     {
-        //
+        // Esta função está vazia
     }
 
-    public function new(){
+    /**
+     * Exibe o formulário para criar um novo cartão.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function new()
+    {
         $contas = (new \App\Models\Conta)->showAll();
 
         return view('cartaoCriar', [
             'contas' => $contas,
         ]);
-
     }
 
-    public function new_despesa(){
+    /**
+     * Exibe o formulário para criar uma nova despesa de fatura.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function new_despesa()
+    {
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::all();
-        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','D');
         $categorias = (new \App\Models\Categoria)->show('D');
 
         return view('fatura_despesaCriar', [
@@ -166,34 +190,47 @@ class CartaoController extends Controller
             'contas' => $contas,
             'cartoes' => $cartoes,
         ]);
-
     }
 
+    /**
+     * Exibe o recurso especificado.
+     *
+     * @param Cartao $cartao
+     * @return void
+     */
     public function show(Cartao $cartao)
     {
-        //
+        // Esta função está vazia
     }
 
-    public function showAll(){
-        $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' .
-            Carbon::now()->isoFormat('MM');
+    /**
+     * Exibe a listagem de todos os cartões.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function showAll()
+    {
+        $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         $cartoes = new Cartao();
-        //$request->session()->put('ID_Cartao', $request->ID_Cartao);
         Session::forget('ID_Cartao');
         return view('cartaoListar', [
             'cartoes' => $cartoes->show($Ano_Mes)
         ]);
     }
 
+    /**
+     * Armazena um novo cartão no banco de dados.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store(Request $request)
     {
         $cartao = new Cartao();
-
         $cartao->Nome = $request->Nome;
         $cartao->Bandeira = $request->Bandeira;
         $cartao->Dia_Vencimento = $request->Dia_Vencimento;
         $cartao->Dia_Fechamento_Fatura = $request->Dia_Fechamento_Fatura;
-
         $cartao->ID_Conta = $request->Conta;
         $cartao->Cor = $request->corCartao;
 
@@ -202,18 +239,22 @@ class CartaoController extends Controller
         return redirect()->route('cartoes.showAll');
     }
 
+    /**
+     * Salva uma nova despesa parcelada ou não para uma fatura.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function store_despesa(Request $request)
     {
         $Ano = $request->Ano;
         $Mes = str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
         $Ano_Mes = $Ano . '-' . $Mes;
 
-        // Busca a fatura correspondente
         $faturaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
             ->where('Ano_Mes', $Ano_Mes)
             ->first();
 
-        // Verifica se a fatura existe e está finalizada
         if ($faturaExistente && $faturaExistente->Fechada) {
             return redirect()->back()
                 ->withInput()
@@ -221,21 +262,17 @@ class CartaoController extends Controller
         }
 
         $cartao = Cartao::find($request->ID_Cartao);
-
         $descricaoOriginal = $request->Descricao;
         $valorStr = $request->Valor;
         $valorTotal = floatval(str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $valorStr))));
         $data = implode("-", array_reverse(explode("/", $request->Data)));
-
         $parcelada = $request->Parcelada === 'sim';
         $numParcelas = $parcelada ? max((int) $request->NumeroParcelas, 1) : 1;
 
-        // Cálculo do valor base e ajuste de centavos
         $valorBase = floor(($valorTotal / $numParcelas) * 100) / 100;
         $diferenca = round($valorTotal - ($valorBase * $numParcelas), 2);
 
-        // Base para calcular fatura de cada parcela (ignora a data da compra e usa o campo Ano/Mes selecionado)
-        $dataBaseParcela = \Carbon\Carbon::createFromDate((int) $request->Ano, (int) $request->Mes, 1);
+        $dataBaseParcela = Carbon::createFromDate((int) $request->Ano, (int) $request->Mes, 1);
 
         for ($i = 1; $i <= $numParcelas; $i++) {
             $valorParcela = $valorBase;
@@ -243,11 +280,9 @@ class CartaoController extends Controller
                 $valorParcela += 0.01;
             }
 
-            // Define a data da fatura da parcela
             $dataParcela = $dataBaseParcela->copy()->addMonths($i - 1);
             $anoMesParcela = $dataParcela->format('Y-m');
 
-            // Verifica se a fatura da parcela está fechada
             $faturaParcelaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
                 ->where('Ano_Mes', $anoMesParcela)
                 ->first();
@@ -258,7 +293,6 @@ class CartaoController extends Controller
                     ->withErrors(['Fatura ' . $anoMesParcela . ' já está finalizada. Não é possível adicionar novas despesas.']);
             }
 
-            // Cria a despesa
             $despesa = new Despesa();
             $despesa->Descricao = $parcelada ? "{$descricaoOriginal} ({$i}/{$numParcelas})" : $descricaoOriginal;
             $despesa->Valor = $valorParcela;
@@ -271,7 +305,6 @@ class CartaoController extends Controller
             $despesa->Efetivada = 0;
             $despesa->save();
 
-            // Cria ou associa à fatura
             $fatura = new Fatura();
             $fatura->ID_Cartao = $request->ID_Cartao;
             $fatura->ID_Despesa = $despesa->ID_Despesa;
@@ -283,11 +316,24 @@ class CartaoController extends Controller
         return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
     }
 
+    /**
+     * Atualiza o recurso de cartão especificado no armazenamento.
+     *
+     * @param Request $request
+     * @param Cartao $cartao
+     * @return void
+     */
     public function update(Request $request, Cartao $cartao)
     {
-        //
+        // Implemente a lógica para atualizar um cartão
     }
 
+    /**
+     * Atualiza uma despesa de fatura.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function update_despesa(Request $request)
     {
         $despesa = Despesa::find($request->ID_Despesa);
@@ -295,7 +341,6 @@ class CartaoController extends Controller
 
         $novoAnoMes = $request->Ano . '-' . str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
 
-        // Verifica se está tentando mover para uma fatura fechada
         $faturaNova = Fatura::where('ID_Cartao', $request->ID_Cartao)
             ->where('Ano_Mes', $novoAnoMes)
             ->where('ID_Despesa', '!=', $despesa->ID_Despesa)
@@ -321,8 +366,4 @@ class CartaoController extends Controller
 
         return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
     }
-
-
-
-
 }
