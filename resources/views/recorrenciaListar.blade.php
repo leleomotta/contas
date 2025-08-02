@@ -3,9 +3,47 @@
 @section('title', 'Recorrência - Listar')
 
 @section('content_header')
+    <div class="row mb-2">
+        <div class="col-sm-6">
+            <h1>Recorrências</h1>
+        </div>
+        <div class="col-sm-6">
+            <ol class="breadcrumb float-sm-right">
+                <!-- Botão para abrir o modal de geração de recorrências -->
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalGerarRecorrencias">
+                    <i class="fas fa-plus"></i> Gerar Recorrências
+                </button>
+            </ol>
+        </div>
+    </div>
 @stop
 
 @section('content')
+
+    <!-- Bloco para exibir as mensagens de sucesso/erro -->
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            {{ session('success') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+    @if (session('error'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
+
+    <!-- O restante do seu conteúdo da tabela -->
+    <div class="row">
+        ...
+    </div>
+
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -101,6 +139,57 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal para Gerar Recorrências -->
+    <div class="modal fade" id="modalGerarRecorrencias" tabindex="-1" role="dialog" aria-labelledby="modalGerarRecorrenciasLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalGerarRecorrenciasLabel">Gerar Recorrências Mensais</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Selecione o mês e o ano para gerar as despesas recorrentes.</p>
+                    <form id="formGerarRecorrencias">
+                        <div class="form-group">
+                            <label for="mes">Mês</label>
+                            <select class="form-control" id="mes" name="mes">
+                                <option value="01">Janeiro</option>
+                                <option value="02">Fevereiro</option>
+                                <option value="03">Março</option>
+                                <option value="04">Abril</option>
+                                <option value="05">Maio</option>
+                                <option value="06">Junho</option>
+                                <option value="07">Julho</option>
+                                <option value="08">Agosto</option>
+                                <option value="09">Setembro</option>
+                                <option value="10">Outubro</option>
+                                <option value="11">Novembro</option>
+                                <option value="12">Dezembro</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="ano">Ano</label>
+                            <select class="form-control" id="ano" name="ano">
+                                @php
+                                    $anoAtual = now()->year;
+                                @endphp
+                                @for ($i = $anoAtual - 2; $i <= $anoAtual + 5; $i++)
+                                    <option value="{{ $i }}" {{ $i == $anoAtual ? 'selected' : '' }}>{{ $i }}</option>
+                                @endfor
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
+                    <button type="button" class="btn btn-primary" id="btnGerarRecorrencias">Gerar</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('css')
@@ -122,4 +211,30 @@
             margin: 0;
         }
     </style>
+@stop
+
+@section('js')
+    <script>
+        // Lógica para o modal de geração de recorrências
+        $('#btnGerarRecorrencias').on('click', function() {
+            let mes = $('#mes').val();
+            let ano = $('#ano').val();
+
+            // Monta a URL com os valores selecionados
+            let url = "{{ route('recorrencias.gerar', ['mes' => 'MES_PLACEHOLDER', 'ano' => 'ANO_PLACEHOLDER']) }}";
+            url = url.replace('MES_PLACEHOLDER', mes).replace('ANO_PLACEHOLDER', ano);
+
+            // Redireciona para a rota
+            window.location.href = url;
+        });
+
+        // Opcional: preenche o modal com o mês e ano atuais ao abrir
+        $('#modalGerarRecorrencias').on('show.bs.modal', function() {
+            let dataAtual = new Date();
+            let mesAtual = dataAtual.getMonth() + 1;
+            let anoAtual = dataAtual.getFullYear();
+            $('#mes').val(('0' + mesAtual).slice(-2));
+            $('#ano').val(anoAtual);
+        });
+    </script>
 @stop
