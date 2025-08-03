@@ -8,7 +8,7 @@ use Illuminate\Support\Carbon;
 class HomeController extends Controller
 {
     /**
-     * Create a new controller instance.
+     * Cria uma nova instância do controller.
      *
      * @return void
      */
@@ -18,7 +18,7 @@ class HomeController extends Controller
     }
 
     /**
-     * Show the application dashboard.
+     * Exibe o painel de controle da aplicação.
      *
      * @return \Illuminate\Contracts\Support\Renderable
      */
@@ -27,12 +27,18 @@ class HomeController extends Controller
         return view('home');
     }
 
-    public function showAll(Request $request){
+    /**
+     * Exibe todos os dados do dashboard para o mês selecionado.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function showAll(Request $request)
+    {
         $dateFilter = $request->date_filter;
 
-        if (is_null($dateFilter) ) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
+        if (is_null($dateFilter)) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         }
         $dt = Carbon::now();
         $dt->setDateFrom($dateFilter . '-15');
@@ -41,33 +47,14 @@ class HomeController extends Controller
 
         $despesas = (new \App\Models\Despesa)->show($start_date, $end_date);
         $receitas = (new \App\Models\Receita)->show($start_date, $end_date);
-        $despesasCartao = (new \App\Models\Despesa)->cartaoAberto( Carbon::createFromDate($start_date)->isoFormat('Y') .
-            '-' . Carbon::createFromDate($start_date)->isoFormat('MM') );
+        $despesasCartao = (new \App\Models\Despesa)->cartaoAberto(Carbon::createFromDate($start_date)->isoFormat('Y') .
+            '-' . Carbon::createFromDate($start_date)->isoFormat('MM'));
         $despesasCartao = $despesasCartao->merge((new \App\Models\Despesa)->cartaoPago($start_date, $end_date, null));
-
-
-        //$receitas = $receitas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
-        //$despesas = $despesas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
-        //$bunda = $despesas->values();
-        //dd($bunda[11]);
-        //$chaves = $despesas->keys();
-        //dd($chaves[0]); // "Outros"
 
         return view('home', [
             'despesas' => $despesas,
             'receitas' => $receitas,
             'despesasCartao' => $despesasCartao
         ]);
-
-        /*
-        return view('despesaListar', [
-            'despesas' => $despesas->sum('Valor'),
-            'pendente' => $despesas->where('Efetivada','=',0)->sum('Valor'),
-            'pago' => $despesas->where('Efetivada','=',1)->sum('Valor'),
-            'contas' => $contas,
-            'categorias' => $categorias
-        ]);
-*/
     }
-
 }

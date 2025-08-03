@@ -13,72 +13,148 @@ use Illuminate\Support\Facades\Redirect;
 
 class ReceitaController extends Controller
 {
+    /**
+     * Remove a receita especificada do armazenamento.
+     *
+     * @param int $ID_Receita
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function destroy(int $ID_Receita)
+    {
+        $receita = Receita::find($ID_Receita);
+        try {
+            DB::beginTransaction();
+
+            $receita->delete();
+
+            DB::commit();
+            $url ='/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
+                \Carbon\Carbon::now()->isoFormat('MM');
+            return Redirect::to($url);
+
+        } catch (\Exception $e) {
+            DB::rollback();
+
+            return back();
+        }
+    }
+
+    /**
+     * Edita a receita especificada.
+     *
+     * @param int $ID_Receita
+     * @return \Illuminate\View\View
+     */
+    public function edit(int $ID_Receita)
+    {
+        $receita = Receita::find($ID_Receita);
+        $contas = (new \App\Models\Conta)->showAll();
+        $categorias = (new \App\Models\Categoria)->show('R');
+
+        return view('receitaEditar', [
+            'receita' => $receita,
+            'categorias' => $categorias,
+            'contas' => $contas,
+        ]);
+    }
+
+    /**
+     * Alterna o status de efetivada de uma receita.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
     public function efetiva(Request $request)
     {
         $receita = Receita::find($request->ID_Receita);
         $receita->Efetivada = !$receita->Efetivada;
         $receita->save();
         $dateFilter = $request->date_filter;
-        if (is_null($dateFilter) ) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
+        if (is_null($dateFilter)) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         }
         $url ='/receitas?date_filter=' . $dateFilter;
         return redirect::to($url);
     }
 
     /**
-     * Display a listing of the resource.
+     * Filtra a listagem de receitas com base nos parâmetros da requisição.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function filter(Request $request)
+    {
+        $start_date = implode("-", array_reverse(explode("/", substr($request->datas, 0, 10))));
+        $end_date = implode("-", array_reverse(explode("/", substr($request->datas, 13, 10))));
+
+        $request["chkCategoria"] = (isset($request["chkCategoria"])) ? 1 : 0;
+        $request["chkConta"] = (isset($request["chkConta"])) ? 1 : 0;
+        $request["chkTexto"] = (isset($request["chkTexto"])) ? 1 : 0;
+        $request["chkDatas"] = (isset($request["chkDatas"])) ? 1 : 0;
+
+        $categoria = $request["chkCategoria"] ? $request->categoria : null;
+        $conta = $request["chkConta"] ? $request->conta : null;
+        $texto = $request["chkTexto"] ? $request->texto : null;
+
+        if (!$request["chkDatas"]) {
+            $start_date = '0001-01-01';
+            $end_date = '9999-12-31';
+        }
+
+        $contas = (new \App\Models\Conta)->showAll();
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
+        $receitas = new Receita();
+
+        return view('receitaListar',
+            [
+                'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
+                'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
+                'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
+                'categorias' => $categorias,
+                'contas' => $contas,
+            ]);
+    }
+
+    /**
+     * Exibe a listagem do recurso.
+     *
+     * @return void
      */
     public function index()
     {
-        //
+        // Esta função está vazia
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Exibe o formulário para criar uma nova receita.
+     *
+     * @return \Illuminate\View\View
      */
-    public function store(Request $request)
+    public function new()
     {
-        $receita = new Receita();
-
-        $receita->Descricao = $request->Descricao;
-        $receita->Valor =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Valor)));
-        $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
-        $receita->ID_Conta = $request->Conta;
-        $receita->ID_Categoria = $request->Categoria;
-
-        $request["Efetivada"] = (isset($request["Efetivada"]))?1:0;
-        $receita->Efetivada = $request->Efetivada;
-
-        $receita->save();
-
-        $url ='/receitas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' .
-        Carbon::now()->isoFormat('MM');
-        return redirect::to($url);
-        //return redirect()->route('receitas.showAll');
-
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Receita $receita)
-    {
-        //
-    }
-
-    public function showAll(Request $request){
         $contas = (new \App\Models\Conta)->showAll();
+        $categorias = (new \App\Models\Categoria)->show('R');
+        return view('receitaCriar', [
+            'categorias' => $categorias,
+            'contas' => $contas,
+        ]);
+    }
 
+    /**
+     * Exibe a listagem completa de receitas.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function showAll(Request $request)
+    {
+        $contas = (new \App\Models\Conta)->showAll();
         $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
 
         $dateFilter = $request->date_filter;
-        if (is_null($dateFilter) ) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-            Carbon::now()->isoFormat('MM');
+        if (is_null($dateFilter)) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         }
 
         $dt = Carbon::now();
@@ -98,135 +174,61 @@ class ReceitaController extends Controller
             'contas' => $contas,
             'categorias' => $categorias
         ]);
-
     }
 
-    public function filter(Request $request){
-        $start_date = implode("-",array_reverse(explode("/",substr($request->datas,0,10) )));
-        $end_date = implode("-",array_reverse(explode("/",substr($request->datas,13,10) )));
-
-        $request["chkCategoria"] = (isset($request["chkCategoria"]))?1:0;
-        $request["chkConta"] = (isset($request["chkConta"]))?1:0;
-        $request["chkTexto"] = (isset($request["chkTexto"]))?1:0;
-        $request["chkDatas"] = (isset($request["chkDatas"]))?1:0;
-
-        if($request["chkCategoria"]){
-            $categoria = $request->categoria;
-        }
-        else{
-            $categoria = $request->null;
-        }
-
-        if($request["chkConta"]){
-            $conta = $request->conta;
-        }
-        else{
-            $conta = $request->null;
-        }
-
-        if($request["chkTexto"]){
-            $texto = $request->texto;
-        }
-        else{
-            $texto = $request->null;
-        }
-
-        if(! $request["chkDatas"]){
-            $start_date = '0001-01-01';
-            $end_date = '9999-12-31';
-        }
-
-        $contas = (new \App\Models\Conta)->showAll();
-
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
-
-        $receitas = new Receita();
-
-        return view('receitaListar',
-            [
-                'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
-                'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
-                'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
-                'categorias' => $categorias,
-                'contas' => $contas,
-        ]);
-    }
     /**
-     * Update the specified resource in storage.
+     * Exibe o recurso especificado.
+     *
+     * @param Receita $receita
+     * @return void
      */
-
-    public function edit(int $ID_Receita) {
-
-        $receita = Receita::find($ID_Receita);
-
-        $contas = (new \App\Models\Conta)->showAll();
-
-        $categorias = (new \App\Models\Categoria)->show('R');
-
-        return view('receitaEditar', [
-            'receita' => $receita,
-            'categorias' => $categorias,
-            'contas' => $contas,
-        ]);
+    public function show(Receita $receita)
+    {
+        // Esta função está vazia
     }
 
-    public function update(Request $request, int $ID_Receita)
+    /**
+     * Salva uma nova receita no banco de dados.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
     {
-        $receita = Receita::find($ID_Receita);
+        $receita = new Receita();
+
         $receita->Descricao = $request->Descricao;
-        $receita->Valor =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Valor)));
+        $receita->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
         $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
         $receita->ID_Conta = $request->Conta;
         $receita->ID_Categoria = $request->Categoria;
 
-        $request["Efetivada"] = (isset($request["Efetivada"]))?1:0;
-        $receita->Efetivada = $request->Efetivada;
-
+        $receita->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
         $receita->save();
 
-        return redirect()->route('receitas.showAll');
-
-
+        $url ='/receitas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+        return Redirect::to($url);
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Atualiza a receita especificada no armazenamento.
+     *
+     * @param Request $request
+     * @param int $ID_Receita
+     * @return \Illuminate\Http\RedirectResponse
      */
-    //public function destroy(Receita $receita)
-    public function destroy(int $ID_Receita)
+    public function update(Request $request, int $ID_Receita)
     {
         $receita = Receita::find($ID_Receita);
-        try {
-            DB::beginTransaction();
+        $receita->Descricao = $request->Descricao;
+        $receita->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
+        $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $receita->ID_Conta = $request->Conta;
+        $receita->ID_Categoria = $request->Categoria;
 
-            $receita->delete();
+        $receita->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
+        $receita->save();
 
-            DB::commit();
-            /*return redirect()->route('receitas.showAll', [
-                'page' => Request::capture()->page
-            ]);*/
-            $url ='/receitas?date_filter=' . \Carbon\Carbon::now()->isoFormat('Y') . '-' .
-                \Carbon\Carbon::now()->isoFormat('MM');
-            return redirect::to($url);
-
-        } catch (\Exception $e) {
-            DB::rollback();
-
-            return back();
-        }
-    }
-
-    public function new(){
-        $contas = (new \App\Models\Conta)->showAll();
-
-        //$categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
-        $categorias = (new \App\Models\Categoria)->show('R');
-        return view('receitaCriar', [
-            'categorias' => $categorias,
-            'contas' => $contas,
-        ]);
-
+        return redirect()->route('receitas.showAll');
     }
 }

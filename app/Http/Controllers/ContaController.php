@@ -12,81 +12,22 @@ use Illuminate\Support\Facades\Session;
 class ContaController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Remove a conta especificada do armazenamento.
+     *
+     * @param Conta $conta
+     * @return void
      */
-    public function index()
+    public function destroy(Conta $conta)
     {
-        //
+        // Implemente a lógica para excluir uma conta
     }
 
     /**
-     * Store a newly created resource in storage.
+     * Edita a conta especificada.
+     *
+     * @param int $ID_Conta
+     * @return \Illuminate\View\View
      */
-    public function store(Request $request)
-    {
-        $conta = new Conta();
-
-        //$prova->idUsuario = (session()->get('UsuarioLogado'))->idUsuario;
-
-        $conta->Nome = $request->Nome;
-        $conta->Descricao = $request->Descricao;
-        $conta->Banco = $request->Banco;
-        //$conta->Saldo_Inicial = str_replace("R$ ","",$request->Saldo_Inicial);
-        $conta->Saldo_Inicial =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Saldo_Inicial)));
-        //dd($conta->Saldo_Inicial);
-        $conta->Cor = $request->corConta;
-
-        $imagens = $request->files->all();
-        if (isset($imagens['imagem'])) {
-            $conta->Imagem = Imagem::CriaImagem($imagens, 'imagem');
-        }
-
-        //$prova->DataProva = implode("-",array_reverse(explode("/",$request->DataProva)));
-
-        $conta->save();
-        return redirect()->route('contas.showAll');
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Conta $conta)
-    {
-        //
-    }
-
-
-    public function showAll(Request $request){
-
-        $dateFilter = $request->date_filter;
-
-        if (is_null($dateFilter) ) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
-        }
-        $dt = Carbon::now();
-        $dt->setDateFrom($dateFilter . '-15');
-        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-
-        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-
-        /* Como era
-        $start_date = Carbon::createFromDate('2014','06')->startOfMonth()->toDateString();
-        $end_date = Carbon::createFromDate('2014','06')->endOfMonth()->toDateString();
-        */
-
-        $contas = new Conta();
-
-        return view('contaListar', [
-            //'contas' => $contas->show($start_date, $end_date)
-            'contasAtivas' => $contas->show($start_date, $end_date,0),
-            'contasArquivadas' => $contas->show($start_date, $end_date,1),
-        ]);
-    }
-
-
     public function edit(int $ID_Conta)
     {
         $conta = Conta::find($ID_Conta);
@@ -94,11 +35,99 @@ class ContaController extends Controller
         return view('contaEditar', [
             'conta' => $conta,
         ]);
-
     }
 
     /**
-     * Update the specified resource in storage.
+     * Exibe a listagem do recurso.
+     *
+     * @return void
+     */
+    public function index()
+    {
+        // Esta função está vazia
+    }
+
+    /**
+     * Exibe o formulário para criar uma nova conta.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function new()
+    {
+        $bancos = null;
+        return view('contaCriar', [
+            'bancos' => $bancos
+        ]);
+    }
+
+    /**
+     * Exibe o recurso especificado.
+     *
+     * @param Conta $conta
+     * @return void
+     */
+    public function show(Conta $conta)
+    {
+        // Esta função está vazia
+    }
+
+    /**
+     * Exibe a listagem completa de contas ativas e arquivadas.
+     *
+     * @param Request $request
+     * @return \Illuminate\View\View
+     */
+    public function showAll(Request $request)
+    {
+        $dateFilter = $request->date_filter;
+
+        if (is_null($dateFilter)) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+        }
+        $dt = Carbon::now();
+        $dt->setDateFrom($dateFilter . '-15');
+        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+
+        $contas = new Conta();
+
+        return view('contaListar', [
+            'contasAtivas' => $contas->show($start_date, $end_date, 0),
+            'contasArquivadas' => $contas->show($start_date, $end_date, 1),
+        ]);
+    }
+
+    /**
+     * Salva uma nova conta no banco de dados.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function store(Request $request)
+    {
+        $conta = new Conta();
+
+        $conta->Nome = $request->Nome;
+        $conta->Descricao = $request->Descricao;
+        $conta->Banco = $request->Banco;
+        $conta->Saldo_Inicial = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Saldo_Inicial)));
+        $conta->Cor = $request->corConta;
+
+        $imagens = $request->files->all();
+        if (isset($imagens['imagem'])) {
+            $conta->Imagem = Imagem::CriaImagem($imagens, 'imagem');
+        }
+
+        $conta->save();
+        return redirect()->route('contas.showAll');
+    }
+
+    /**
+     * Atualiza a conta especificada no armazenamento.
+     *
+     * @param Request $request
+     * @param int $ID_Conta
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, int $ID_Conta)
     {
@@ -106,10 +135,7 @@ class ContaController extends Controller
         $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;
-        $conta->Saldo_Inicial =
-            str_replace(",",'.',str_replace(".","",
-                str_replace("R$ ","",$request->Saldo_Inicial)));
-
+        $conta->Saldo_Inicial = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Saldo_Inicial)));
         $conta->Cor = $request->corConta;
 
         $imagens = $request->files->all();
@@ -121,27 +147,11 @@ class ContaController extends Controller
             }
         }
 
-        $request["Arquivada"] = (isset($request["Arquivada"]))?1:0;
+        $request["Arquivada"] = (isset($request["Arquivada"])) ? 1 : 0;
         $conta->Arquivada = $request->Arquivada;
 
         $conta->save();
 
         return redirect()->route('contas.showAll');
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Conta $conta)
-    {
-        //
-    }
-
-    public function new(){
-        $bancos = null;
-        return view('contaCriar', [
-            'bancos' => $bancos
-        ]);
-
     }
 }

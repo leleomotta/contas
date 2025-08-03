@@ -87,14 +87,11 @@ class CartaoController extends Controller
 
         // Busca o status de fechamento da fatura
         $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
-        $fechada = ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1);
-
-        /*
         if ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1) {
             $data = Carbon::createFromFormat('Y-m', $Ano_Mes)->addMonth();
             $Ano_Mes = $data->format('Y-m');
         }
-*/
+
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::all();

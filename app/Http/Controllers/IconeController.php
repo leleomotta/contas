@@ -8,51 +8,68 @@ use Illuminate\Http\Request;
 class IconeController extends Controller
 {
     /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Icone $icone)
-    {
-        //
-
-    }
-
-    public function showAll(Icone $icone)
-    {
-
-    }
-
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Icone $icone)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
+     * Remove o recurso especificado do armazenamento.
+     *
+     * @param Icone $icone
+     * @return void
      */
     public function destroy(Icone $icone)
     {
-        //
+        // Implemente a lógica para excluir um ícone
     }
 
+    /**
+     * Exibe a listagem do recurso.
+     *
+     * @return void
+     */
+    public function index()
+    {
+        // Implemente a lógica para exibir a lista de ícones
+    }
 
+    /**
+     * Exibe o recurso especificado.
+     *
+     * @param Icone $icone
+     * @return void
+     */
+    public function show(Icone $icone)
+    {
+        // Implemente a lógica para exibir um ícone específico
+    }
+
+    /**
+     * Exibe a listagem completa de ícones.
+     *
+     * @param Icone $icone
+     * @return void
+     */
+    public function showAll(Icone $icone)
+    {
+        // Implemente a lógica para exibir todos os ícones
+    }
+
+    /**
+     * Armazena um recurso recém-criado.
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function store(Request $request)
+    {
+        // Implemente a lógica para salvar um novo ícone
+    }
+
+    /**
+     * Atualiza o recurso especificado no armazenamento.
+     *
+     * @param Request $request
+     * @param Icone $icone
+     * @return void
+     */
+    public function update(Request $request, Icone $icone)
+    {
+        // Implemente a lógica para atualizar um ícone
+    }
 }
