@@ -50,11 +50,7 @@
                                data-inputmask="'alias': 'numeric',
                                'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                                'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa"
-                               value="{{ str_replace("_",'.',
-                                                str_replace(".",',',
-                                                str_replace(",",'_',
-                                                number_format($despesa['Valor'], 2
-                                                )))) }}">
+                               value="R$ {{ number_format($despesa['Valor'], 2, ',', '.') }}">
                     </div>
 
                     <label>Categoria</label>
@@ -63,12 +59,13 @@
                             <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                         </div>
                         <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
-                            <option selected data-default>- Selecione uma categoria -</option>
+                            <option data-default>- Selecione uma categoria -</option>
                             @foreach($categorias as $categoria)
                                 <option value="{{$categoria->ID_Categoria}}"
-                                    data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
+                                        data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
                                     <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'
-                                >
+                                    {{ $despesa['ID_Categoria'] == $categoria->ID_Categoria ? 'selected' : '' }}>
+                                    {{$categoria->Nome}}
                                 </option>
                             @endforeach
                         </select>
@@ -82,7 +79,10 @@
                         <select class="custom-select" id="Conta" name="Conta">
                             <option selected data-default>- Selecione uma conta -</option>
                             @foreach($contas as $conta)
-                                <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
+                                <option value="{{$conta->ID_Conta}}"
+                                    {{ $despesa['ID_Conta'] == $conta->ID_Conta ? 'selected' : '' }}>
+                                    {{$conta->Nome . ' - ' . $conta->Banco }}
+                                </option>
                             @endforeach
                         </select>
                     </div>
@@ -90,7 +90,6 @@
                     <div class="form-group">
                         <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
                             <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada" value="1" @if ($despesa['Efetivada'] == 1) checked @endif>
-
                             <label class="custom-control-label" for="Efetivada">Efetivada</label>
                         </div>
                     </div>
@@ -98,7 +97,7 @@
 
                 <div class="card-footer">
                     <div class="float-right">
-                        <button type="submit" class="btn btn-success">Cadastrar</button>
+                        <button type="submit" class="btn btn-success">Salvar</button>
                     </div>
                     <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
                 </div>
@@ -159,8 +158,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
 
     <script>
-        $("#Categoria").val( {{ $despesa['ID_Categoria'] }} );
-        $("#Conta").val( {{ $despesa['ID_Conta'] }} );
+        // Pré-selecionar a categoria e a conta
+        $(document).ready(function() {
+            $("#Categoria").val( {{ $despesa['ID_Categoria'] }} );
+            $("#Conta").val( {{ $despesa['ID_Conta'] }} );
+            $('.selectpicker').selectpicker('refresh');
+        });
     </script>
     <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -194,7 +197,6 @@
                 rules: {
                     Data:{
                         required: true
-                        //date: true
                     },
                     Descricao:{
                         required: true

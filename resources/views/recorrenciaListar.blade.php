@@ -80,7 +80,7 @@
                                 <td>
                                     @if ($rec->categoria)
                                         <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
-                                            <i class="{{ $rec->categoria->Icone }}"></i>
+                                            <i class="{{ $rec->categoria->Link }}"></i>
                                         </span>
                                         {{ $rec->categoria->Nome }}
                                     @else

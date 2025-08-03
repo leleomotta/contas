@@ -14,7 +14,6 @@
 
                 <div class="card">
                 </div>
-                <!-- Seletor de mês/ano -->
                 <div class="col-md-auto mx-auto">
                     <div class="input-group date" id="divData" data-target-input="nearest">
 
@@ -35,9 +34,6 @@
 
                     </div>
                 </div>
-                <!-- /Seletor de mês/ano -->
-
-                <!-- Listagem-->
                 <div class="card-body table-responsive p-0">
                     <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                         <thead>
@@ -106,12 +102,10 @@
                         </tfoot>
                     </table>
                 </div>
-                <!-- /Listagem-->
             </div>
         </div>
     </div>
 
-    <!-- Rodapé -->
     <div class="card card-success">
         <div class="card-header">
             <h3 class="card-title">Operações</h3>
@@ -143,11 +137,11 @@
                     <div class="info-box-content">
                         <span class="info-box-text">Fechamento da fatura</span>
                         <span class="info-box-number">
-                        @if ($faturas->count() <> 0 )
-                                @if ($fatura->Fechada == 0)
+                        @if ($faturas->count() != 0)
+                                @if (isset($fatura) && $fatura->Fechada == 0)
                                     ---
                                 @else
-                                    {{ date('d/m/Y', strtotime($fatura->Data_fechamento)) }}
+                                    {{ isset($fatura) ? date('d/m/Y', strtotime($fatura->Data_fechamento)) : '---' }}
                                 @endif
                             @else
                                 ---
@@ -161,8 +155,8 @@
                 <div class="info-box">
                     <div class="card-body row">
                         <div class="col-12">
-                            @if ($faturas->count() <> 0 )
-                                @if ($fatura->Fechada == 0)
+                            @if ($faturas->count() != 0)
+                                @if (isset($fatura) && $fatura->Fechada == 0)
                                     <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
                                         <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
                                         <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
@@ -181,16 +175,15 @@
                         </div>
 
                         <div class="col-12">
-                            @if ($faturas->count() <> 0 )
-                                @if ($fatura->Fechada  == 0)
+                            @if ($faturas->count() != 0)
+                                @if (isset($fatura) && $fatura->Fechada  == 0)
                                     <button type="submit" class="btn btn-warning btn-block" title="Fechar fatura"
                                             data-toggle="modal" data-target="#fechaFatura">
                                         <span class="fas fa-money-bill-wave"></span>
                                     </button>
-                                    <!-- Modal de figura -->
                                     <form id="fatura" role="form" action="{{ route('cartoes.fatura_fechar') }}" method="GET">
                                         <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
-                                        <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
+                                        <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
                                         <div class="modal fade" id="fechaFatura">
                                             <div class="modal-dialog  modal-lg">
                                                 <div class="modal-content">
@@ -237,16 +230,13 @@
                                                         </div>
                                                     </div>
                                                 </div>
-                                                <!-- /.modal-content -->
                                             </div>
-                                            <!-- /.modal-dialog -->
                                         </div>
-                                        <!-- Modal de figura -->
                                     </form>
                                 @else
                                     <form id="fatura{{ Session::get('ID_Cartao') }}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
                                         <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
-                                        <input type="hidden" name="Ano_Mes" value="{{app('request')->input('Ano_Mes')}}">
+                                        <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
                                         <button type="submit" class="btn btn-danger btn-block" title="Reabrir fatura"
                                                 onclick="return confirm('Deseja realmente reabrir a fatura?')">
                                             <span class="fas fa-money-bill-wave"></span>
@@ -260,13 +250,11 @@
             </div>
         </div>
     </div>
-    <!-- Rodapé -->
-
 @stop
 
 @section('css')
     {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" xintegrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/icheck-bootstrap/3.0.1/icheck-bootstrap.css">
 
@@ -293,7 +281,6 @@
 
 @section('js')
     <script>
-
         function voltaData() {
             const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
             let ano = parseInt(anoStr);
@@ -354,7 +341,13 @@
             const myParam = urlParams.get('Ano_Mes');
             if (myParam == null) {
                 const dateObj = new Date();
-                var month   = dateObj.getUTCMonth() + 1; // months from 1-12
+                const faturaFechada = {{ $fechada ? 'true' : 'false' }};
+                if (faturaFechada) {
+                    var month   = dateObj.getUTCMonth() + 2; // months from 1-12
+                }else{
+                    var month   = dateObj.getUTCMonth() + 1; // months from 1-12
+                }
+
                 if (month >= 1 && month <= 9) {
                     month = "0" + month;
                 }
@@ -370,7 +363,6 @@
         };
     </script>
 
-    <!-- INPUT DATE -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/inputmask@5.0.9/dist/jquery.inputmask.min.js"></script>

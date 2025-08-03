@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 
@@ -78,10 +79,22 @@ class CartaoController extends Controller
      */
     public function fatura(Request $request)
     {
+        $ID_Cartao = $request->session()->get('ID_Cartao') ?? $request->ID_Cartao;
+
         $Ano_Mes = is_null($request->Ano_Mes)
             ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
             : $request->Ano_Mes;
 
+        // Busca o status de fechamento da fatura
+        $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
+        $fechada = ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1);
+
+        /*
+        if ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1) {
+            $data = Carbon::createFromFormat('Y-m', $Ano_Mes)->addMonth();
+            $Ano_Mes = $data->format('Y-m');
+        }
+*/
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::all();
@@ -90,11 +103,16 @@ class CartaoController extends Controller
             $request->session()->put('ID_Cartao', $request->ID_Cartao);
         }
 
+        Log::info('AnoMes: ' . $Ano_Mes);
+        Log::info('ID_Cartao: ' . $ID_Cartao);
+
         return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes, $request->session()->get('ID_Cartao')),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes, $request->session()->get('ID_Cartao')),
+            'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
+            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
             'contas' => $contas,
             'cartoes' => $cartoes,
+            'Ano_Mes' => $Ano_Mes, // Adiciona o Ano_Mes atualizado à view
+            'fechada' => $fechada, // Adiciona a variável 'fechada' à view
         ]);
     }
 
@@ -102,7 +120,7 @@ class CartaoController extends Controller
      * Fecha a fatura de um cartão e move as despesas para uma conta.
      *
      * @param Request $request
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function fatura_fechar(Request $request)
     {
@@ -115,21 +133,14 @@ class CartaoController extends Controller
 
         (new Fatura)->fatura_fechar($Ano_Mes, $ID_Cartao, $Data, $Conta);
 
-        $fatura = new Fatura();
-        $contas = (new \App\Models\Conta)->showAll();
-
-        return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
-            'contas' => $contas
-        ]);
+        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $ID_Cartao, 'Ano_Mes' => $Ano_Mes]);
     }
 
     /**
      * Reabre uma fatura fechada.
      *
      * @param Request $request
-     * @return \Illuminate\View\View
+     * @return \Illuminate\Http\RedirectResponse
      */
     public function fatura_reabrir(Request $request)
     {
@@ -140,14 +151,7 @@ class CartaoController extends Controller
 
         (new Fatura)->fatura_reabrir($Ano_Mes, $ID_Cartao);
 
-        $fatura = new Fatura();
-        $contas = (new \App\Models\Conta)->showAll();
-
-        return view('faturaListar', [
-            'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
-            'contas' => $contas
-        ]);
+        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $ID_Cartao, 'Ano_Mes' => $Ano_Mes]);
     }
 
     /**

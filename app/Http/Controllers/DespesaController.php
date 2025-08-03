@@ -177,26 +177,57 @@ class DespesaController extends Controller
     }
 
     /**
-     * Salva uma nova despesa no banco de dados.
+     * Salva uma nova despesa no banco de dados, com suporte a parcelamento.
      *
      * @param Request $request
      * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
-        $despesa = new Despesa();
+        $valorStr = $request->Valor;
+        $valorTotal = floatval(str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $valorStr))));
+        $dataInicial = Carbon::createFromFormat('d/m/Y', $request->Data);
 
-        $despesa->Descricao = $request->Descricao;
-        $despesa->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
-        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
-        $despesa->ID_Conta = $request->Conta;
-        $despesa->ID_Categoria = $request->Categoria;
+        $parcelada = $request->Parcelada === 'sim';
+        $numParcelas = $parcelada ? max((int) $request->NumeroParcelas, 1) : 1;
 
-        $despesa->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
+        if ($parcelada) {
+            $valorBase = floor(($valorTotal / $numParcelas) * 100) / 100;
+            $diferenca = round($valorTotal - ($valorBase * $numParcelas), 2);
 
-        $despesa->save();
+            for ($i = 1; $i <= $numParcelas; $i++) {
+                $valorParcela = $valorBase;
+                if ($i <= $diferenca * 100) {
+                    $valorParcela += 0.01;
+                }
 
-        $url ='/despesas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+                $dataParcela = $dataInicial->copy()->addMonths($i - 1);
+
+                $despesa = new Despesa();
+                $despesa->Descricao = "{$request->Descricao} ({$i}/{$numParcelas})";
+                $despesa->Valor = $valorParcela;
+                $despesa->ValorTotal = $valorTotal;
+                $despesa->Parcela = $i;
+                $despesa->TotalParcelas = $numParcelas;
+                $despesa->Data = $dataParcela->format('Y-m-d');
+                $despesa->ID_Conta = $request->Conta;
+                $despesa->ID_Categoria = $request->Categoria;
+                $despesa->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
+                $despesa->save();
+            }
+        } else {
+            // Lógica para despesa única
+            $despesa = new Despesa();
+            $despesa->Descricao = $request->Descricao;
+            $despesa->Valor = $valorTotal;
+            $despesa->Data = $dataInicial->format('Y-m-d');
+            $despesa->ID_Conta = $request->Conta;
+            $despesa->ID_Categoria = $request->Categoria;
+            $despesa->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
+            $despesa->save();
+        }
+
+        $url ='/despesas?date_filter=' . $dataInicial->isoFormat('Y') . '-' . $dataInicial->isoFormat('MM');
         return Redirect::to($url);
     }
 

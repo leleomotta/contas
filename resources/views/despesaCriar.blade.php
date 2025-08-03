@@ -15,94 +15,106 @@
             </div>
             <div class="card-body">
                 <div class="box-body">
-                <!-- Date -->
-                <label>Data</label>
-                <div class="form-group">
-                    <div class="input-group date" id="Data" data-target-input="nearest">
-                        <div class="input-group-append" data-target="#Data" data-toggle="datetimepicker">
-                            <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    <!-- Data -->
+                    <label>Data</label>
+                    <div class="form-group">
+                        <div class="input-group date" id="Data" data-target-input="nearest">
+                            <div class="input-group-append" data-target="#Data" data-toggle="datetimepicker">
+                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                            </div>
+                            <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
+                                   data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                   placeholder="dd/mm/yyyy"
+                                   value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
+                            />
                         </div>
-                        <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
-                               data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                               placeholder="dd/mm/yyyy"
-                               value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
-                        />
-
                     </div>
-                </div>
 
-                <label >Descrição</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
+                    <label >Descrição</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
+                        </div>
+                        <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa">
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa">
-                </div>
 
-                <label >Valor</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
-                    </div>
-                    <input type="text" class="form-control text-left" id="Valor" name="Valor"
-                           data-inputmask="'alias': 'numeric',
+                    <label >Valor</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-money-bill"></i></span>
+                        </div>
+                        <input type="text" class="form-control text-left" id="Valor" name="Valor"
+                               data-inputmask="'alias': 'numeric',
                            'groupSeparator': '.', 'autoGroup': true, 'digits': 2, 'digitsOptional': false,'radixPoint': ',',
                            'prefix': 'R$ ', 'placeholder': '0'" placeholder="Digite o valor da despesa">
-                </div>
-
-                <label>Categoria</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
                     </div>
-                    <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
-                        <option selected data-default>- Selecione uma categoria -</option>
-                        @foreach($categorias as $categoria)
-                            <option value="{{$categoria->ID_Categoria}}"
-                                    data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
+
+                    <!-- Campos para parcelamento -->
+                    <div class="form-row">
+                        <div class="col-md-6">
+                            <label>Despesa parcelada?</label>
+                            <select name="Parcelada" id="Parcelada" class="form-control">
+                                <option value="nao">Não</option>
+                                <option value="sim">Sim</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6" id="divNumeroParcelas">
+                            <label>Número de parcelas</label>
+                            <input type="number" name="NumeroParcelas" id="NumeroParcelas" class="form-control"
+                                   min="1" max="60" value="1">
+                        </div>
+                    </div>
+
+                    <label class="mt-3">Categoria</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"><i class="fa fa-list-alt"></i> </span>
+                        </div>
+                        <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
+                            <option selected data-default>- Selecione uma categoria -</option>
+                            @foreach($categorias as $categoria)
+                                <option value="{{$categoria->ID_Categoria}}"
+                                        data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
                                 <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'
-                            >
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-
-                <label>Conta</label>
-                <div class="input-group">
-                    <div class="input-group-prepend">
-                        <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
+                                >
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
-                    <select class="custom-select" id="Conta" name="Conta">
-                        <option selected data-default>- Selecione uma conta -</option>
-                        @foreach($contas as $conta)
-                            <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
-                 <div class="form-group">
-                    <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
-                        <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
-                        <label class="custom-control-label" for="Efetivada">Efetivada</label>
+
+                    <label>Conta</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text"> <i class="fa fa-landmark"></i> </span>
+                        </div>
+                        <select class="custom-select" id="Conta" name="Conta">
+                            <option selected data-default>- Selecione uma conta -</option>
+                            @foreach($contas as $conta)
+                                <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}
+                                </option>
+                            @endforeach
+                        </select>
                     </div>
+                    <div class="form-group">
+                        <div class="custom-control custom-switch custom-switch-off-danger custom-switch-on-success">
+                            <input type="checkbox" class="custom-control-input" id="Efetivada" name="Efetivada">
+                            <label class="custom-control-label" for="Efetivada">Efetivada</label>
+                        </div>
+                    </div>
+
                 </div>
 
-            </div>
-
-            <div class="card-footer">
-                <div class="float-right">
-                    <button type="submit" class="btn btn-success">Cadastrar</button>
+                <div class="card-footer">
+                    <div class="float-right">
+                        <button type="submit" class="btn btn-success">Cadastrar</button>
+                    </div>
+                    <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
                 </div>
-                <button type="reset" class="btn btn-default"><i class="fas fa-times"></i> Redefinir</button>
-            </div>
             </div>
         </div>
-
-
     </form>
-
 @stop
-
 
 @section('css')
     {{-- Add here extra stylesheets --}}
@@ -170,14 +182,25 @@
     <script>
         $('[data-mask]').inputmask();
         $('input').inputmask();
-
     </script>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/jquery.validate.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/additional-methods.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.21.0/localization/messages_pt_BR.min.js"></script>
     <script>
         $(document).ready(function () {
+            // Lógica para desabilitar/habilitar o campo de parcelas
+            const selectParcelada = $('#Parcelada');
+            const inputNumeroParcelas = $('#NumeroParcelas');
+
+            function toggleParcelas() {
+                if (selectParcelada.val() === 'sim') {
+                    inputNumeroParcelas.prop('disabled', false);
+                } else {
+                    inputNumeroParcelas.val(1);
+                    inputNumeroParcelas.prop('disabled', true);
+                }
+            }
+
+            toggleParcelas();
+            selectParcelada.on('change', toggleParcelas);
 
             $.validator.addMethod("valueNotEquals", function(value, element, arg){
                 return arg !== value;
@@ -187,13 +210,21 @@
                 rules: {
                     Data:{
                         required: true
-                        //date: true
                     },
                     Descricao:{
                         required: true
                     },
                     Valor:{
                         required: true
+                    },
+                    Parcelada: {
+                        required: true
+                    },
+                    NumeroParcelas: {
+                        required: function(element) {
+                            return $("#Parcelada").val() === "sim";
+                        },
+                        min: 1
                     },
                     Categoria: {
                         valueNotEquals: "- Selecione uma categoria -"
@@ -213,6 +244,10 @@
                     Valor:{
                         required: "Por favor, entre com um valor para a despesa."
                     },
+                    NumeroParcelas: {
+                        required: "Por favor, informe o número de parcelas.",
+                        min: "O número de parcelas deve ser pelo menos 1."
+                    },
                     Categoria: {
                         valueNotEquals: "Por favor, selecione uma categoria."
                     },
@@ -223,7 +258,7 @@
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
+                    element.closest('.form-group, .form-row').append(error);
                 },
                 highlight: function (element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
