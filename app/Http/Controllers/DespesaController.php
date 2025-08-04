@@ -260,7 +260,8 @@ class DespesaController extends Controller
      */
     public function recorrencias_new()
     {
-        $categorias = Categoria::orderBy('Nome')->get();
+        //$categorias = Categoria::orderBy('Nome')->get();
+        $categorias = (new Categoria)->show('D');
         $contas = Conta::orderBy('Nome')->get();
         $cartoes = Cartao::orderBy('Nome')->get();
 

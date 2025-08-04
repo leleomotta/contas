@@ -48,6 +48,8 @@
                         <thead>
                         <tr>
                             <th style="width:50px">Ativa</th>
+                            <th>Data Início</th>
+                            <th>Data Fim</th>
                             <th>Descrição</th>
                             <th>Valor</th>
                             <th>Conta</th>
@@ -55,8 +57,6 @@
                             <th>Categoria</th>
                             <th>Periodicidade</th>
                             <th>Dia vencimento</th>
-                            <th>Data Início</th>
-                            <th>Data Fim</th>
                             <th style="width:110px">&nbsp;</th>
                         </tr>
                         </thead>
@@ -73,22 +73,6 @@
                                         @endif
                                     </a>
                                 </td>
-                                <td>{{ $rec->Descricao }}</td>
-                                <td>{{ 'R$ ' . number_format($rec->Valor, 2, ',', '.') }}</td>
-                                <td>{{ $rec->conta->Banco ?? '-' }}</td>
-                                <td>{{ $rec->cartao->Nome ?? '-' }}</td>
-                                <td>
-                                    @if ($rec->categoria)
-                                        <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
-                                            <i class="{{ $rec->categoria->Link }}"></i>
-                                        </span>
-                                        {{ $rec->categoria->Nome }}
-                                    @else
-                                        -
-                                    @endif
-                                </td>
-                                <td>{{ $rec->Periodicidade }}</td>
-                                <td>{{ $rec->Dia_vencimento }}</td>
                                 <td>{{ \Carbon\Carbon::parse($rec->Data_inicio)->format('d/m/Y') }}</td>
                                 <td>
                                     @if ($rec->Data_fim)
@@ -97,6 +81,26 @@
                                         -
                                     @endif
                                 </td>
+                                <td>{{ $rec->Descricao }}</td>
+                                <td>{{ 'R$ ' . number_format($rec->Valor, 2, ',', '.') }}</td>
+                                <td>{{ $rec->conta->Banco ?? '-' }}</td>
+                                <td>{{ $rec->cartao->Nome ?? '-' }}</td>
+                                <!---->
+                                <td>
+                                    @if ($rec->categoria)
+                                        <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
+                                            <i class="{{ $rec->categoria->icone->Link }}"></i>
+                                        </span>
+                                        {{ $rec->categoria->Nome }}
+                                    @else
+                                        -
+                                    @endif
+                                </td>
+                                <!---->
+
+
+                                <td>{{ $rec->Periodicidade }}</td>
+                                <td>{{ $rec->Dia_vencimento }}</td>
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
                                         <form action="{{ route('recorrencias.edit', ['ID_Recorrencia' => $rec->ID_Recorrencia]) }}" method="GET" class="m-0 p-0">

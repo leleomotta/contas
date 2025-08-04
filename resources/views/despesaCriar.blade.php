@@ -184,6 +184,8 @@
         $('input').inputmask();
     </script>
 
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/jquery.validate.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/localization/messages_pt_BR.min.js"></script>
     <script>
         $(document).ready(function () {
             // Lógica para desabilitar/habilitar o campo de parcelas
@@ -202,9 +204,7 @@
             toggleParcelas();
             selectParcelada.on('change', toggleParcelas);
 
-            $.validator.addMethod("valueNotEquals", function(value, element, arg){
-                return arg !== value;
-            }, "Value must not equal arg.");
+            // Remova a definição do método valueNotEquals
 
             $('#cadastro').validate({
                 rules: {
@@ -226,13 +226,13 @@
                         },
                         min: 1
                     },
+                    // Use a regra 'required' simples para os campos select
                     Categoria: {
-                        valueNotEquals: "- Selecione uma categoria -"
+                        required: true
                     },
                     Conta:{
-                        valueNotEquals: "- Selecione uma conta -"
+                        required: true
                     }
-
                 },
                 messages: {
                     Data: {
@@ -248,24 +248,38 @@
                         required: "Por favor, informe o número de parcelas.",
                         min: "O número de parcelas deve ser pelo menos 1."
                     },
-                    Categoria: {
-                        valueNotEquals: "Por favor, selecione uma categoria."
-                    },
-                    Conta:{
-                        valueNotEquals: "Por favor, selecione uma conta"
-                    }
+                    // Remova as mensagens personalizadas para Categoria e Conta
                 },
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-group, .form-row').append(error);
+                    // Lógica para o campo Categoria (bootstrap-select)
+                    if (element.attr("name") === "Categoria") {
+                        // Posiciona o erro após o container do selectpicker
+                        error.insertAfter(element.next('.bootstrap-select'));
+                    } else {
+                        element.closest('.form-group, .input-group, .form-row').append(error);
+                    }
                 },
-                highlight: function (element, errorClass, validClass) {
+                highlight: function (element) {
                     $(element).addClass('is-invalid');
+                    // Adiciona o destaque de erro ao container do selectpicker
+                    if ($(element).attr("name") === "Categoria" || $(element).attr("name") === "Conta") {
+                        $(element).next('.bootstrap-select').find('.dropdown-toggle').addClass('is-invalid');
+                    }
                 },
-                unhighlight: function (element, errorClass, validClass) {
+                unhighlight: function (element) {
                     $(element).removeClass('is-invalid');
+                    // Remove o destaque de erro do container do selectpicker
+                    if ($(element).attr("name") === "Categoria" || $(element).attr("name") === "Conta") {
+                        $(element).next('.bootstrap-select').find('.dropdown-toggle').removeClass('is-invalid');
+                    }
                 }
+            });
+
+            // Disparar a validação do campo Categoria quando o valor do bootstrap-select mudar
+            $('#Categoria, #Conta').on('change.bs.select', function() {
+                $(this).valid();
             });
         });
     </script>

@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Conta;
 use App\Models\Imagem;
+use App\Models\Receita;
+use App\Models\Despesa;
+use App\Models\Transferencia;
 use Illuminate\Http\Request;
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Carbon;
@@ -13,20 +16,14 @@ class ContaController extends Controller
 {
     /**
      * Remove a conta especificada do armazenamento.
-     *
-     * @param Conta $conta
-     * @return void
      */
     public function destroy(Conta $conta)
     {
-        // Implemente a lógica para excluir uma conta
+        //
     }
 
     /**
      * Edita a conta especificada.
-     *
-     * @param int $ID_Conta
-     * @return \Illuminate\View\View
      */
     public function edit(int $ID_Conta)
     {
@@ -35,22 +32,19 @@ class ContaController extends Controller
         return view('contaEditar', [
             'conta' => $conta,
         ]);
+
     }
 
     /**
      * Exibe a listagem do recurso.
-     *
-     * @return void
      */
     public function index()
     {
-        // Esta função está vazia
+        //
     }
 
     /**
      * Exibe o formulário para criar uma nova conta.
-     *
-     * @return \Illuminate\View\View
      */
     public function new()
     {
@@ -58,31 +52,26 @@ class ContaController extends Controller
         return view('contaCriar', [
             'bancos' => $bancos
         ]);
+
     }
 
     /**
      * Exibe o recurso especificado.
-     *
-     * @param Conta $conta
-     * @return void
      */
     public function show(Conta $conta)
     {
-        // Esta função está vazia
+        //
     }
 
     /**
      * Exibe a listagem completa de contas ativas e arquivadas.
-     *
-     * @param Request $request
-     * @return \Illuminate\View\View
      */
-    public function showAll(Request $request)
-    {
+    public function showAllGemini(Request $request){
         $dateFilter = $request->date_filter;
 
-        if (is_null($dateFilter)) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+        if (is_null($dateFilter) ) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+                Carbon::now()->isoFormat('MM');
         }
         $dt = Carbon::now();
         $dt->setDateFrom($dateFilter . '-15');
@@ -91,17 +80,58 @@ class ContaController extends Controller
 
         $contas = new Conta();
 
+        $contasAtivas = $contas->show($start_date, $end_date,0);
+        $contasArquivadas = $contas->show($start_date, $end_date,1);
+
+        // Preenche os dados de transferências para cada conta
+        foreach($contasAtivas as $conta) {
+            $transferencias = new Transferencia();
+            $conta->Entradas = $transferencias->tranferenciasEntrada($start_date, $end_date, $conta->ID_Conta);
+            $conta->Saidas = $transferencias->tranferenciasSaida($start_date, $end_date, $conta->ID_Conta);
+        }
+
+        foreach($contasArquivadas as $conta) {
+            $transferencias = new Transferencia();
+            $conta->Entradas = $transferencias->tranferenciasEntrada($start_date, $end_date, $conta->ID_Conta);
+            $conta->Saidas = $transferencias->tranferenciasSaida($start_date, $end_date, $conta->ID_Conta);
+        }
+
         return view('contaListar', [
-            'contasAtivas' => $contas->show($start_date, $end_date, 0),
-            'contasArquivadas' => $contas->show($start_date, $end_date, 1),
+            'contasAtivas' => $contasAtivas,
+            'contasArquivadas' => $contasArquivadas,
+        ]);
+    }
+
+    public function showAll(Request $request){
+
+        $dateFilter = $request->date_filter;
+
+        if (is_null($dateFilter) ) {
+            $dateFilter = Carbon::now()->isoFormat('Y') . '-' .
+                Carbon::now()->isoFormat('MM');
+        }
+        $dt = Carbon::now();
+        $dt->setDateFrom($dateFilter . '-15');
+        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
+
+        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
+
+        /* Como era
+        $start_date = Carbon::createFromDate('2014','06')->startOfMonth()->toDateString();
+        $end_date = Carbon::createFromDate('2014','06')->endOfMonth()->toDateString();
+        */
+
+        $contas = new Conta();
+
+        return view('contaListar', [
+            //'contas' => $contas->show($start_date, $end_date)
+            'contasAtivas' => $contas->show($start_date, $end_date,0),
+            'contasArquivadas' => $contas->show($start_date, $end_date,1),
         ]);
     }
 
     /**
      * Salva uma nova conta no banco de dados.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -110,7 +140,9 @@ class ContaController extends Controller
         $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;
-        $conta->Saldo_Inicial = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Saldo_Inicial)));
+        $conta->Saldo_Inicial =
+            str_replace(",",'.',str_replace(".","",
+                str_replace("R$ ","",$request->Saldo_Inicial)));
         $conta->Cor = $request->corConta;
 
         $imagens = $request->files->all();
@@ -124,10 +156,6 @@ class ContaController extends Controller
 
     /**
      * Atualiza a conta especificada no armazenamento.
-     *
-     * @param Request $request
-     * @param int $ID_Conta
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update(Request $request, int $ID_Conta)
     {
@@ -135,7 +163,10 @@ class ContaController extends Controller
         $conta->Nome = $request->Nome;
         $conta->Descricao = $request->Descricao;
         $conta->Banco = $request->Banco;
-        $conta->Saldo_Inicial = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Saldo_Inicial)));
+        $conta->Saldo_Inicial =
+            str_replace(",",'.',str_replace(".","",
+                str_replace("R$ ","",$request->Saldo_Inicial)));
+
         $conta->Cor = $request->corConta;
 
         $imagens = $request->files->all();
@@ -147,7 +178,7 @@ class ContaController extends Controller
             }
         }
 
-        $request["Arquivada"] = (isset($request["Arquivada"])) ? 1 : 0;
+        $request["Arquivada"] = (isset($request["Arquivada"]))?1:0;
         $conta->Arquivada = $request->Arquivada;
 
         $conta->save();

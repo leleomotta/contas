@@ -14,6 +14,12 @@ class Categoria extends Model
 
     protected $primaryKey = 'ID_Categoria';
 
+    public function icone()
+    {
+        // Define o relacionamento com a tabela 'icone'
+        return $this->belongsTo(Icone::class, 'ID_Icone', 'ID_Icone');
+    }
+
     public function showAll(){
             $filtros = DB::table('categoria')
                 ->select('*' )

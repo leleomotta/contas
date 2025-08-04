@@ -85,7 +85,7 @@ class CartaoController extends Controller
             ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
             : $request->Ano_Mes;
 
-// Busca o status de fechamento da fatura
+        // Busca o status de fechamento da fatura
         $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
         $fechada = ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1);
 

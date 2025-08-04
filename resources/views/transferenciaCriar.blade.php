@@ -22,6 +22,7 @@
                     <input type="text" class="form-control datetimepicker-input" data-target="#Data" name="Data"
                            data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
                            placeholder="dd/mm/yyyy"
+                           value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
                     />
                 </div>
             </div>
