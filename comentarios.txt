@@ -54,6 +54,8 @@ CREATE TABLE `recorrencia` (
     PRIMARY KEY (`ID_recorrencia`)
 );
 
+Teste
+
 alter table recorrencia add FOREIGN KEY (`ID_Categoria`) REFERENCES `categoria` (`ID_Categoria`);
 alter table recorrencia add FOREIGN KEY (`ID_Conta`) REFERENCES `conta` (`ID_Conta`);
 alter table recorrencia add FOREIGN KEY (`ID_Cartao`) REFERENCES `cartao` (`ID_Cartao`);
