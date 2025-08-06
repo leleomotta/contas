@@ -81,7 +81,7 @@
                             @foreach($contas as $conta)
                                 <option value="{{$conta->ID_Conta}}"
                                     {{ $despesa['ID_Conta'] == $conta->ID_Conta ? 'selected' : '' }}>
-                                    {{$conta->Nome . ' - ' . $conta->Banco }}
+                                    {{$conta->Banco . ' - ' . $conta->Nome }}
                                 </option>
                             @endforeach
                         </select>

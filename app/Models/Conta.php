@@ -163,12 +163,23 @@ class Conta extends Model
     }
 
     public function showAll(){
-        //$contas = DB::table('conta')->paginate(99999);
-        $contas = Conta::where(function ($query) {
-            $query->select('*');
-            //$query->where('Arquivada',0);
-            $query->orderBy('Nome','ASC');
-        })->get();
+        //$contas = Conta::where('Arquivada', 0) // Filtra as contas não arquivadas
+        //->orderBy('Banco', 'asc') // Ordena por Banco
+
+        // Inicia a construção da query no modelo 'Conta'.
+        // A query irá buscar todos os registros da tabela 'conta'.
+        $contas = Conta::
+        // Primeiro, ordena os resultados pelo nome do banco em ordem ascendente (A-Z).
+        // Esta é a ordenação principal.
+        orderBy('Banco', 'asc')
+            // Em seguida, para os registros que possuem o mesmo banco,
+            // ordena pelo nome da conta em ordem ascendente (A-Z).
+            // Esta é a ordenação secundária.
+            ->orderBy('Nome', 'asc')
+            // Executa a query e retorna uma coleção de objetos 'Conta'.
+            ->get();
+
+        // A função retorna a coleção de contas, já ordenada.
         return $contas;
     }
 }

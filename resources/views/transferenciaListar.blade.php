@@ -3,7 +3,12 @@
 @section('title', 'Transferência - Listar')
 
 @section('content_header')
-    <h1>Transferências</h1>
+    <div class="d-flex justify-content-between align-items-center">
+        <h1>Transferências</h1>
+        <a href="{{ route('transferencias.new') }}" class="btn btn-success">
+            Nova transferência
+        </a>
+    </div>
 @stop
 
 @section('content')
@@ -160,11 +165,7 @@
     </div>
 
     <div class="card-footer">
-        <form id="novaTransferencia" role="form" action="{{ route('transferencias.new') }}" method="GET">
-            <div class="float-right">
-                <button type="submit" class="btn btn-success">Nova transferência</button>
-            </div>
-        </form>
+
     </div>
 
 @stop
