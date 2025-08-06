@@ -14,7 +14,7 @@ return [
     |
     */
 
-    'title' => 'Controle de Contas',
+    'title' => 'Conta em Dia',
     'title_prefix' => '',
     'title_postfix' => '',
 
@@ -30,7 +30,7 @@ return [
     |
     */
 
-    'use_ico_only' => false,
+    'use_ico_only' => true,
     'use_full_favicon' => false,
 
     /*
@@ -62,13 +62,12 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
     |
     */
-
-    'logo' => '<b>Admin</b>Leotônio',
-    'logo_img' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
+    'logo' => '<b>Conta em</b>Dia',
+    'logo_img' => 'storage/logo.png',
     'logo_img_class' => 'brand-image img-circle elevation-3',
     'logo_img_xl' => null,
     'logo_img_xl_class' => 'brand-image-xs',
-    'logo_img_alt' => 'Admin Logo',
+    'logo_img_alt' => 'Conta em Dia',
 
     /*
     |--------------------------------------------------------------------------
@@ -82,15 +81,14 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
     |
     */
-
     'auth_logo' => [
-        'enabled' => false,
+        'enabled' => true,
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'Auth Logo',
+            'path' => 'storage/logo.png',
+            'alt' => 'Conta em Dia',
             'class' => '',
-            'width' => 50,
-            'height' => 50,
+            'width' => 60, // Ajuste a largura conforme necessário
+            'height' => 60, // Ajuste a altura conforme necessário
         ],
     ],
 
@@ -108,13 +106,12 @@ return [
     | https://github.com/jeroennoten/Laravel-AdminLTE/wiki/Basic-Configuration
     |
     */
-
     'preloader' => [
         'enabled' => true,
         'mode' => 'fullscreen',
         'img' => [
-            'path' => 'vendor/adminlte/dist/img/AdminLTELogo.png',
-            'alt' => 'AdminLTE Preloader Image',
+            'path' => 'storage/logo.png', // Alterado aqui
+            'alt' => 'Conta em Dia',
             'effect' => 'animation__shake',
             'width' => 60,
             'height' => 60,
