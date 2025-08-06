@@ -211,7 +211,7 @@
                                                                 </div>
                                                                 <input type="text" class="form-control datetimepicker-input" data-target="#Data_Fechamento" name="Data_Fechamento"
                                                                        data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                                                       placeholder="dd/mm/yyyy" value=" "
+                                                                       placeholder="dd/mm/yyyy" value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
                                                                 />
                                                             </div>
                                                         </div>
@@ -220,7 +220,7 @@
                                                         <select class="custom-select" id="Conta" name="Conta">
                                                             <option selected data-default>- Selecione uma conta -</option>
                                                             @foreach($contas as $conta)
-                                                                <option value="{{$conta->ID_Conta}}"> {{$conta->Nome . ' - ' . $conta->Banco }}  </option>
+                                                                <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Nome }}  </option>
                                                             @endforeach
                                                         </select>
                                                         <div class="card-footer">
