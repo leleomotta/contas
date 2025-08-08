@@ -89,6 +89,8 @@ class CartaoController extends Controller
         $Ano_Mes = $request->Ano_Mes;
         // Busca o status de fechamento da fatura
         $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
+        $cartao = Cartao::where('ID_Cartao', $ID_Cartao)->first()->Nome;
+
         $fechada = ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1);
 
         /*
@@ -113,7 +115,8 @@ class CartaoController extends Controller
             'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
             'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
             'contas' => $contas,
-            'cartoes' => $cartoes,
+            'cartao' => $cartao,
+            //'cartoes' => $cartoes,
             'Ano_Mes' => $Ano_Mes, // Adiciona o Ano_Mes atualizado à view
             'fechada' => $fechada, // Adiciona a variável 'fechada' à view
         ]);

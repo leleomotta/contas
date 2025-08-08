@@ -14,9 +14,16 @@
 
                 <div class="card">
                 </div>
-                <div class="col-md-auto mx-auto">
-                    <div class="input-group date" id="divData" data-target-input="nearest">
+                <div class="position-relative text-center mb-3" style="min-height:40px;">
 
+                {{-- Nome do cartão alinhado à esquerda --}}
+                <div class="position-absolute" style="left:0; top:50%; transform:translateY(-50%);">
+                    &nbsp;&nbsp;&nbsp;{{ $cartao ?? 'NOME DO CARTÃO' }}
+                </div>
+
+                {{-- datetimepicker centralizado --}}
+                <div class="d-inline-block">
+                    <div class="input-group date" id="divData" data-target-input="nearest">
                         <div class="input-group-append" onclick="voltaData()">
                             <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                         </div>
@@ -31,9 +38,12 @@
                         <div class="input-group-append" onclick="avancaData()">
                             <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
                         </div>
-
                     </div>
                 </div>
+            </div>
+
+
+
                 <div class="card-body table-responsive p-0">
                     <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                         <thead>
