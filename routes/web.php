@@ -94,19 +94,12 @@ Route::group(['middleware'=>['auth']], function(){
     Route::put('despesas/atualiza/{ID_Despesa}',[DespesaController::class, 'update'])->name('despesas.update');
     //----------------- DESPESAS -----------------
 
-    Route::get('recorrencias/novo',[DespesaController::class, 'recorrencias_new'])->name('recorrencias.new');
-    Route::post('recorrencias/salvar', [DespesaController::class, 'recorrencias_store'])->name('recorrencias.store');
-    Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
-    Route::get('recorrencias', [RecorrenciaController::class, 'showAll'])->name('recorrencias.showAll');
-    Route::get('recorrencias/editar/{ID_Recorrencia}', [RecorrenciaController::class, 'edit'])->name('recorrencias.edit');
-    Route::put('recorrencias/atualiza/{ID_Recorrencia}', [RecorrenciaController::class, 'update'])->name('recorrencias.update');
-    Route::delete('recorrencias/apagar/{ID_Recorrencia}', [RecorrenciaController::class, 'destroy'])->name('recorrencias.destroy');
-    Route::post('recorrencias/toggleAtiva/{ID_Recorrencia}', [RecorrenciaController::class, 'toggleAtiva'])->name('recorrencias.toggleAtiva');
-
-
     //----------------- FATURA -----------------
-    //FATURA PRA MIM É Cartão. Vai ficar no controle do CartaoController por pragmatismo
+    //FATURA PRA MIM É Cartão. Vai ficar no controller do CartaoController por pragmatismo
     Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');
+    //Route::get('fatura/{Ano_Mes?}/{navega?}', [CartaoController::class, 'fatura'])->name('cartoes.fatura');
+    //Route::get('fatura/{Ano_Mes?}/', [CartaoController::class, 'fatura'])->name('cartoes.fatura');
+
     Route::get('fatura/despesa/novo',[CartaoController::class, 'new_despesa'])->name('cartoes.new_despesa');
     Route::post('fatura/despesa/salvar',[CartaoController::class, 'store_despesa'])->name('cartoes.store_despesa');
     Route::delete('fatura/despesas/apagar/{ID_Despesa}',[CartaoController::class, 'destroy_despesa'])->name('cartoes.destroy_despesa');
@@ -115,6 +108,18 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('fatura/fechar',[CartaoController::class, 'fatura_fechar'])->name('cartoes.fatura_fechar');
     Route::get('fatura/reabrir',[CartaoController::class, 'fatura_reabrir'])->name('cartoes.fatura_reabrir');
     //----------------- FATURA -----------------
+
+    //----------------- RECORRENCIA -----------------
+    Route::get('recorrencias/novo',[DespesaController::class, 'recorrencias_new'])->name('recorrencias.new');
+    Route::post('recorrencias/salvar', [DespesaController::class, 'recorrencias_store'])->name('recorrencias.store');
+    Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
+    Route::get('recorrencias', [RecorrenciaController::class, 'showAll'])->name('recorrencias.showAll');
+    Route::get('recorrencias/editar/{ID_Recorrencia}', [RecorrenciaController::class, 'edit'])->name('recorrencias.edit');
+    Route::put('recorrencias/atualiza/{ID_Recorrencia}', [RecorrenciaController::class, 'update'])->name('recorrencias.update');
+    Route::delete('recorrencias/apagar/{ID_Recorrencia}', [RecorrenciaController::class, 'destroy'])->name('recorrencias.destroy');
+    Route::post('recorrencias/toggleAtiva/{ID_Recorrencia}', [RecorrenciaController::class, 'toggleAtiva'])->name('recorrencias.toggleAtiva');
+    //----------------- RECORRENCIA -----------------
+
 
     //----------------- RECEITAS -----------------
     Route::get('receitas',[ReceitaController::class, 'showAll'])->name('receitas.showAll');

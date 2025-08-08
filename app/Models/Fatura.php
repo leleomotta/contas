@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class Fatura extends Model
 {
@@ -18,6 +19,8 @@ class Fatura extends Model
 
     public function show($Ano_Mes, $ID_Cartao)
     {
+        //Log::info("Fatura Ano_Mes: " . $Ano_Mes);
+        //Log::info("Fatura IDCartão: " . $ID_Cartao);
         $retorno = DB::table('fatura')
             ->select(
                 'fatura.Ano_Mes', 'fatura.Data_fechamento', 'fatura.Fechada', 'fatura.ID_Cartao', 'despesa.ID_Despesa',

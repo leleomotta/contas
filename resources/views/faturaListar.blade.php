@@ -341,13 +341,8 @@
             const myParam = urlParams.get('Ano_Mes');
             if (myParam == null) {
                 const dateObj = new Date();
-                const faturaFechada = {{ $fechada ? 'true' : 'false' }};
-                if (faturaFechada) {
-                    var month   = dateObj.getUTCMonth() + 2; // months from 1-12
-                }else{
-                    var month   = dateObj.getUTCMonth() + 1; // months from 1-12
-                }
 
+                var month   = dateObj.getUTCMonth() + 1; // months from 1-12
                 if (month >= 1 && month <= 9) {
                     month = "0" + month;
                 }
