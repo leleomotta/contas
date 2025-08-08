@@ -34,12 +34,11 @@
                                 <div class="col-sm-4 border-right">
                                     <div class="description-block">
                                         <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
-                                            {{ 'R$ ' .  str_replace("_",'.',
-                                                        str_replace(".",',',
-                                                        str_replace(",",'_',
-                                                        number_format($cartao->Gasto_Total, 2
-                                                        )))) }}</h5>
-                                        <span class="description-text">GASTO TOTAL</span>
+                                            {{
+                                            $cartao->Ano_Mes
+                                            }}
+                                        </h5>
+                                        <span class="description-text">Ano/Mês</span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
@@ -53,7 +52,7 @@
                                                         number_format($cartao->Valor, 2
                                                         )))) }}
                                         </h5>
-                                        <span class="description-text">FATURA ATUAL</span>
+                                        <span class="description-text">Valor Fatura</span>
                                     </div>
                                     <!-- /.description-block -->
                                 </div>
@@ -62,10 +61,13 @@
                                     <div class="description-block">
                                         <form id="fatura{{$cartao->ID_Cartao}}" role="form" action="{{ route('cartoes.fatura') }}" method="GET">
                                             <input type="hidden" name="ID_Cartao" value="{{ $cartao->ID_Cartao }}">
+                                            <input type="hidden" name="Ano_Mes" value="{{ $cartao->Ano_Mes }}">
                                             <a href="javascript:{}" onclick="document.getElementById('fatura{{$cartao->ID_Cartao}}').submit();" class="btn btn-app">
                                                 <span class="badge bg-info">{{$cartao->N_Despesas}}</span>
                                                 <i class="fas fa-inbox"></i> Fatura
                                             </a>
+
+
                                         </form>
                                     </div>
                                     <!-- /.description-block -->

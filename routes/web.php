@@ -99,7 +99,6 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('fatura',[CartaoController::class, 'fatura'])->name('cartoes.fatura');
     //Route::get('fatura/{Ano_Mes?}/{navega?}', [CartaoController::class, 'fatura'])->name('cartoes.fatura');
     //Route::get('fatura/{Ano_Mes?}/', [CartaoController::class, 'fatura'])->name('cartoes.fatura');
-
     Route::get('fatura/despesa/novo',[CartaoController::class, 'new_despesa'])->name('cartoes.new_despesa');
     Route::post('fatura/despesa/salvar',[CartaoController::class, 'store_despesa'])->name('cartoes.store_despesa');
     Route::delete('fatura/despesas/apagar/{ID_Despesa}',[CartaoController::class, 'destroy_despesa'])->name('cartoes.destroy_despesa');
