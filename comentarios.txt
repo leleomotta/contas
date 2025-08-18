@@ -1,11 +1,22 @@
 FALTA
 
+Ajustes do sistema de contas
+	FEITO- parcelamento de despesas cartão
+	FEITO- recorrências
+	FEITO- tela de transferências
+	FEITO- nova transferência data
+	FEITO- erro no login
+	AJUSTAR - tela de cartão mostrar o aberto ou o do mês
+	- ao lançar uma despesa de cartão precisa voltar para a fatura correta
+	- receita recorrente
+
+	- grafico inicial = no meio não diferenciar cartão e na direito colocar só as do cartão por categoria
+	- colocar SQL no site
+
 *cartao =>
     Na fatura ter uma oppção de não contabilizar a despesa para as recorrentes
     Na fatura, se ela esta fechada precisa colocar data de fechamento (a data está, a conta ainda não) e aa contta que fechou
     Possibilidade de ditar cartão
-    Criar despesa parcelada
-    Se gasta em janeiro é pra fatura de fevereiro. precisa ajustar pra mostar um mes depois na tela de cartão e na hora de adcionar
     Na hora de adcionar despesa de cartão tem que colocar no mês seguinte e ver a questão do dia de fechamento
 
 * ajustar os controller e os Models para unificar funções (Exemplo: despesa) => já ajustei os principais

@@ -23848,3 +23848,31 @@
 [2025-08-08 12:59:39] local.INFO: ID_Cartao: 4  
 [2025-08-08 13:00:14] local.INFO: AnoMes: 2026-01  
 [2025-08-08 13:00:14] local.INFO: ID_Cartao: 4  
+[2025-08-11 13:43:41] local.ERROR: Class "DOMDocument" not found {"exception":"[object] (Error(code: 0): Class \"DOMDocument\" not found at /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/XmlDescriptor.php:84)
+[stacktrace]
+#0 /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/XmlDescriptor.php(145): Symfony\\Component\\Console\\Descriptor\\XmlDescriptor->getApplicationDocument()
+#1 /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/Descriptor.php(40): Symfony\\Component\\Console\\Descriptor\\XmlDescriptor->describeApplication()
+#2 /opt/lampp/htdocs/contas/vendor/symfony/console/Helper/DescriptorHelper.php(69): Symfony\\Component\\Console\\Descriptor\\Descriptor->describe()
+#3 /opt/lampp/htdocs/contas/vendor/symfony/console/Command/ListCommand.php(66): Symfony\\Component\\Console\\Helper\\DescriptorHelper->describe()
+#4 /opt/lampp/htdocs/contas/vendor/symfony/console/Command/Command.php(326): Symfony\\Component\\Console\\Command\\ListCommand->execute()
+#5 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(1096): Symfony\\Component\\Console\\Command\\Command->run()
+#6 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#7 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#8 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#9 /opt/lampp/htdocs/contas/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#10 {main}
+"} 
+[2025-08-18 09:43:20] local.ERROR: Class "DOMDocument" not found {"exception":"[object] (Error(code: 0): Class \"DOMDocument\" not found at /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/XmlDescriptor.php:84)
+[stacktrace]
+#0 /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/XmlDescriptor.php(145): Symfony\\Component\\Console\\Descriptor\\XmlDescriptor->getApplicationDocument()
+#1 /opt/lampp/htdocs/contas/vendor/symfony/console/Descriptor/Descriptor.php(40): Symfony\\Component\\Console\\Descriptor\\XmlDescriptor->describeApplication()
+#2 /opt/lampp/htdocs/contas/vendor/symfony/console/Helper/DescriptorHelper.php(69): Symfony\\Component\\Console\\Descriptor\\Descriptor->describe()
+#3 /opt/lampp/htdocs/contas/vendor/symfony/console/Command/ListCommand.php(66): Symfony\\Component\\Console\\Helper\\DescriptorHelper->describe()
+#4 /opt/lampp/htdocs/contas/vendor/symfony/console/Command/Command.php(326): Symfony\\Component\\Console\\Command\\ListCommand->execute()
+#5 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(1096): Symfony\\Component\\Console\\Command\\Command->run()
+#6 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(324): Symfony\\Component\\Console\\Application->doRunCommand()
+#7 /opt/lampp/htdocs/contas/vendor/symfony/console/Application.php(175): Symfony\\Component\\Console\\Application->doRun()
+#8 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Console/Kernel.php(201): Symfony\\Component\\Console\\Application->run()
+#9 /opt/lampp/htdocs/contas/artisan(35): Illuminate\\Foundation\\Console\\Kernel->handle()
+#10 {main}
+"} 
