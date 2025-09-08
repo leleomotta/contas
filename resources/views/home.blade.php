@@ -262,7 +262,7 @@
                 labels: [
                     //dd($chaves[0]); // "Outros"
                     @for ($i = 0; $i < $chaves->count() ; $i++)
-                        "{{ $chaves[$i] }}" ,
+                        "{!! $chaves[$i] !!}" ,
                     @endfor
 
                 ],
@@ -309,7 +309,7 @@
                 labels: [
                     //dd($chaves[0]); // "Outros"
                     @for ($i = 0; $i < $chaves->count() ; $i++)
-                        "{{ $chaves[$i] }}" ,
+                        "{!! $chaves[$i] !!}" ,
                     @endfor
 
                 ],
@@ -356,7 +356,7 @@
                 labels: [
                     //dd($chaves[0]); // "Outros"
                     @for ($i = 0; $i < $chaves->count() ; $i++)
-                        "{{ $chaves[$i] }}" ,
+                        "{!! $chaves[$i] !!}" ,
                     @endfor
 
                 ],
