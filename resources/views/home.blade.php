@@ -251,12 +251,20 @@
             // Get context with jQuery - using jQuery's .get() method.
             @php
                 $ordenado = $receitas->sortBy(function($categoria){
-                    return $categoria->NomeCategoria;
+                        return $categoria->NomeCategoria;
+                    });
+                $agrupadas = $ordenado->groupBy('NomeCategoria')->map(function ($items) {
+                    return [
+                        'total' => $items->sum('Valor'),
+                        'cor' => optional($items->first())->Cor,
+                    ];
                 });
-                $receitasSoma = $ordenado->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
-                $chaves = $receitasSoma->keys();
-                $valores = $receitasSoma->values();
+
+                $chaves = $agrupadas->keys()->values();
+                $valores = $agrupadas->pluck('total')->values();
+                $cores = $agrupadas->pluck('cor')->values();
             @endphp
+
 
             var ReceitasData        = {
                 labels: [
@@ -274,10 +282,11 @@
                             @endfor
                         ],
                         backgroundColor : [
-                            @for ($i = 0; $i < $chaves->count() ; $i++)
-                            gerar_cor_hexadecimal(),
+                            @for ($i = 0; $i < $cores->count(); $i++)
+                                "{{ $cores[$i] }}",
                             @endfor
                         ],
+
                     }
                 ]
             }
@@ -300,9 +309,16 @@
             //DESPESAS
             // Get context with jQuery - using jQuery's .get() method.
             @php
-                $despesasSoma = $despesas->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
-                $chaves = $despesasSoma->keys();
-                $valores = $despesasSoma->values();
+                $agrupadas = $despesas->groupBy('NomeCategoria')->map(function ($items) {
+                    return [
+                        'total' => $items->sum('Valor'),
+                        'cor' => optional($items->first())->Cor,
+                    ];
+                });
+
+                $chaves = $agrupadas->keys()->values();
+                $valores = $agrupadas->pluck('total')->values();
+                $cores = $agrupadas->pluck('cor')->values();
             @endphp
 
             var DespesasData        = {
@@ -321,10 +337,11 @@
                             @endfor
                         ],
                         backgroundColor : [
-                            @for ($i = 0; $i < $chaves->count() ; $i++)
-                            gerar_cor_hexadecimal(),
+                            @for ($i = 0; $i < $cores->count(); $i++)
+                                "{{ $cores[$i] }}",
                             @endfor
                         ],
+
                     }
                 ]
             }
@@ -347,10 +364,18 @@
             //CARTÃO
             // Get context with jQuery - using jQuery's .get() method.
             @php
-                $despesasCartaoSoma = $despesasCartao->groupBy('NomeCategoria')->map(function ($categoria) { return $categoria->sum('Valor'); });
-                $chaves = $despesasCartaoSoma->keys();
-                $valores = $despesasCartaoSoma->values();
+                $agrupadas = $despesasCartao->groupBy('NomeCategoria')->map(function ($items) {
+                    return [
+                        'total' => $items->sum('Valor'),
+                        'cor' => optional($items->first())->Cor,
+                    ];
+                });
+
+                $chaves = $agrupadas->keys()->values();
+                $valores = $agrupadas->pluck('total')->values();
+                $cores = $agrupadas->pluck('cor')->values();
             @endphp
+
 
             var CartaoData        = {
                 labels: [
@@ -368,10 +393,11 @@
                             @endfor
                         ],
                         backgroundColor : [
-                            @for ($i = 0; $i < $chaves->count() ; $i++)
-                            gerar_cor_hexadecimal(),
+                            @for ($i = 0; $i < $cores->count(); $i++)
+                                "{{ $cores[$i] }}",
                             @endfor
                         ],
+
                     }
                 ]
             }

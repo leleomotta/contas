@@ -24545,3 +24545,555 @@
 [2025-09-08 16:49:25] local.INFO: ID_Cartao: 4  
 [2025-09-08 16:49:54] local.INFO: AnoMes:   
 [2025-09-08 16:49:54] local.INFO: ID_Cartao: 4  
+[2025-09-08 17:33:09] local.ERROR: Undefined variable $[{"ID_Despesa":1002,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-25","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":994,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-25","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":998,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-24","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":990,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-24","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":1001,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-18","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":993,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-18","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":997,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-17","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":989,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-17","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":1000,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-11","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":992,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-11","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":996,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-10","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":988,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-10","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":954,"Descricao":"Seguro Tiger 2\/3","Valor":"456.01","Data":"2025-09-10","Efetivada":0,"NomeCategoria":"Moto - Manuten\u00e7\u00e3o, Combust\u00edvel, Seguro","Icone":"fa-solid fa-motorcycle","Banco":"NossaCoop","Cor":"#FFFFFF"},{"ID_Despesa":999,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-04","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":991,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-04","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":995,"Descricao":"Apolo - \u00c1gua","Valor":"3.00","Data":"2025-09-03","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Alimenta\u00e7\u00e3o","Icone":"fa-solid fa-bowl-food","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":987,"Descricao":"Hospedagem - Hotel Apolo","Valor":"90.00","Data":"2025-09-03","Efetivada":0,"NomeCategoria":"IFSP \/ CEFET -> Ap\u00ea\/ Hospedagem","Icone":"fa-solid fa-bed","Banco":"NossaCoop","Cor":"#FD9592"},{"ID_Despesa":985,"Descricao":"Ma\u00e7onaria","Valor":"170.00","Data":"2025-09-02","Efetivada":0,"NomeCategoria":"Outros","Icone":"fa-solid fa-face-smile","Banco":"NossaCoop","Cor":"#FF4746"},{"ID_Despesa":982,"Descricao":"Condom\u00ednio","Valor":"530.00","Data":"2025-09-01","Efetivada":0,"NomeCategoria":"Casa - Luz, telefone, condom\u00ednio, etc","Icone":"fa-solid fa-house","Banco":"NossaCoop","Cor":"#FC8B01"},{"ID_Despesa":983,"Descricao":"Cemig","Valor":"400.00","Data":"2025-09-01","Efetivada":0,"NomeCategoria":"Casa - Luz, telefone, condom\u00ednio, etc","Icone":"fa-solid fa-house","Banco":"NossaCoop","Cor":"#FC8B01"},{"ID_Despesa":981,"Descricao":"Previd\u00eancia","Valor":"605.66","Data":"2025-09-01","Efetivada":0,"NomeCategoria":"Previd\u00eancia","Icone":"fa-solid fa-gem","Banco":"NossaCoop","Cor":"#FFBB27"},{"ID_Despesa":986,"Descricao":"Quota-parte Nossacoop","Valor":"138.49","Data":"2025-09-01","Efetivada":0,"NomeCategoria":"Taxas banc\u00e1rias","Icone":"fa-solid fa-calculator","Banco":"NossaCoop","Cor":"#BEBEBE"},{"ID_Despesa":984,"Descricao":"Previd\u00eancia Th\u00e9o","Valor":"484.90","Data":"2025-09-01","Efetivada":0,"NomeCategoria":"Th\u00e9o","Icone":"fa-solid fa-face-smile","Banco":"NossaCoop","Cor":"#FF4443"},{"ID_Despesa":1007,"Descricao":"Teste","Valor":"1234.00","Data":null,"Efetivada":0,"NomeCategoria":"Doa\u00e7\u00f5es","Icone":"fa-solid fa-hand-holding-dollar","Banco":null,"Cor":"#689C00"},{"ID_Despesa":790,"Descricao":"Hotel Parque do Avestruz (4\/4)","Valor":"1243.07","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Viajens","Icone":"fa-solid fa-earth-americas","Banco":"Empr\u00e9stimo","Cor":"#0298CD"},{"ID_Despesa":905,"Descricao":"Hotel Vila Gal\u00e9 Touros (2\/6)","Valor":"3131.01","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Viajens","Icone":"fa-solid fa-earth-americas","Banco":"Empr\u00e9stimo","Cor":"#0298CD"},{"ID_Despesa":1003,"Descricao":"Amazon Prime","Valor":"19.90","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Casa - Luz, telefone, condom\u00ednio, etc","Icone":"fa-solid fa-house","Banco":"Empr\u00e9stimo","Cor":"#FC8B01"},{"ID_Despesa":1004,"Descricao":"ChatGPT","Valor":"120.00","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Outros","Icone":"fa-solid fa-face-smile","Banco":"Empr\u00e9stimo","Cor":"#FF4746"},{"ID_Despesa":1005,"Descricao":"Oi Fibra","Valor":"99.90","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Casa - Luz, telefone, condom\u00ednio, etc","Icone":"fa-solid fa-house","Banco":"Empr\u00e9stimo","Cor":"#FC8B01"},{"ID_Despesa":1006,"Descricao":"YouTube Premium","Valor":"53.90","Data":"2025-09-08","Efetivada":1,"NomeCategoria":"Casa - Luz, telefone, condom\u00ednio, etc","Icone":"fa-solid fa-house","Banco":"Empr\u00e9stimo","Cor":"#FC8B01"}] {"view":{"view":"/opt/lampp/htdocs/contas/resources/views/home.blade.php","data":{"errors":"<pre class=sf-dump id=sf-dump-746742992 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\ViewErrorBag</span> {<a class=sf-dump-ref>#622</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">bags</span>: []
+</samp>}
+</pre><script>Sfdump(\"sf-dump-746742992\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","despesas":"<pre class=sf-dump id=sf-dump-1173837600 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\Collection</span> {<a class=sf-dump-ref>#1624</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">items</span>: <span class=sf-dump-note>array:30</span> [<samp data-depth=2 class=sf-dump-compact>
+    <span class=sf-dump-index>0</span> => {<a class=sf-dump-ref>#1626</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1002</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-25</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>1</span> => {<a class=sf-dump-ref>#1625</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>994</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-25</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>2</span> => {<a class=sf-dump-ref>#1621</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>998</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-24</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>3</span> => {<a class=sf-dump-ref>#1623</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>990</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-24</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>4</span> => {<a class=sf-dump-ref>#1648</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1001</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-18</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>5</span> => {<a class=sf-dump-ref>#1649</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>993</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-18</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>6</span> => {<a class=sf-dump-ref>#1620</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>997</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-17</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>7</span> => {<a class=sf-dump-ref>#1651</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>989</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-17</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>8</span> => {<a class=sf-dump-ref>#1652</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1000</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-11</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>9</span> => {<a class=sf-dump-ref>#1650</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>992</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-11</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>10</span> => {<a class=sf-dump-ref>#1653</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>996</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-10</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>11</span> => {<a class=sf-dump-ref>#1654</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>988</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-10</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>12</span> => {<a class=sf-dump-ref>#1655</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>954</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"16 characters\">Seguro Tiger 2/3</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">456.01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-10</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"38 characters\">Moto - Manuten&#231;&#227;o, Combust&#237;vel, Seguro</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-motorcycle</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FFFFFF</span>\"
+    </samp>}
+    <span class=sf-dump-index>13</span> => {<a class=sf-dump-ref>#1656</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>999</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-04</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>14</span> => {<a class=sf-dump-ref>#1657</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>991</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-04</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>15</span> => {<a class=sf-dump-ref>#1658</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>995</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Apolo - &#193;gua</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"4 characters\">3.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-03</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"27 characters\">IFSP / CEFET -&gt; Alimenta&#231;&#227;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"21 characters\">fa-solid fa-bowl-food</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>16</span> => {<a class=sf-dump-ref>#1659</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>987</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"24 characters\">Hospedagem - Hotel Apolo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">90.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-03</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"31 characters\">IFSP / CEFET -&gt; Ap&#234;/ Hospedagem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-bed</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FD9592</span>\"
+    </samp>}
+    <span class=sf-dump-index>17</span> => {<a class=sf-dump-ref>#1660</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>985</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"9 characters\">Ma&#231;onaria</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">170.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-02</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"6 characters\">Outros</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-face-smile</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FF4746</span>\"
+    </samp>}
+    <span class=sf-dump-index>18</span> => {<a class=sf-dump-ref>#1661</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>982</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"10 characters\">Condom&#237;nio</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">530.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>19</span> => {<a class=sf-dump-ref>#1662</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>983</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"5 characters\">Cemig</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">400.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>20</span> => {<a class=sf-dump-ref>#1663</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>981</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"11 characters\">Previd&#234;ncia</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">605.66</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"11 characters\">Previd&#234;ncia</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"15 characters\">fa-solid fa-gem</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FFBB27</span>\"
+    </samp>}
+    <span class=sf-dump-index>21</span> => {<a class=sf-dump-ref>#1664</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>986</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"21 characters\">Quota-parte Nossacoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">138.49</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"15 characters\">Taxas banc&#225;rias</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-calculator</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#BEBEBE</span>\"
+    </samp>}
+    <span class=sf-dump-index>22</span> => {<a class=sf-dump-ref>#1665</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>984</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"16 characters\">Previd&#234;ncia Th&#233;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">484.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"4 characters\">Th&#233;o</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-face-smile</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"9 characters\">NossaCoop</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FF4443</span>\"
+    </samp>}
+    <span class=sf-dump-index>23</span> => {<a class=sf-dump-ref>#1622</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1007</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"5 characters\">Teste</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">1234.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Doa&#231;&#245;es</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"31 characters\">fa-solid fa-hand-holding-dollar</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#689C00</span>\"
+    </samp>}
+    <span class=sf-dump-index>24</span> => {<a class=sf-dump-ref>#1666</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>790</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"30 characters\">Hotel Parque do Avestruz (4/4)</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">1243.07</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Viajens</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"26 characters\">fa-solid fa-earth-americas</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#0298CD</span>\"
+    </samp>}
+    <span class=sf-dump-index>25</span> => {<a class=sf-dump-ref>#1701</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>905</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"28 characters\">Hotel Vila Gal&#233; Touros (2/6)</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">3131.01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Viajens</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"26 characters\">fa-solid fa-earth-americas</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#0298CD</span>\"
+    </samp>}
+    <span class=sf-dump-index>26</span> => {<a class=sf-dump-ref>#1709</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1003</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Amazon Prime</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">19.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>27</span> => {<a class=sf-dump-ref>#1710</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1004</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"7 characters\">ChatGPT</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">120.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"6 characters\">Outros</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-face-smile</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FF4746</span>\"
+    </samp>}
+    <span class=sf-dump-index>28</span> => {<a class=sf-dump-ref>#1667</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1005</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"8 characters\">Oi Fibra</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">99.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>29</span> => {<a class=sf-dump-ref>#1708</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1006</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"15 characters\">YouTube Premium</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">53.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+  </samp>]
+  #<span class=sf-dump-protected title=\"Protected property\">escapeWhenCastingToString</span>: <span class=sf-dump-const>false</span>
+</samp>}
+</pre><script>Sfdump(\"sf-dump-1173837600\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","receitas":"<pre class=sf-dump id=sf-dump-60954687 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\Collection</span> {<a class=sf-dump-ref>#1633</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">items</span>: []
+  #<span class=sf-dump-protected title=\"Protected property\">escapeWhenCastingToString</span>: <span class=sf-dump-const>false</span>
+</samp>}
+</pre><script>Sfdump(\"sf-dump-60954687\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+","despesasCartao":"<pre class=sf-dump id=sf-dump-573249659 data-indent-pad=\"  \"><span class=sf-dump-note>Illuminate\\Support\\Collection</span> {<a class=sf-dump-ref>#1637</a><samp data-depth=1 class=sf-dump-expanded>
+  #<span class=sf-dump-protected title=\"Protected property\">items</span>: <span class=sf-dump-note>array:7</span> [<samp data-depth=2 class=sf-dump-compact>
+    <span class=sf-dump-index>0</span> => {<a class=sf-dump-ref>#1726</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1007</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"5 characters\">Teste</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">1234.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>0</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Doa&#231;&#245;es</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"31 characters\">fa-solid fa-hand-holding-dollar</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": <span class=sf-dump-const>null</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#689C00</span>\"
+    </samp>}
+    <span class=sf-dump-index>1</span> => {<a class=sf-dump-ref>#1680</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>790</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"30 characters\">Hotel Parque do Avestruz (4/4)</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">1243.07</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Viajens</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"26 characters\">fa-solid fa-earth-americas</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#0298CD</span>\"
+    </samp>}
+    <span class=sf-dump-index>2</span> => {<a class=sf-dump-ref>#1683</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>905</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"28 characters\">Hotel Vila Gal&#233; Touros (2/6)</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"7 characters\">3131.01</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"7 characters\">Viajens</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"26 characters\">fa-solid fa-earth-americas</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#0298CD</span>\"
+    </samp>}
+    <span class=sf-dump-index>3</span> => {<a class=sf-dump-ref>#1734</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1003</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"12 characters\">Amazon Prime</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">19.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>4</span> => {<a class=sf-dump-ref>#1735</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1004</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"7 characters\">ChatGPT</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"6 characters\">120.00</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"6 characters\">Outros</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"22 characters\">fa-solid fa-face-smile</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FF4746</span>\"
+    </samp>}
+    <span class=sf-dump-index>5</span> => {<a class=sf-dump-ref>#1737</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1005</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"8 characters\">Oi Fibra</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">99.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+    <span class=sf-dump-index>6</span> => {<a class=sf-dump-ref>#1733</a><samp data-depth=3 class=sf-dump-compact>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">ID_Despesa</span>\": <span class=sf-dump-num>1006</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Descricao</span>\": \"<span class=sf-dump-str title=\"15 characters\">YouTube Premium</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Valor</span>\": \"<span class=sf-dump-str title=\"5 characters\">53.90</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Data</span>\": \"<span class=sf-dump-str title=\"10 characters\">2025-09-08</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Efetivada</span>\": <span class=sf-dump-num>1</span>
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">NomeCategoria</span>\": \"<span class=sf-dump-str title=\"37 characters\">Casa - Luz, telefone, condom&#237;nio, etc</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Icone</span>\": \"<span class=sf-dump-str title=\"17 characters\">fa-solid fa-house</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Banco</span>\": \"<span class=sf-dump-str title=\"10 characters\">Empr&#233;stimo</span>\"
+      +\"<span class=sf-dump-public title=\"Runtime added dynamic property\">Cor</span>\": \"<span class=sf-dump-str title=\"7 characters\">#FC8B01</span>\"
+    </samp>}
+  </samp>]
+  #<span class=sf-dump-protected title=\"Protected property\">escapeWhenCastingToString</span>: <span class=sf-dump-const>false</span>
+</samp>}
+</pre><script>Sfdump(\"sf-dump-573249659\", {\"maxDepth\":3,\"maxStringLength\":160})</script>
+"}},"userId":1,"exception":"[object] (Spatie\\LaravelIgnition\\Exceptions\\ViewException(code: 0): Undefined variable $[{\"ID_Despesa\":1002,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-25\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":994,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-25\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":998,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-24\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":990,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-24\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":1001,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-18\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":993,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-18\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":997,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-17\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":989,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-17\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":1000,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-11\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":992,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-11\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":996,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":988,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":954,\"Descricao\":\"Seguro Tiger 2\\/3\",\"Valor\":\"456.01\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"Moto - Manuten\\u00e7\\u00e3o, Combust\\u00edvel, Seguro\",\"Icone\":\"fa-solid fa-motorcycle\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FFFFFF\"},{\"ID_Despesa\":999,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-04\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":991,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-04\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":995,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-03\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":987,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-03\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":985,\"Descricao\":\"Ma\\u00e7onaria\",\"Valor\":\"170.00\",\"Data\":\"2025-09-02\",\"Efetivada\":0,\"NomeCategoria\":\"Outros\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FF4746\"},{\"ID_Despesa\":982,\"Descricao\":\"Condom\\u00ednio\",\"Valor\":\"530.00\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":983,\"Descricao\":\"Cemig\",\"Valor\":\"400.00\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":981,\"Descricao\":\"Previd\\u00eancia\",\"Valor\":\"605.66\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Previd\\u00eancia\",\"Icone\":\"fa-solid fa-gem\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FFBB27\"},{\"ID_Despesa\":986,\"Descricao\":\"Quota-parte Nossacoop\",\"Valor\":\"138.49\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Taxas banc\\u00e1rias\",\"Icone\":\"fa-solid fa-calculator\",\"Banco\":\"NossaCoop\",\"Cor\":\"#BEBEBE\"},{\"ID_Despesa\":984,\"Descricao\":\"Previd\\u00eancia Th\\u00e9o\",\"Valor\":\"484.90\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Th\\u00e9o\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FF4443\"},{\"ID_Despesa\":1007,\"Descricao\":\"Teste\",\"Valor\":\"1234.00\",\"Data\":null,\"Efetivada\":0,\"NomeCategoria\":\"Doa\\u00e7\\u00f5es\",\"Icone\":\"fa-solid fa-hand-holding-dollar\",\"Banco\":null,\"Cor\":\"#689C00\"},{\"ID_Despesa\":790,\"Descricao\":\"Hotel Parque do Avestruz (4\\/4)\",\"Valor\":\"1243.07\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Viajens\",\"Icone\":\"fa-solid fa-earth-americas\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#0298CD\"},{\"ID_Despesa\":905,\"Descricao\":\"Hotel Vila Gal\\u00e9 Touros (2\\/6)\",\"Valor\":\"3131.01\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Viajens\",\"Icone\":\"fa-solid fa-earth-americas\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#0298CD\"},{\"ID_Despesa\":1003,\"Descricao\":\"Amazon Prime\",\"Valor\":\"19.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":1004,\"Descricao\":\"ChatGPT\",\"Valor\":\"120.00\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Outros\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FF4746\"},{\"ID_Despesa\":1005,\"Descricao\":\"Oi Fibra\",\"Valor\":\"99.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":1006,\"Descricao\":\"YouTube Premium\",\"Valor\":\"53.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"}] at /opt/lampp/htdocs/contas/resources/views/home.blade.php:302)
+[stacktrace]
+#0 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(123): require('/opt/lampp/htdo...')
+#1 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(124): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#2 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Engines/PhpEngine.php(58): Illuminate\\Filesystem\\Filesystem->getRequire('/opt/lampp/htdo...', Array)
+#3 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Engines/CompilerEngine.php(72): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('/opt/lampp/htdo...', Array)
+#4 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(207): Illuminate\\View\\Engines\\CompilerEngine->get('/opt/lampp/htdo...', Array)
+#5 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(190): Illuminate\\View\\View->getContents()
+#6 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(159): Illuminate\\View\\View->renderContents()
+#7 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Response.php(69): Illuminate\\View\\View->render()
+#8 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Response.php(35): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#9 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(918): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#10 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(885): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#11 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#12 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#13 /opt/lampp/htdocs/contas/vendor/barryvdh/laravel-debugbar/src/Middleware/InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#14 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#15 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#25 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#26 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#27 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#32 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#33 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#34 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#35 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#36 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#37 /opt/lampp/htdocs/contas/vendor/barryvdh/laravel-debugbar/src/Middleware/InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#38 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#39 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#42 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#43 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#45 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#46 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#55 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#56 /opt/lampp/htdocs/contas/public/index.php(51): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#57 {main}
+
+[previous exception] [object] (ErrorException(code: 0): Undefined variable $[{\"ID_Despesa\":1002,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-25\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":994,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-25\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":998,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-24\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":990,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-24\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":1001,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-18\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":993,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-18\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":997,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-17\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":989,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-17\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":1000,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-11\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":992,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-11\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":996,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":988,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":954,\"Descricao\":\"Seguro Tiger 2\\/3\",\"Valor\":\"456.01\",\"Data\":\"2025-09-10\",\"Efetivada\":0,\"NomeCategoria\":\"Moto - Manuten\\u00e7\\u00e3o, Combust\\u00edvel, Seguro\",\"Icone\":\"fa-solid fa-motorcycle\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FFFFFF\"},{\"ID_Despesa\":999,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-04\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":991,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-04\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":995,\"Descricao\":\"Apolo - \\u00c1gua\",\"Valor\":\"3.00\",\"Data\":\"2025-09-03\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Alimenta\\u00e7\\u00e3o\",\"Icone\":\"fa-solid fa-bowl-food\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":987,\"Descricao\":\"Hospedagem - Hotel Apolo\",\"Valor\":\"90.00\",\"Data\":\"2025-09-03\",\"Efetivada\":0,\"NomeCategoria\":\"IFSP \\/ CEFET -> Ap\\u00ea\\/ Hospedagem\",\"Icone\":\"fa-solid fa-bed\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FD9592\"},{\"ID_Despesa\":985,\"Descricao\":\"Ma\\u00e7onaria\",\"Valor\":\"170.00\",\"Data\":\"2025-09-02\",\"Efetivada\":0,\"NomeCategoria\":\"Outros\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FF4746\"},{\"ID_Despesa\":982,\"Descricao\":\"Condom\\u00ednio\",\"Valor\":\"530.00\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":983,\"Descricao\":\"Cemig\",\"Valor\":\"400.00\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":981,\"Descricao\":\"Previd\\u00eancia\",\"Valor\":\"605.66\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Previd\\u00eancia\",\"Icone\":\"fa-solid fa-gem\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FFBB27\"},{\"ID_Despesa\":986,\"Descricao\":\"Quota-parte Nossacoop\",\"Valor\":\"138.49\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Taxas banc\\u00e1rias\",\"Icone\":\"fa-solid fa-calculator\",\"Banco\":\"NossaCoop\",\"Cor\":\"#BEBEBE\"},{\"ID_Despesa\":984,\"Descricao\":\"Previd\\u00eancia Th\\u00e9o\",\"Valor\":\"484.90\",\"Data\":\"2025-09-01\",\"Efetivada\":0,\"NomeCategoria\":\"Th\\u00e9o\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"NossaCoop\",\"Cor\":\"#FF4443\"},{\"ID_Despesa\":1007,\"Descricao\":\"Teste\",\"Valor\":\"1234.00\",\"Data\":null,\"Efetivada\":0,\"NomeCategoria\":\"Doa\\u00e7\\u00f5es\",\"Icone\":\"fa-solid fa-hand-holding-dollar\",\"Banco\":null,\"Cor\":\"#689C00\"},{\"ID_Despesa\":790,\"Descricao\":\"Hotel Parque do Avestruz (4\\/4)\",\"Valor\":\"1243.07\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Viajens\",\"Icone\":\"fa-solid fa-earth-americas\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#0298CD\"},{\"ID_Despesa\":905,\"Descricao\":\"Hotel Vila Gal\\u00e9 Touros (2\\/6)\",\"Valor\":\"3131.01\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Viajens\",\"Icone\":\"fa-solid fa-earth-americas\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#0298CD\"},{\"ID_Despesa\":1003,\"Descricao\":\"Amazon Prime\",\"Valor\":\"19.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":1004,\"Descricao\":\"ChatGPT\",\"Valor\":\"120.00\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Outros\",\"Icone\":\"fa-solid fa-face-smile\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FF4746\"},{\"ID_Despesa\":1005,\"Descricao\":\"Oi Fibra\",\"Valor\":\"99.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"},{\"ID_Despesa\":1006,\"Descricao\":\"YouTube Premium\",\"Valor\":\"53.90\",\"Data\":\"2025-09-08\",\"Efetivada\":1,\"NomeCategoria\":\"Casa - Luz, telefone, condom\\u00ednio, etc\",\"Icone\":\"fa-solid fa-house\",\"Banco\":\"Empr\\u00e9stimo\",\"Cor\":\"#FC8B01\"}] at /opt/lampp/htdocs/contas/storage/framework/views/0a7bb97e0e321ff68202c28f55bfa94d.php:304)
+[stacktrace]
+#0 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Bootstrap/HandleExceptions.php(255): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->handleError(2, 'Undefined varia...', '/opt/lampp/htdo...', 304)
+#1 /opt/lampp/htdocs/contas/storage/framework/views/0a7bb97e0e321ff68202c28f55bfa94d.php(304): Illuminate\\Foundation\\Bootstrap\\HandleExceptions->Illuminate\\Foundation\\Bootstrap\\{closure}(2, 'Undefined varia...', '/opt/lampp/htdo...', 304)
+#2 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(123): require('/opt/lampp/htdo...')
+#3 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem.php(124): Illuminate\\Filesystem\\Filesystem::Illuminate\\Filesystem\\{closure}()
+#4 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Engines/PhpEngine.php(58): Illuminate\\Filesystem\\Filesystem->getRequire('/opt/lampp/htdo...', Array)
+#5 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Engines/CompilerEngine.php(72): Illuminate\\View\\Engines\\PhpEngine->evaluatePath('/opt/lampp/htdo...', Array)
+#6 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(207): Illuminate\\View\\Engines\\CompilerEngine->get('/opt/lampp/htdo...', Array)
+#7 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(190): Illuminate\\View\\View->getContents()
+#8 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/View.php(159): Illuminate\\View\\View->renderContents()
+#9 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Response.php(69): Illuminate\\View\\View->render()
+#10 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Response.php(35): Illuminate\\Http\\Response->setContent(Object(Illuminate\\View\\View))
+#11 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(918): Illuminate\\Http\\Response->__construct(Object(Illuminate\\View\\View), 200, Array)
+#12 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(885): Illuminate\\Routing\\Router::toResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#13 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Routing\\Router->prepareResponse(Object(Illuminate\\Http\\Request), Object(Illuminate\\View\\View))
+#14 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Routing\\Router->Illuminate\\Routing\\{closure}(Object(Illuminate\\Http\\Request))
+#15 /opt/lampp/htdocs/contas/vendor/barryvdh/laravel-debugbar/src/Middleware/InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#16 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#17 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Middleware/SubstituteBindings.php(50): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#18 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Routing\\Middleware\\SubstituteBindings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#19 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Auth/Middleware/Authenticate.php(57): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#20 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Auth\\Middleware\\Authenticate->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#21 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/VerifyCsrfToken.php(78): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#22 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\VerifyCsrfToken->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#23 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/View/Middleware/ShareErrorsFromSession.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#24 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\View\\Middleware\\ShareErrorsFromSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#25 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(121): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#26 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Session/Middleware/StartSession.php(64): Illuminate\\Session\\Middleware\\StartSession->handleStatefulRequest(Object(Illuminate\\Http\\Request), Object(Illuminate\\Session\\Store), Object(Closure))
+#27 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Session\\Middleware\\StartSession->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#28 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/AddQueuedCookiesToResponse.php(37): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#29 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\AddQueuedCookiesToResponse->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#30 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Cookie/Middleware/EncryptCookies.php(67): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#31 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Cookie\\Middleware\\EncryptCookies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#32 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#33 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(805): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#34 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(784): Illuminate\\Routing\\Router->runRouteWithinStack(Object(Illuminate\\Routing\\Route), Object(Illuminate\\Http\\Request))
+#35 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(748): Illuminate\\Routing\\Router->runRoute(Object(Illuminate\\Http\\Request), Object(Illuminate\\Routing\\Route))
+#36 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Routing/Router.php(737): Illuminate\\Routing\\Router->dispatchToRoute(Object(Illuminate\\Http\\Request))
+#37 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(200): Illuminate\\Routing\\Router->dispatch(Object(Illuminate\\Http\\Request))
+#38 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(144): Illuminate\\Foundation\\Http\\Kernel->Illuminate\\Foundation\\Http\\{closure}(Object(Illuminate\\Http\\Request))
+#39 /opt/lampp/htdocs/contas/vendor/barryvdh/laravel-debugbar/src/Middleware/InjectDebugbar.php(66): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#40 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Barryvdh\\Debugbar\\Middleware\\InjectDebugbar->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#41 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#42 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ConvertEmptyStringsToNull.php(31): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#43 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ConvertEmptyStringsToNull->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#44 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TransformsRequest.php(21): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#45 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/TrimStrings.php(40): Illuminate\\Foundation\\Http\\Middleware\\TransformsRequest->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#46 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\TrimStrings->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#47 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/ValidatePostSize.php(27): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#48 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\ValidatePostSize->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#49 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Middleware/PreventRequestsDuringMaintenance.php(99): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#50 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Foundation\\Http\\Middleware\\PreventRequestsDuringMaintenance->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#51 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Middleware/HandleCors.php(49): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#52 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\HandleCors->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#53 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Http/Middleware/TrustProxies.php(39): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#54 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(183): Illuminate\\Http\\Middleware\\TrustProxies->handle(Object(Illuminate\\Http\\Request), Object(Closure))
+#55 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Pipeline/Pipeline.php(119): Illuminate\\Pipeline\\Pipeline->Illuminate\\Pipeline\\{closure}(Object(Illuminate\\Http\\Request))
+#56 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(175): Illuminate\\Pipeline\\Pipeline->then(Object(Closure))
+#57 /opt/lampp/htdocs/contas/vendor/laravel/framework/src/Illuminate/Foundation/Http/Kernel.php(144): Illuminate\\Foundation\\Http\\Kernel->sendRequestThroughRouter(Object(Illuminate\\Http\\Request))
+#58 /opt/lampp/htdocs/contas/public/index.php(51): Illuminate\\Foundation\\Http\\Kernel->handle(Object(Illuminate\\Http\\Request))
+#59 {main}
+"} 
