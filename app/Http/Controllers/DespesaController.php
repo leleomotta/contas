@@ -165,7 +165,8 @@ class DespesaController extends Controller
         $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
         $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
 
-        $despesas = (new Despesa)->show($start_date, $end_date);
+        //$despesas = (new Despesa)->show($start_date, $end_date);
+        $despesas = (new Despesa)->showAgrupado($start_date, $end_date);
 
         return view('despesaListar', [
             'despesas' => $despesas,

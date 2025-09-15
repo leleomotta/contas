@@ -71,6 +71,23 @@ class Despesa extends Model
         return $despesas;
     }
 
+    public function showAgrupado($start_date, $end_date){
+        //dd($this->despesasSemCartao($start_date,$end_date, null));
+        $despesas = $this->despesasSemCartao($start_date,$end_date, null);
+
+        //dd($despesas->merge($this->cartaoAberto( Carbon::createFromDate($start_date)->isoFormat('Y') .
+        //'-' . Carbon::createFromDate($start_date)->isoFormat('MM') ) ));
+        $despesas = $despesas->merge($this->cartaoAbertoAgrupado(Carbon::createFromDate($start_date)->isoFormat('Y') .
+            '-' . Carbon::createFromDate($start_date)->isoFormat('MM') ) );
+
+        //dd($despesas->merge($this->cartaoPago($start_date, $end_date, null)));
+        $despesas = $despesas->merge($this->cartaoPagoAgrupado($start_date, $end_date, null));
+
+        //dd($despesas);
+        //leonardo motta
+        return $despesas;
+    }
+
     public function despesasSemCartao($start_date, $end_date, $conta){
         //$despesasSemCartao = DB::table('despesa')
         $despesasSemCartao = DB::table(DB::raw('/* FUNÇÃO: despesasSemCartao */ despesa'))
@@ -248,6 +265,7 @@ class Despesa extends Model
         }
         //dd($cartaoPago->toSql());
         return $cartaoPago->get();
+
     }
 
     public function cartaoAbertoAgrupado($Ano_Mes){
