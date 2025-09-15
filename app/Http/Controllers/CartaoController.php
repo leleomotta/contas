@@ -113,7 +113,8 @@ class CartaoController extends Controller
 
         return view('faturaListar', [
             'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
-            'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
+            //'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
+            'totalFatura' => 0,
             'contas' => $contas,
             'cartao' => $cartao,
             //'cartoes' => $cartoes,

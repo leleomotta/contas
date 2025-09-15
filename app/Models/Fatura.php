@@ -42,14 +42,14 @@ class Fatura extends Model
 
     public function totalFatura($Ano_Mes, $ID_Cartao){
 
-        $data = Carbon::today()->toDateString();
+        //$data = Carbon::today()->toDateString();
 
         $retorno = DB::table('despesa')
             ->select('despesa.valor as Valor')
             ->join('fatura', 'fatura.ID_Despesa', '=', 'despesa.ID_Despesa')
             ->where('fatura.ID_Cartao',$ID_Cartao)
             ->where('fatura.Ano_Mes',$Ano_Mes)
-            ->where('despesa.Data', '<', $data) // Verifica se a data da despesa é anterior a hoje
+            //->where('despesa.Data', '<', $data) // Verifica se a data da despesa é anterior a hoje
             //->toSql(); dd($retorno);
             ->get();
 

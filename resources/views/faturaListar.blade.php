@@ -48,6 +48,9 @@
                     <table id="example1" class="table text-nowrap table-hover table-bordered border-light">
                         <thead>
                         <tr>
+                            <th style="text-align: center">
+                                <input type="checkbox" id="select_all" checked>
+                            </th>
                             <th style="text-align: center">Data</th>
                             <th style="text-align: center">Descrição</th>
                             <th style="text-align: center">Valor</th>
@@ -58,6 +61,9 @@
                         <tbody>
                         @foreach($faturas as $fatura)
                             <tr>
+                                <td style="text-align: center">
+                                    <input type="checkbox" class="linha-checkbox" checked value="{{ $fatura->Valor }}">
+                                </td>
                                 <td style="text-align: center">{{ date('d/m/Y', strtotime($fatura->Data)) }}</td>
                                 <td>{{ $fatura->Descricao  }}</td>
                                 <td>{{ 'R$ ' .  str_replace("_",'.',
@@ -103,6 +109,9 @@
                         </tbody>
                         <tfoot>
                         <tr>
+                            <th style="text-align: center">
+                                <input type="checkbox" id="select_all_footer" checked disabled>
+                            </th>
                             <th style="text-align: center">Data</th>
                             <th style="text-align: center">Descrição</th>
                             <th style="text-align: center">Valor</th>
@@ -130,12 +139,8 @@
                     <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
                     <div class="info-box-content">
                         <span class="info-box-text">Total da fatura</span>
-                        <span class="info-box-number">
-                        {{ 'R$ ' .  str_replace("_",'.',
-                                    str_replace(".",',',
-                                    str_replace(",",'_',
-                                    number_format($totalFatura, 2
-                                    )))) }}
+                        <span class="info-box-number" id="valor_total_selecionado">
+                            {{ 'R$ ' . str_replace("_",'.', str_replace(".",',', str_replace(",",'_', number_format($totalFatura, 2)))) }}
                         </span>
                     </div>
                 </div>
@@ -398,4 +403,36 @@
             format:'DD/MM/YYYY',
         })
     </script>
+    <script>
+        // Função para formatar valores como moeda (BRL)
+        function formatarValor(valor) {
+            return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, style: 'currency', currency: 'BRL' });
+        }
+
+        function atualizarTotalSelecionado() {
+            let total = 0;
+            document.querySelectorAll('.linha-checkbox:checked').forEach(cb => {
+                total += parseFloat(cb.value);
+            });
+            document.getElementById('valor_total_selecionado').innerText = formatarValor(total);
+        }
+
+        // Ao carregar a página
+        document.addEventListener('DOMContentLoaded', function () {
+            atualizarTotalSelecionado();
+
+            // Evento ao (des)marcar uma checkbox individual
+            document.querySelectorAll('.linha-checkbox').forEach(cb => {
+                cb.addEventListener('change', atualizarTotalSelecionado);
+            });
+
+            // Evento para selecionar/deselecionar todos
+            document.getElementById('select_all').addEventListener('change', function () {
+                const checkboxes = document.querySelectorAll('.linha-checkbox');
+                checkboxes.forEach(cb => cb.checked = this.checked);
+                atualizarTotalSelecionado();
+            });
+        });
+    </script>
+
 @stop
