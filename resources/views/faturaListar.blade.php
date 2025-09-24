@@ -125,6 +125,7 @@
         </div>
     </div>
 
+
     <div class="card card-success">
         <div class="card-header">
             <h3 class="card-title">Operações</h3>
@@ -265,6 +266,7 @@
             </div>
         </div>
     </div>
+
 @stop
 
 @section('css')
@@ -292,6 +294,7 @@
             margin: 0;
         }
     </style>
+
 @stop
 
 @section('js')

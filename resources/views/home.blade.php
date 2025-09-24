@@ -309,16 +309,19 @@
             //DESPESAS
             // Get context with jQuery - using jQuery's .get() method.
             @php
-                $agrupadas = $despesas->groupBy('NomeCategoria')->map(function ($items) {
-                    return [
-                        'total' => $items->sum('Valor'),
-                        'cor' => optional($items->first())->Cor,
-                    ];
-                });
+                    $ordenado = $despesas->sortBy(function($categoria){
+                        return $categoria->NomeCategoria;
+                    });
+                    $agrupadas = $ordenado->groupBy('NomeCategoria')->map(function ($items) {
+                        return [
+                            'total' => $items->sum('Valor'),
+                            'cor' => optional($items->first())->Cor,
+                        ];
+                    });
 
-                $chaves = $agrupadas->keys()->values();
-                $valores = $agrupadas->pluck('total')->values();
-                $cores = $agrupadas->pluck('cor')->values();
+                    $chaves = $agrupadas->keys()->values();
+                    $valores = $agrupadas->pluck('total')->values();
+                    $cores = $agrupadas->pluck('cor')->values();
             @endphp
 
             var DespesasData        = {
@@ -364,16 +367,19 @@
             //CARTÃO
             // Get context with jQuery - using jQuery's .get() method.
             @php
-                $agrupadas = $despesasCartao->groupBy('NomeCategoria')->map(function ($items) {
-                    return [
-                        'total' => $items->sum('Valor'),
-                        'cor' => optional($items->first())->Cor,
-                    ];
-                });
+                    $ordenado = $despesasCartao->sortBy(function($categoria){
+                        return $categoria->NomeCategoria;
+                    });
+                    $agrupadas = $ordenado->groupBy('NomeCategoria')->map(function ($items) {
+                        return [
+                            'total' => $items->sum('Valor'),
+                            'cor' => optional($items->first())->Cor,
+                        ];
+                    });
 
-                $chaves = $agrupadas->keys()->values();
-                $valores = $agrupadas->pluck('total')->values();
-                $cores = $agrupadas->pluck('cor')->values();
+                    $chaves = $agrupadas->keys()->values();
+                    $valores = $agrupadas->pluck('total')->values();
+                    $cores = $agrupadas->pluck('cor')->values();
             @endphp
 
 
