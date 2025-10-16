@@ -230,7 +230,7 @@
     <!--</form> -->
 
     <!-- Rodapé -->
-    <div class="card card-success">
+    <div class="card card-success" id="saldos-flutuantes">
         <div class="card-header">
             <h3 class="card-title">Saldos&nbsp;&nbsp;</h3>
             <div class="card-tools">
@@ -294,6 +294,12 @@
 
         .icone-circulo i {
             margin: 0;
+        }
+
+        #saldos-flutuantes {
+            position: sticky;
+            bottom: 0;
+            z-index: 1030; /* Garante que fique acima da maioria dos elementos */
         }
     </style>
 @stop
