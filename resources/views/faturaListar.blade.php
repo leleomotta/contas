@@ -133,7 +133,8 @@
             </div>
         </div>
 
-        <div class="row">
+        <div class="card-body">
+            <div class="row">
             <div class="col-md-3 col-sm-6 col-12 h-150" id="Total">
                 <div class="info-box">
                     <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
@@ -263,6 +264,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 
