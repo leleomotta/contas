@@ -10,11 +10,11 @@
         @csrf
         <div class="card card-primary">
             <div class="card-header">
-                <h3 class="card-title">Criar despesa recorrente</h3>
+                {{-- TÍTULO ATUALIZADO --}}
+                <h3 class="card-title">Criar Recorrência</h3>
             </div>
             <div class="card-body">
 
-                <!-- Campos fixos -->
                 <label>Descrição</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
@@ -23,22 +23,34 @@
                     <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Descrição">
                 </div>
 
+                {{-- NOVO CAMPO: TIPO (RECEITA/DESPESA) --}}
+                <label>Tipo</label>
+                <div class="input-group">
+                    <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-exchange-alt"></i></span></div>
+                    <select name="Tipo" id="Tipo" class="form-control">
+                        <option value="D" selected>Despesa</option>
+                        <option value="R">Receita</option>
+                    </select>
+                </div>
+
                 <label>Valor</label>
                 <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-money-bill"></i></span></div>
                     <input type="text" id="Valor" name="Valor"
                            class="form-control text-left"
                            data-inputmask="'alias':'numeric','groupSeparator':'.','autoGroup':true,'digits':2,'digitsOptional':false,'radixPoint':',','prefix':'R$ ','placeholder':'0'"
-                           placeholder="Digite o valor da despesa">
+                           placeholder="Digite o valor"> {{-- PLACEHOLDER ATUALIZADO --}}
                 </div>
 
                 <label>Categoria</label>
                 <div class="input-group">
                     <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-list-alt"></i></span></div>
                     <select name="ID_Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
-                        <option selected data-default>- Selecione uma categoria -</option>
+                        <option selected value="" data-default>- Selecione uma categoria -</option>
                         @foreach($categorias as $categoria)
+                            {{-- ATUALIZADO: Adicionado data-tipo para filtragem JS --}}
                             <option value="{{$categoria->ID_Categoria}}"
+                                    data-tipo="{{ $categoria->Tipo }}"
                                     data-content="<span class='icone-circulo' style='background-color: {{ $categoria->Cor }};'><i class='{{ $categoria->Link }}'></i></span> {{$categoria->Nome}}">
                                 {{$categoria->Nome}}
                             </option>
@@ -46,36 +58,41 @@
                     </select>
                 </div>
 
-                <label>Tipo</label>
-                <div class="form-group">
-                    <select class="form-control" name="TipoPagamento" id="TipoPagamento">
-                        <option selected value="">- Selecione -</option>
-                        <option value="conta">Conta</option>
-                        <option value="cartao">Cartão</option>
-                    </select>
-                </div>
-
-                <div id="divConta" style="display:none">
-                    <label>Conta</label>
-                    <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-landmark"></i></span></div>
-                        <select name="ID_Conta" id="Conta" class="form-control selectpicker" data-live-search="true">
-                            <option selected>- Selecione uma conta -</option>
-                            @foreach($contas as $conta)
-                                <option value="{{$conta->ID_Conta}}">{{$conta->Nome}} - {{$conta->Banco}}</option>
-                            @endforeach
+                {{-- ATUALIZADO: Bloco de pagamento (apenas para Despesa) --}}
+                <div id="blocoDespesa">
+                    <label id="labelPagamento">Forma de Pagamento</label>
+                    <div class="form-group">
+                        <select class="form-control" name="TipoPagamento" id="TipoPagamento">
+                            <option selected value="">- Selecione -</option>
+                            <option value="conta">Conta</option>
+                            <option value="cartao">Cartão</option>
                         </select>
+                    </div>
+
+                    {{-- Bloco do Cartão (movido para dentro do blocoDespesa) --}}
+                    <div id="divCartao" style="display:none">
+                        <label>Cartão</label>
+                        <div class="input-group">
+                            <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-credit-card"></i></span></div>
+                            <select name="ID_Cartao" id="Cartao" class="form-control selectpicker" data-live-search="true">
+                                <option selected value="">- Selecione um cartão -</option> {{-- Adicionado value="" --}}
+                                @foreach($cartoes as $cartao)
+                                    <option value="{{$cartao->ID_Cartao}}">{{$cartao->Nome}}</option>
+                                @endforeach
+                            </select>
+                        </div>
                     </div>
                 </div>
 
-                <div id="divCartao" style="display:none">
-                    <label>Cartão</label>
+                {{-- ATUALIZADO: Bloco da Conta (agora usado por Receita e Despesa) --}}
+                <div id="divConta" style="display:none">
+                    <label id="labelConta">Conta</label> {{-- ID adicionado para JS --}}
                     <div class="input-group">
-                        <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-credit-card"></i></span></div>
-                        <select name="ID_Cartao" id="Cartao" class="form-control selectpicker" data-live-search="true">
-                            <option selected>- Selecione um cartão -</option>
-                            @foreach($cartoes as $cartao)
-                                <option value="{{$cartao->ID_Cartao}}">{{$cartao->Nome}}</option>
+                        <div class="input-group-prepend"><span class="input-group-text"><i class="fa fa-landmark"></i></span></div>
+                        <select name="ID_Conta" id="Conta" class="form-control selectpicker" data-live-search="true">
+                            <option selected value="">- Selecione uma conta -</option> {{-- Adicionado value="" --}}
+                            @foreach($contas as $conta)
+                                <option value="{{$conta->ID_Conta}}">{{$conta->Nome}} - {{$conta->Banco}}</option>
                             @endforeach
                         </select>
                     </div>
@@ -90,7 +107,6 @@
                     </select>
                 </div>
 
-                <!-- Campo dinâmico DiaVencimento, alterado via JS -->
                 <div class="form-group" id="grupoDia">
                     <label id="labelDia">Dia do mês</label>
                     <input type="text" class="form-control" name="DiaVencimento" id="DiaVencimento" placeholder="Ex: 15" data-inputmask-alias="datetime" data-inputmask-inputformat="dd" data-mask>
@@ -131,6 +147,7 @@
     </form>
 @stop
 
+{{-- ... Seção CSS permanece idêntica ... --}}
 @section('css')
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
@@ -165,11 +182,15 @@
         .icone-circulo i {
             margin: 0;
         }
+        /* Adicionado para feedback de validação em selectpickers */
+        .is-invalid .dropdown-toggle {
+            border-color: #dc3545 !important;
+        }
     </style>
 @stop
 
+
 @section('js')
-    <!-- Latest compiled and minified JavaScript -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
@@ -189,32 +210,102 @@
     <script>
         $('.selectpicker').selectpicker();
 
-        $('#TipoPagamento').change(function () {
-            $('#divConta').hide();
-            $('#divCartao').hide();
+        // --- NOVO: Função para filtrar categorias ---
+        function filtrarCategorias(tipo) {
+            let $categoriaSelect = $('#Categoria');
+            let $opcoes = $categoriaSelect.find('option');
 
-            if ($(this).val() === 'conta') {
+            // Mostra a opção default ("Selecione...")
+            $opcoes.first().show();
+
+            $opcoes.each(function() {
+                // Pula a primeira opção (default)
+                if ($(this).data('default')) return;
+
+                if ($(this).data('tipo') === tipo) {
+                    $(this).show();
+                } else {
+                    $(this).hide();
+                }
+            });
+
+            // Reseta a seleção para a opção default
+            $categoriaSelect.val($opcoes.first().val());
+
+            // Atualiza o selectpicker
+            $categoriaSelect.selectpicker('refresh');
+        }
+
+        // --- NOVO: Lógica principal para Receita/Despesa ---
+        $('#Tipo').change(function () {
+            let tipo = $(this).val();
+
+            if (tipo === 'R') { // É Receita
+                $('#blocoDespesa').hide();
+                $('#divCartao').hide(); // Garante que o cartão está escondido
                 $('#divConta').show();
-            } else if ($(this).val() === 'cartao') {
-                $('#divCartao').show();
+                $('#labelConta').text('Conta de Destino');
+
+                // Reseta valores de despesa
+                $('#TipoPagamento').val('');
+                $('#ID_Cartao').val('').selectpicker('refresh');
+
+            } else { // É Despesa (default)
+                $('#blocoDespesa').show();
+                $('#labelConta').text('Conta');
+
+                // Reseta a seleção de conta
+                $('#ID_Conta').val('').selectpicker('refresh');
+
+                // Dispara o change do TipoPagamento para re-exibir o campo correto (conta/cartao)
+                $('#TipoPagamento').trigger('change');
+            }
+
+            // Filtra categorias
+            filtrarCategorias(tipo);
+        });
+
+        // --- LÓGICA EXISTENTE ATUALIZADA ---
+        $('#TipoPagamento').change(function () {
+            // Só executa se for despesa
+            if ($('#Tipo').val() === 'D') {
+                $('#divConta').hide();
+                $('#divCartao').hide();
+
+                if ($(this).val() === 'conta') {
+                    $('#divConta').show();
+                    $('#ID_Cartao').val('').selectpicker('refresh'); // Limpa cartão
+                } else if ($(this).val() === 'cartao') {
+                    $('#divCartao').show();
+                    $('#ID_Conta').val('').selectpicker('refresh'); // Limpa conta
+                }
             }
         });
 
-        // Validação com regras dinâmicas
+        // --- ATUALIZADO: Validação com regras dinâmicas ---
         $('#cadastro').validate({
             rules: {
                 Descricao: { required: true },
+                Tipo: { required: true }, // Regra nova
                 Valor: { required: true },
                 ID_Categoria: { required: true },
-                TipoPagamento: { required: true },
+                TipoPagamento: {
+                    required: function () {
+                        // Obrigatório apenas se for Despesa
+                        return $('#Tipo').val() === 'D';
+                    }
+                },
                 ID_Conta: {
                     required: function () {
-                        return $('#TipoPagamento').val() === 'conta';
+                        // Obrigatório se for Receita OU Despesa do tipo Conta
+                        return $('#Tipo').val() === 'R' ||
+                            ($('#Tipo').val() === 'D' && $('#TipoPagamento').val() === 'conta');
                     }
                 },
                 ID_Cartao: {
                     required: function () {
-                        return $('#TipoPagamento').val() === 'cartao';
+                        // Obrigatório apenas se for Despesa do tipo Cartão
+                        return $('#Tipo').val() === 'D' && $('#TipoPagamento').val() === 'cartao';
                     }
                 },
                 DiaVencimento: {
@@ -226,22 +317,42 @@
                 DataInicio: { required: true }
             },
             messages: {
-                DiaVencimento: { required: 'Informe um valor válido.' }
+                Descricao: { required: 'A descrição é obrigatória.' },
+                Valor: { required: 'O valor é obrigatório.' },
+                ID_Categoria: { required: 'Selecione uma categoria.' },
+                TipoPagamento: { required: 'Selecione a forma de pagamento.' },
+                ID_Conta: { required: 'Selecione uma conta.' },
+                ID_Cartao: { required: 'Selecione um cartão.' },
+                DiaVencimento: { required: 'Informe um valor válido.' },
+                DataInicio: { required: 'A data de início é obrigatória.' }
             },
             errorElement: 'span',
             errorPlacement: function (error, element) {
                 error.addClass('invalid-feedback');
-                element.closest('.form-group, .input-group').append(error);
+                // Ajuste para selectpicker e inputs com ícones
+                if (element.hasClass('selectpicker')) {
+                    element.closest('.input-group').append(error);
+                } else if (element.closest('.input-group').length) {
+                    element.closest('.input-group').append(error);
+                } else {
+                    element.closest('.form-group').append(error);
+                }
             },
             highlight: function (element) {
                 $(element).addClass('is-invalid');
+                if ($(element).hasClass('selectpicker')) {
+                    $(element).closest('.input-group').find('.dropdown-toggle').addClass('is-invalid');
+                }
             },
             unhighlight: function (element) {
                 $(element).removeClass('is-invalid');
+                if ($(element).hasClass('selectpicker')) {
+                    $(element).closest('.input-group').find('.dropdown-toggle').removeClass('is-invalid');
+                }
             }
         });
 
-        // Ajuste do campo ao trocar periodicidade
+        // Ajuste do campo ao trocar periodicidade (sem alterações)
         $('#Periodicidade').change(function () {
             let tipo = $(this).val();
             let grupo = $('#grupoDia');
@@ -267,6 +378,10 @@
             $('[data-mask]').inputmask();
         });
 
+        // --- NOVO: Dispara o change na carga da página para setar o estado inicial ---
+        $(document).ready(function() {
+            $('#Tipo').trigger('change');
+        });
+
     </script>
 @stop
-

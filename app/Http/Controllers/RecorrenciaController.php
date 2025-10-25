@@ -6,17 +6,36 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
-use App\Models\{Recorrencia, Despesa, Fatura, Cartao, Conta, Categoria};
+use App\Models\{Recorrencia, Despesa, Receita, Fatura, Cartao, Conta, Categoria};
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 
 class RecorrenciaController extends Controller
 {
+    /**
+     * Exibe o formulário para criar uma nova recorrência.
+     *
+     * @return \Illuminate\View\View
+     */
+    public function new()
+    {
+        //$categorias = Categoria::orderBy('Nome')->get();
+        $categorias = (new Categoria)->show('D');
+        // Garanta que está buscando TODAS as categorias (Receita e Despesa)
+        $categorias = (new \App\Models\Categoria)->showAll();
+        $contas = Conta::orderBy('Nome')->get();
+        $cartoes = Cartao::orderBy('Nome')->get();
+
+        return view('recorrenciaCriar', compact('categorias', 'contas', 'cartoes'));
+    }
+
     // Exibe a lista de recorrências cadastradas
     public function showAll(Request $request)
     {
         $contas = (new Conta)->showAll();
-        $categorias = (new Categoria)->showAll()->where('Tipo','=','D');
+        //$categorias = (new Categoria)->showAll()->where('Tipo','=','D');
+        // (use o método que sua Model Categoria usa para pegar todas)
+        $categorias = (new \App\Models\Categoria)->showAll();
 
 
         $dateFilter = $request->date_filter;
@@ -29,7 +48,8 @@ class RecorrenciaController extends Controller
         $end_date = $dt->copy()->endOfMonth()->toDateString();
 
         //$recorrencias = Recorrencia::with('categoria')
-        $recorrencias = Recorrencia::with('categoria.icone') // Alterado para carregar o ícone
+        //$recorrencias = Recorrencia::with('categoria.icone') // Alterado para carregar o ícone
+        $recorrencias = Recorrencia::with('categoria.icone', 'conta', 'cartao')
             ->where(function ($query) use ($start_date, $end_date) {
                 $query->whereNull('Data_fim')
                     ->orWhereBetween('Data_fim', [$start_date, $end_date]);
@@ -47,22 +67,37 @@ class RecorrenciaController extends Controller
     }
 
     // Armazena uma nova recorrência no banco de dados
+// Em RecorrenciaController.php
     public function store(Request $request)
     {
         $recorrencia = new Recorrencia();
 
         // Define os campos básicos da recorrência
         $recorrencia->Descricao = $request->Descricao;
+        $recorrencia->Tipo = $request->Tipo; // <-- NOVO: Salva o tipo
         $recorrencia->Valor = str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
         $recorrencia->ID_Categoria = $request->ID_Categoria;
 
-        // Define o meio de pagamento com base nos IDs
-        if ($request->has('ID_Conta')) {
+        // --- LÓGICA DE PAGAMENTO ATUALIZADA ---
+        if ($request->Tipo === 'R') {
+            // Se for Receita, só pode ser Conta
             $recorrencia->ID_Conta = $request->ID_Conta;
+            $recorrencia->ID_Cartao = null;
+        } else {
+            // Se for Despesa, usa a lógica do TipoPagamento
+            if ($request->TipoPagamento === 'conta') {
+                $recorrencia->ID_Conta = $request->ID_Conta;
+                $recorrencia->ID_Cartao = null;
+            } elseif ($request->TipoPagamento === 'cartao') {
+                $recorrencia->ID_Conta = null;
+                $recorrencia->ID_Cartao = $request->ID_Cartao;
+            } else {
+                // Caso não seja nenhum (ex: despesa "genérica" se permitido)
+                $recorrencia->ID_Conta = null;
+                $recorrencia->ID_Cartao = null;
+            }
         }
-        if ($request->has('ID_Cartao')) {
-            $recorrencia->ID_Cartao = $request->ID_Cartao;
-        }
+        // --- FIM DA LÓGICA ATUALIZADA ---
 
         // Define a periodicidade e datas
         $recorrencia->Periodicidade = $request->Periodicidade;
@@ -80,13 +115,50 @@ class RecorrenciaController extends Controller
         return Redirect::to('/recorrencias');
     }
 
+    /**
+     * Salva uma nova recorrência no banco de dados.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\RedirectResponse
+     */
+    public function recorrencias_store(Request $request)
+    {
+        $recorrencia = new Recorrencia();
+        dd('recorrencias_storestore');
+        $recorrencia->Descricao = $request->Descricao;
+        $recorrencia->Valor = str_replace(",", '.', str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
+        $recorrencia->ID_Categoria = $request->ID_Categoria;
+        $recorrencia->ID_Conta = ($request->TipoPagamento === 'conta') ? $request->ID_Conta : null;
+        $recorrencia->ID_Cartao = ($request->TipoPagamento === 'cartao') ? $request->ID_Cartao : null;
+        $recorrencia->Dia_vencimento = $request->DiaVencimento;
+        $recorrencia->Periodicidade = $request->Periodicidade;
+        $recorrencia->Data_inicio = implode("-", array_reverse(explode("/", $request->DataInicio)));
+
+        if (!empty($request->DataFim)) {
+            $recorrencia->Data_fim = implode("-", array_reverse(explode("/", $request->DataFim)));
+        } else {
+            $recorrencia->Data_fim = null;
+        }
+
+        $recorrencia->Ativa = isset($request->Ativa) ? 1 : 0;
+
+        $recorrencia->save();
+
+        $url = '/recorrencias';
+        return redirect($url);
+    }
+
     // Geração das despesas recorrentes para um determinado mês e ano
+    // Geração das despesas E RECEITAS recorrentes para um determinado mês e ano
     public function gerarRecorrencias($mes, $ano)
     {
         try {
             DB::beginTransaction();
             $recorrencias = Recorrencia::where('Ativa', 1)->get();
-            $contador = 0;
+
+            // Novos contadores
+            $contadorDespesas = 0;
+            $contadorReceitas = 0;
 
             foreach ($recorrencias as $recorrencia) {
                 $dataInicio = Carbon::parse($recorrencia->Data_inicio);
@@ -111,9 +183,16 @@ class RecorrenciaController extends Controller
                             // Limpa e valida o dia
                             $diaVenc = (int) trim($recorrencia->Dia_vencimento);
                             if ($diaVenc <= 0 || $diaVenc > 31) {
-                                continue 2;
+                                // Se o dia for inválido (ex: 31 em Fev), mas comum (29, 30, 31)
+                                // tenta usar o último dia do mês atual.
+                                if (in_array($diaVenc, [29, 30, 31]) && $diaVenc > $diasNoMes) {
+                                    $gerar = $dataAtual->day == $diasNoMes;
+                                } else {
+                                    continue 2; // Dia inválido, pula recorrência
+                                }
+                            } else {
+                                $gerar = $dataAtual->day == $diaVenc;
                             }
-                            $gerar = $dataAtual->day == $diaVenc;
                             break;
 
                         case 'Anual':
@@ -139,55 +218,93 @@ class RecorrenciaController extends Controller
                     // Se a data não for válida para gerar, pula
                     if (!$gerar) continue;
 
-                    // Evita gerar duplicatas para o mesmo dia e descrição
-                    $jaExiste = Despesa::where('Descricao', $recorrencia->Descricao)
-                        ->whereDate('Data', $dataAtual->toDateString())
-                        ->where('Valor', $recorrencia->Valor)
-                        ->exists();
+                    // --- DIVISÃO DA LÓGICA: RECEITA OU DESPESA ---
 
-                    if ($jaExiste) continue;
+                    if ($recorrencia->Tipo == 'R') {
+                        // --- LÓGICA PARA GERAR RECEITA ---
 
-                    // Criação da despesa
-                    $despesa = new Despesa();
-                    $despesa->Descricao = $recorrencia->Descricao;
-                    $despesa->Valor = $recorrencia->Valor;
-                    $despesa->Data = $dataAtual->toDateString();
-                    $despesa->ID_Categoria = $recorrencia->ID_Categoria;
-                    $despesa->Efetivada = 0;
-                    $despesa->Recorrente = 1;
+                        // Evita gerar duplicatas
+                        $jaExiste = Receita::where('Descricao', $recorrencia->Descricao)
+                            ->whereDate('Data', $dataAtual->toDateString())
+                            ->where('Valor', $recorrencia->Valor)
+                            ->exists();
 
-                    // Define se a despesa é por conta
-                    if (!is_null($recorrencia->ID_Conta)) {
-                        $despesa->ID_Conta = $recorrencia->ID_Conta;
-                        $despesa->save();
-                    } elseif (!is_null($recorrencia->ID_Cartao)) {
-                        $despesa->save();
-                        $cartao = Cartao::find($recorrencia->ID_Cartao);
-                        if (!$cartao) continue;
+                        if ($jaExiste) continue;
 
-                        $diaFechamento = $cartao->Dia_Fechamento_Fatura ?? 1;
-                        $referencia = $dataAtual->copy();
-                        if ($dataAtual->day > $diaFechamento) {
-                            $referencia->addMonth();
+                        // Criação da receita
+                        $receita = new Receita();
+                        $receita->Descricao = $recorrencia->Descricao;
+                        $receita->Valor = $recorrencia->Valor;
+                        $receita->Data = $dataAtual->toDateString();
+                        $receita->ID_Categoria = $recorrencia->ID_Categoria;
+                        $receita->Efetivada = 0; // Padrão para recorrências
+                        $receita->Recorrente = 1; // Indica que veio de recorrência
+
+                        // Receita sempre cai em uma conta
+                        if (!is_null($recorrencia->ID_Conta)) {
+                            $receita->ID_Conta = $recorrencia->ID_Conta;
+                            $receita->save();
+                            $contadorReceitas++;
                         }
-                        $anoMes = $referencia->format('Y-m');
 
-                        // Cria o vínculo com a fatura
-                        $fatura = new Fatura();
-                        $fatura->ID_Cartao = $recorrencia->ID_Cartao;
-                        $fatura->ID_Despesa = $despesa->ID_Despesa;
-                        $fatura->Ano_Mes = $anoMes;
-                        $fatura->Fechada = 0;
-                        $fatura->save();
+                    } else {
+                        // --- LÓGICA PARA GERAR DESPESA (CÓDIGO ORIGINAL) ---
+
+                        // Evita gerar duplicatas
+                        $jaExiste = Despesa::where('Descricao', $recorrencia->Descricao)
+                            ->whereDate('Data', $dataAtual->toDateString())
+                            ->where('Valor', $recorrencia->Valor)
+                            ->exists();
+
+                        if ($jaExiste) continue;
+
+                        // Criação da despesa
+                        $despesa = new Despesa();
+                        $despesa->Descricao = $recorrencia->Descricao;
+                        $despesa->Valor = $recorrencia->Valor;
+                        $despesa->Data = $dataAtual->toDateString();
+                        $despesa->ID_Categoria = $recorrencia->ID_Categoria;
+                        $despesa->Efetivada = 0;
+                        $despesa->Recorrente = 1;
+
+                        // Define se a despesa é por conta
+                        if (!is_null($recorrencia->ID_Conta)) {
+                            $despesa->ID_Conta = $recorrencia->ID_Conta;
+                            $despesa->save();
+                        }
+                        // Define se é por cartão
+                        elseif (!is_null($recorrencia->ID_Cartao)) {
+                            $despesa->save();
+                            $cartao = Cartao::find($recorrencia->ID_Cartao);
+                            if (!$cartao) continue;
+
+                            $diaFechamento = $cartao->Dia_Fechamento_Fatura ?? 1;
+                            $referencia = $dataAtual->copy();
+                            if ($dataAtual->day > $diaFechamento) {
+                                $referencia->addMonth();
+                            }
+                            $anoMes = $referencia->format('Y-m');
+
+                            // Cria o vínculo com a fatura
+                            $fatura = new Fatura();
+                            $fatura->ID_Cartao = $recorrencia->ID_Cartao;
+                            $fatura->ID_Despesa = $despesa->ID_Despesa;
+                            $fatura->Ano_Mes = $anoMes;
+                            $fatura->Fechada = 0;
+                            $fatura->save();
+                        }
+                        $contadorDespesas++;
                     }
-                    $contador++;
                 }
             }
             DB::commit();
 
-            // Retorno com mensagem de sucesso
+            // --- MENSAGEM DE SUCESSO ATUALIZADA ---
             $mesNome = \Carbon\Carbon::createFromFormat('m', $mes)->translatedFormat('F');
-            $mensagem = "{$contador} despesa(s) recorrente(s) gerada(s) com sucesso para {$mesNome}/{$ano}.";
+
+            // Mensagem em linha única
+            $mensagem = "Recorrências geradas para {$mesNome}/{$ano}: {$contadorDespesas} despesa(s) e {$contadorReceitas} receita(s) criadas com sucesso.";
+
             return redirect()->route('recorrencias.showAll')->with('success', $mensagem);
 
         } catch (\Exception $e) {
@@ -206,7 +323,9 @@ class RecorrenciaController extends Controller
         // Busca todas as contas e categorias do tipo 'Despesa'
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::orderBy('Nome')->get();
-        $categorias = (new \App\Models\Categoria)->show('D');
+        //$categorias = (new \App\Models\Categoria)->show('D');
+        // CORREÇÃO: Carregar TODAS as categorias
+        $categorias = (new \App\Models\Categoria)->showAll();
 
 
         return view('recorrenciaEditar', [
@@ -217,6 +336,8 @@ class RecorrenciaController extends Controller
         ]);
     }
 
+    // Em RecorrenciaController.php
+    // Em RecorrenciaController.php
     public function update(Request $request, int $ID_Recorrencia)
     {
         $recorrencia = Recorrencia::find($ID_Recorrencia);
@@ -226,18 +347,28 @@ class RecorrenciaController extends Controller
         $recorrencia->Valor = str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $request->Valor)));
         $recorrencia->ID_Categoria = $request->ID_Categoria;
 
-        // Lógica para garantir que apenas um dos campos de pagamento seja preenchido
-        if ($request->TipoPagamento === 'conta') {
-            $recorrencia->ID_Conta = ($request->ID_Conta && is_numeric($request->ID_Conta)) ? $request->ID_Conta : null;
-            $recorrencia->ID_Cartao = null; // Garante que o ID_Cartao seja nulo
-        } elseif ($request->TipoPagamento === 'cartao') {
-            $recorrencia->ID_Conta = null; // Garante que o ID_Conta seja nulo
-            $recorrencia->ID_Cartao = ($request->ID_Cartao && is_numeric($request->ID_Cartao)) ? $request->ID_Cartao : null;
-        } else {
-            // Se nenhum tipo de pagamento for selecionado, ambos os IDs são definidos como nulos
-            $recorrencia->ID_Conta = null;
+        // Não permitimos alterar o Tipo (R/D) de uma recorrência existente.
+        // Portanto, usamos o $recorrencia->Tipo (que veio do DB) para decidir a lógica.
+
+        // --- LÓGICA DE PAGAMENTO ATUALIZADA ---
+        if ($recorrencia->Tipo === 'R') {
+            // Se for Receita, só pode ser Conta
+            $recorrencia->ID_Conta = $request->ID_Conta;
             $recorrencia->ID_Cartao = null;
+        } else {
+            // Se for Despesa, usa a lógica do TipoPagamento
+            if ($request->TipoPagamento === 'conta') {
+                $recorrencia->ID_Conta = $request->ID_Conta;
+                $recorrencia->ID_Cartao = null;
+            } elseif ($request->TipoPagamento === 'cartao') {
+                $recorrencia->ID_Conta = null;
+                $recorrencia->ID_Cartao = $request->ID_Cartao;
+            } else {
+                $recorrencia->ID_Conta = null;
+                $recorrencia->ID_Cartao = null;
+            }
         }
+        // --- FIM DA LÓGICA ATUALIZADA ---
 
         // Datas e periodicidade
         $recorrencia->Periodicidade = $request->Periodicidade;

@@ -9,7 +9,6 @@
         </div>
         <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
-                <!-- Botão para abrir o modal de geração de recorrências -->
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalGerarRecorrencias">
                     <i class="fas fa-plus"></i> Gerar Recorrências
                 </button>
@@ -20,7 +19,6 @@
 
 @section('content')
 
-    <!-- Bloco para exibir as mensagens de sucesso/erro -->
     @if (session('success'))
         <div class="alert alert-success alert-dismissible fade show" role="alert">
             {{ session('success') }}
@@ -39,7 +37,6 @@
         </div>
     @endif
 
-    <!-- O restante do seu conteúdo da tabela -->
     <div class="row">
         <div class="col-12">
             <div class="card">
@@ -51,6 +48,7 @@
                             <th>Data Início</th>
                             <th>Data Fim</th>
                             <th>Descrição</th>
+                            <th>Tipo</th>
                             <th>Valor</th>
                             <th>Conta</th>
                             <th>Cartão</th>
@@ -64,7 +62,6 @@
                         @foreach($recorrencias as $rec)
                             <tr>
                                 <td>
-                                    <!-- Nova estrutura com data-attributes para o JS -->
                                     <a href="#" class="toggle-ativa-btn" data-id="{{ $rec->ID_Recorrencia }}" data-ativa="{{ $rec->Ativa }}">
                                         @if ($rec->Ativa)
                                             <img id="status-{{ $rec->ID_Recorrencia }}" src="{{ URL::asset('/storage/V.bmp') }}" alt="Ativa">
@@ -82,23 +79,34 @@
                                     @endif
                                 </td>
                                 <td>{{ $rec->Descricao }}</td>
-                                <td>{{ 'R$ ' . number_format($rec->Valor, 2, ',', '.') }}</td>
+                                <td class="text-center">
+                                    @if ($rec->Tipo == 'R')
+                                        <span class="badge badge-success">Receita</span>
+                                    @else
+                                        <span class="badge badge-danger">Despesa</span>
+                                    @endif
+                                </td>
+                                <td class="font-weight-bold {{ $rec->Tipo == 'R' ? 'text-success' : 'text-danger' }}">
+                                    {{ 'R$ ' . number_format($rec->Valor, 2, ',', '.') }}
+                                </td>
                                 <td>{{ $rec->conta->Banco ?? '-' }}</td>
                                 <td>{{ $rec->cartao->Nome ?? '-' }}</td>
-                                <!---->
                                 <td>
                                     @if ($rec->categoria)
-                                        <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
-                                            <i class="{{ $rec->categoria->icone->Link }}"></i>
-                                        </span>
+                                        @if ($rec->categoria->icone)
+                                            <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
+                                                <i class="{{ $rec->categoria->icone->Link }}"></i>
+                                            </span>
+                                        @else
+                                            <span class="icone-circulo" style="background-color: {{ $rec->categoria->Cor }};">
+                                                <i class="fa fa-tag"></i>
+                                            </span>
+                                        @endif
                                         {{ $rec->categoria->Nome }}
                                     @else
                                         -
                                     @endif
                                 </td>
-                                <!---->
-
-
                                 <td>{{ $rec->Periodicidade }}</td>
                                 <td>{{ $rec->Dia_vencimento }}</td>
                                 <td class="text-center">
@@ -126,6 +134,7 @@
                         <tr>
                             <th>Ativa</th>
                             <th>Descrição</th>
+                            <th>Tipo</th>
                             <th>Valor</th>
                             <th>Conta</th>
                             <th>Cartão</th>
@@ -143,7 +152,6 @@
         </div>
     </div>
 
-    <!-- Modal para Gerar Recorrências -->
     <div class="modal fade" id="modalGerarRecorrencias" tabindex="-1" role="dialog" aria-labelledby="modalGerarRecorrenciasLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
@@ -223,11 +231,9 @@
             let mes = $('#mes').val();
             let ano = $('#ano').val();
 
-            // Monta a URL com os valores selecionados
             let url = "{{ route('recorrencias.gerar', ['mes' => 'MES_PLACEHOLDER', 'ano' => 'ANO_PLACEHOLDER']) }}";
             url = url.replace('MES_PLACEHOLDER', mes).replace('ANO_PLACEHOLDER', ano);
 
-            // Redireciona para a rota
             window.location.href = url;
         });
 
@@ -242,11 +248,12 @@
 
         // Lógica para alternar o status da recorrência
         $('.toggle-ativa-btn').on('click', function(e) {
-            e.preventDefault(); // Evita o comportamento padrão do link
+            e.preventDefault();
 
             const recorrenciaId = $(this).data('id');
+            // Garante que a tag meta[name="csrf-token"] existe no seu layout principal
+            const token = $('meta[name="csrf-token"]').attr('content');
             const url = "{{ route('recorrencias.toggleAtiva', ['ID_Recorrencia' => 'ID_PLACEHOLDER']) }}".replace('ID_PLACEHOLDER', recorrenciaId);
-            const token = $('meta[name="csrf-token"]').attr('content'); // Certifique-se de ter a meta tag do CSRF
 
             fetch(url, {
                 method: 'POST',

@@ -19,7 +19,7 @@ class Categoria extends Model
         // Define o relacionamento com a tabela 'icone'
         return $this->belongsTo(Icone::class, 'ID_Icone', 'ID_Icone');
     }
-
+    /*
     public function showAll(){
             $filtros = DB::table('categoria')
                 ->select('*' )
@@ -28,7 +28,33 @@ class Categoria extends Model
 
             return $filtros;
     }
+    */
+    public function showAll(){
+        //aqui pegamos todos os pais
+        $despesasPai = Categoria::whereNull('ID_Categoria_Pai')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+            ->orderBy('Nome', 'ASC')
+            ->get();
 
+        $despesas = collect(); // mais limpo que usar um where fake
+
+        //percorre, adciona o atual, depois os possíveis filhos e assim vai
+        foreach ($despesasPai as $desp) {
+            $despesas->push($desp);
+
+            $filhos = Categoria::where('ID_Categoria_Pai', $desp->ID_Categoria)
+                ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+                ->orderBy('Nome', 'ASC')
+                ->get();
+
+            foreach ($filhos as $filho) {
+                $filho->Nome = $desp->Nome . ' -> ' . $filho->Nome;
+                $despesas->push($filho);
+            }
+        }
+
+        return  $despesas;
+    }
     public function show(string $tipoCategoria){
         //aqui pegamos todos os pais
         $despesasPai = Categoria::where('Tipo', $tipoCategoria)

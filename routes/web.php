@@ -86,8 +86,8 @@ Route::group(['middleware'=>['auth']], function(){
     //----------------- FATURA -----------------
 
     //----------------- RECORRENCIA -----------------
-    Route::get('recorrencias/novo',[DespesaController::class, 'recorrencias_new'])->name('recorrencias.new');
-    Route::post('recorrencias/salvar', [DespesaController::class, 'recorrencias_store'])->name('recorrencias.store');
+    Route::get('recorrencias/novo',[RecorrenciaController::class, 'new'])->name('recorrencias.new');
+    Route::post('recorrencias/salvar', [RecorrenciaController::class, 'store'])->name('recorrencias.store');
     Route::get('recorrencias/gerar/{mes}/{ano}', [RecorrenciaController::class, 'gerarRecorrencias'])->name('recorrencias.gerar');
     Route::get('recorrencias', [RecorrenciaController::class, 'showAll'])->name('recorrencias.showAll');
     Route::get('recorrencias/editar/{ID_Recorrencia}', [RecorrenciaController::class, 'edit'])->name('recorrencias.edit');

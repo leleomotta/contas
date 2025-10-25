@@ -71,5 +71,8 @@ alter table recorrencia add FOREIGN KEY (`ID_Categoria`) REFERENCES `categoria` 
 alter table recorrencia add FOREIGN KEY (`ID_Conta`) REFERENCES `conta` (`ID_Conta`);
 alter table recorrencia add FOREIGN KEY (`ID_Cartao`) REFERENCES `cartao` (`ID_Cartao`);
 
+-----------------
+Alterções banco 20251024
 
-
+alter table recorrencia add COLUMN Tipo ENUM('D', 'R') after Descricao;
+ALTER TABLE receita ADD COLUMN `Recorrente` BOOLEAN DEFAULT FALSE AFTER `Efetivada`;
