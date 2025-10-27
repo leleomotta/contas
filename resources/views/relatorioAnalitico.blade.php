@@ -195,7 +195,7 @@
                     <h3 class="card-title">💰 Maiores Despesas (Top 10)</h3>
                 </div>
                 <div class="card-body">
-                    <canvas id="topDespesasChart"></canvas>
+                    <canvas id="topDespesasChart" style="height: 300px;"></canvas>
                 </div>
             </div>
 
@@ -312,15 +312,18 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
     {{-- Tempus Dominus (Datepicker) --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
-    {{-- Bootstrap Select --}}
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/js/bootstrap-select.min.js"></script>
+
+    {{-- Bootstrap Select (VERSÕES UNIFICADAS para 1.13.18) --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
-    {{-- Chart.js (Gráficos) --}}
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    {{-- !!! A CORREÇÃO ESTÁ AQUI !!! --}}
+    {{-- Adicionando o Chart.js v2.9.4, que é compatível com AdminLTE e com o código abaixo --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
+
     {{-- DataTables --}}
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
-    <script src="https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"></script>
 
     <script>
         $(document).ready(function() {
@@ -332,104 +335,92 @@
             // 2. Inicializar Bootstrap Select
             $('.selectpicker').selectpicker();
 
-            // --- ADICIONE ESTA LINHA ---
             // 2b. Inicializar Tooltips
             $('[data-toggle="tooltip"]').tooltip();
-            // --- FIM DA ADIÇÃO ---
 
             // 3. Inicializar Tabela Detalhada (DataTables)
             $('#tabelaDetalhada').DataTable({
                 "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
+                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
                 },
-                "order": [[0, "desc"]] // Ordenar por Data (coluna 0) descendente
+                "order": [[0, "desc"]]
             });
 
-            // 4. Lógica dos Gráficos
+            // 4. Lógica dos Gráficos (Sintaxe v2.9, que agora irá funcionar)
 
-            // --- GRÁFICO 1: EVOLUÇÃO FINANCEIRA ---
+            // --- GRÁFICO 1: EVOLUÇÃO FINANCEIRA (Sintaxe v2.9) ---
             var ctxEvolucao = document.getElementById('evolucaoFinanceiraChart').getContext('2d');
-            var evolucaoData = @json($evolucaoData); // Pega os dados do Controller
+            var evolucaoData = @json($evolucaoData);
 
-            new Chart(ctxEvolucao, {
-                type: 'bar', // Gráfico de barras
-                data: evolucaoData, // Nossos dados já formatados
+            new Chart(ctxEvolucao, { // Esta linha agora deve funcionar
+                type: 'bar',
+                data: evolucaoData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
                     scales: {
-                        x: {
-                            stacked: false, // Barras lado a lado
-                        },
-                        y: {
+                        xAxes: [{
+                            stacked: false,
+                        }],
+                        yAxes: [{
                             stacked: false,
                             ticks: {
                                 callback: function(value) {
                                     return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                                 }
                             }
-                        }
+                        }]
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) {
-                                        label += ': ';
-                                    }
-                                    if (context.parsed.y !== null) {
-                                        label += 'R$ ' + context.parsed.y.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-                                    }
-                                    return label;
-                                }
+                    tooltips: {
+                        callbacks: {
+                            label: function(tooltipItem, data) {
+                                let label = data.datasets[tooltipItem.datasetIndex].label || '';
+                                if (label) { label += ': '; }
+                                let value = tooltipItem.yLabel;
+                                label += 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                                return label;
                             }
                         }
                     }
                 }
             });
 
-            // --- GRÁFICO 2: TOP 10 DESPESAS (Placeholder por enquanto) ---
+            // --- GRÁFICO 2: TOP 10 DESPESAS (Sintaxe v2.9) ---
             var ctxTopDespesas = document.getElementById('topDespesasChart').getContext('2d');
             var topDespesasData = @json($topDespesasData);
 
-            // --- GRÁFICO 2: TOP 10 DESPESAS ---
-            var ctxTopDespesas = document.getElementById('topDespesasChart').getContext('2d');
-            var topDespesasData = @json($topDespesasData);
-
-            // Só renderiza o gráfico se houver dados
             if (topDespesasData.labels && topDespesasData.labels.length > 0) {
-                new Chart(ctxTopDespesas, {
-                    type: 'pie', // Pode ser 'pie' ou 'doughnut'
+                new Chart(ctxTopDespesas, { // Esta linha agora deve funcionar
+                    type: 'pie',
                     data: topDespesasData,
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false, // Importante para o gráfico caber
-                        plugins: {
-                            legend: {
-                                position: 'right', // Posição da legenda
-                                labels: {
-                                    boxWidth: 20,
-                                    padding: 10
-                                }
-                            },
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        let label = context.label || '';
-                                        let value = context.parsed || 0;
-                                        let total = context.chart.getDatasetMeta(0).total;
-                                        let percentage = ((value / total) * 100).toFixed(1) + '%';
-                                        let valueFormatted = 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-                                        return ` ${label}: ${valueFormatted} (${percentage})`;
-                                    }
+                        maintainAspectRatio: false,
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                boxWidth: 20,
+                                padding: 10
+                            }
+                        },
+                        tooltips: {
+                            callbacks: {
+                                label: function(tooltipItem, data) {
+                                    let label = data.labels[tooltipItem.index] || '';
+                                    let value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] || 0;
+
+                                    let total = 0;
+                                    data.datasets[tooltipItem.datasetIndex].data.forEach(v => total += parseFloat(v));
+                                    let percentage = ((value / total) * 100).toFixed(1) + '%';
+                                    let valueFormatted = 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+
+                                    return ` ${label}: ${valueFormatted} (${percentage})`;
                                 }
                             }
                         }
                     }
                 });
             } else {
-                // Se não houver dados, exibe uma mensagem
                 ctxTopDespesas.font = "16px Arial";
                 ctxTopDespesas.fillStyle = "#6c757d";
                 ctxTopDespesas.textAlign = "center";

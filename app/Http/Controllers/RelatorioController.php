@@ -22,7 +22,7 @@ class RelatorioController extends Controller
             'despesa.ID_Conta',
             'fatura.ID_Cartao',
             DB::raw("CAST('D' AS CHAR CHARACTER SET utf8mb4) as Tipo"),
-            DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"), // O alias original
+            DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
             DB::raw("CAST(CONCAT(IFNULL(conta.Nome, ''), ' - ', IFNULL(conta.Banco, '')) AS CHAR CHARACTER SET utf8mb4) as Conta_Nome"),
             DB::raw("CAST(cartao.Nome AS CHAR CHARACTER SET utf8mb4) as Cartao_Nome")
         )
@@ -109,51 +109,65 @@ class RelatorioController extends Controller
             ->select(DB::raw("DATE_FORMAT(Data, '$dateFormat') as periodo"), DB::raw('SUM(Valor) as total'))
             ->groupBy('periodo')->orderBy('periodo')->get()->pluck('total', 'periodo');
 
-        $labels = $receitasAgrupadas->keys()->merge($despesasAgrupadas->keys())->unique()->sort();
+        // *** CORREÇÃO AQUI: ->values() ***
+        // Força $labels a ser um array numérico [0 => '2025-01', 1 => '2025-02']
+        $labels = $receitasAgrupadas->keys()->merge($despesasAgrupadas->keys())->unique()->sort()->values();
 
         $evolucaoData = [
-            'labels' => $labels,
+            'labels' => $labels, // Agora é um array
             'datasets' => [
-                ['label' => 'Receitas', 'backgroundColor' => 'rgba(40, 167, 69, 0.8)', 'data' => $labels->map(fn ($label) => $receitasAgrupadas->get($label, 0))],
-                ['label' => 'Despesas', 'backgroundColor' => 'rgba(220, 53, 69, 0.8)', 'data' => $labels->map(fn ($label) => $despesasAgrupadas->get($label, 0))]
+                [
+                    'label' => 'Receitas',
+                    'backgroundColor' => 'rgba(40, 167, 69, 0.8)',
+                    // *** CORREÇÃO AQUI: ->values() ***
+                    // Força 'data' a ser um array numérico [0 => 15000, 1 => 13000]
+                    'data' => $labels->map(fn ($label) => $receitasAgrupadas->get($label, 0))->values(),
+                ],
+                [
+                    'label' => 'Despesas',
+                    'backgroundColor' => 'rgba(220, 53, 69, 0.8)',
+                    // *** CORREÇÃO AQUI: ->values() ***
+                    'data' => $labels->map(fn ($label) => $despesasAgrupadas->get($label, 0))->values(),
+                ]
             ]
         ];
+        // *** FIM DA CORREÇÃO 7 ***
+
 
         // --- 8. PREPARA DADOS PARA "TOP 10 DESPESAS" (Gráfico) ---
-        // *** CORREÇÃO AQUI ***
         $topDespesasQuery = (clone $queryDespesas)
             ->select(
-            // Precisamos recriar o alias e agrupar pela coluna real
                 DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
                 DB::raw('SUM(Valor) as total')
             )
-            ->groupBy('categoria.Nome') // Agrupa pela coluna original
+            ->groupBy('categoria.Nome')
             ->orderBy('total', 'desc')
             ->limit(10)
             ->get();
-        // *** FIM DA CORREÇÃO ***
 
         $topDespesasData = [
-            'labels' => $topDespesasQuery->pluck('Categoria_Nome'),
+            // *** CORREÇÃO AQUI: ->values() ***
+            'labels' => $topDespesasQuery->pluck('Categoria_Nome')->values(),
             'datasets' => [[
-                'data' => $topDespesasQuery->pluck('total'),
+                // *** CORREÇÃO AQUI: ->values() ***
+                'data' => $topDespesasQuery->pluck('total')->values(),
                 'backgroundColor' => ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6f42c1', '#e83e8c', '#6c757d'],
             ]]
         ];
+        // *** FIM DA CORREÇÃO 8 ***
 
         // --- 9. PREPARA DADOS PARA "COMPARATIVO DE DESPESAS" (Tabela) ---
         $currentDays = $dataFim->diffInDays($dataInicio);
         $prevDataFim = $dataInicio->copy()->subDay();
         $prevDataInicio = $prevDataFim->copy()->subDays($currentDays);
 
-        // *** CORREÇÃO AQUI ***
         $currentDespesas = (clone $queryDespesas)
             ->select(
                 DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
                 DB::raw('SUM(Valor) as total')
             )
             ->groupBy('categoria.Nome')
-            ->pluck('total', 'Categoria_Nome'); // Pluck usa o alias Categoria_Nome
+            ->pluck('total', 'Categoria_Nome');
 
         $queryDespesasAnterior = $this->buildDespesasQuery($prevDataInicio, $prevDataFim, $filtroCategorias, $filtroContas, $filtroCartoes);
 
@@ -164,7 +178,6 @@ class RelatorioController extends Controller
             )
             ->groupBy('categoria.Nome')
             ->pluck('total', 'Categoria_Nome');
-        // *** FIM DA CORREÇÃO ***
 
         $allCategorias = $currentDespesas->keys()->merge($previousDespesas->keys())->unique();
 
