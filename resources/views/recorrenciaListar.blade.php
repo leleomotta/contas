@@ -132,7 +132,9 @@
                         </tbody>
                         <tfoot>
                         <tr>
-                            <th>Ativa</th>
+                            <th style="width:50px">Ativa</th>
+                            <th>Data Início</th>
+                            <th>Data Fim</th>
                             <th>Descrição</th>
                             <th>Tipo</th>
                             <th>Valor</th>
@@ -141,9 +143,7 @@
                             <th>Categoria</th>
                             <th>Periodicidade</th>
                             <th>Dia vencimento</th>
-                            <th>Data Início</th>
-                            <th>Data Fim</th>
-                            <th>&nbsp;</th>
+                            <th style="width:110px">&nbsp;</th>
                         </tr>
                         </tfoot>
                     </table>
