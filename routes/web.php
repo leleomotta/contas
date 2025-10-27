@@ -9,6 +9,7 @@ use App\Http\Controllers\TransferenciaController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContaController;
+use App\Http\Controllers\RelatorioController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -107,6 +108,10 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('receitas/editar/{ID_Receita}',[ReceitaController::class, 'edit'])->name('receitas.edit');
     Route::put('receitas/atualiza/{ID_Receita}',[ReceitaController::class, 'update'])->name('receitas.update');
     //----------------- RECEITAS -----------------
+
+    //----------------- RELATÓRIO -----------------
+    Route::get('/relatorio/analitico', [RelatorioController::class, 'analitico'])->name('relatorio.analitico');
+    //----------------- RELATÓRIO -----------------
 
     //----------------- TRANSFERENCIAS -----------------
     Route::get('transferencias',[TransferenciaController::class, 'showAll'])->name('transferencias.showAll');

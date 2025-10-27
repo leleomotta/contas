@@ -458,6 +458,13 @@ return [
                 ],
             ],
         ],
+
+        [
+            'text' => 'Relatório',
+            'icon' => 'fas fa-chart-bar',
+            'url' => '/relatorio/analitico',
+        ],
+
     ],
 
     /*
