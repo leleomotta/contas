@@ -16,31 +16,31 @@
                 </div>
                 <div class="position-relative text-center mb-3" style="min-height:40px;">
 
-                {{-- Nome do cartão alinhado à esquerda --}}
-                <div class="position-absolute" style="left:0; top:50%; transform:translateY(-50%);">
-                    &nbsp;&nbsp;&nbsp;{{ $cartao ?? 'NOME DO CARTÃO' }}
-                </div>
+                    {{-- Nome do cartão alinhado à esquerda --}}
+                    <div class="position-absolute" style="left:0; top:50%; transform:translateY(-50%);">
+                        &nbsp;&nbsp;&nbsp;{{ $cartao ?? 'NOME DO CARTÃO' }}
+                    </div>
 
-                {{-- datetimepicker centralizado --}}
-                <div class="d-inline-block">
-                    <div class="input-group date" id="divData" data-target-input="nearest">
-                        <div class="input-group-append" onclick="voltaData()">
-                            <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
-                        </div>
+                    {{-- datetimepicker centralizado --}}
+                    <div class="d-inline-block">
+                        <div class="input-group date" id="divData" data-target-input="nearest">
+                            <div class="input-group-append" onclick="voltaData()">
+                                <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
+                            </div>
 
-                        <input type="text" class="form-control datetimepicker-input"
-                               id="Data" name="Data"
-                               data-target="#divData"
-                               data-toggle="datetimepicker"
-                               placeholder="aaaa-mm"
-                               style="text-align:center;" />
+                            <input type="text" class="form-control datetimepicker-input"
+                                   id="Data" name="Data"
+                                   data-target="#divData"
+                                   data-toggle="datetimepicker"
+                                   placeholder="aaaa-mm"
+                                   style="text-align:center;" />
 
-                        <div class="input-group-append" onclick="avancaData()">
-                            <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
+                            <div class="input-group-append" onclick="avancaData()">
+                                <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
 
 
 
@@ -135,44 +135,52 @@
 
         <div class="card-body">
             <div class="row">
-            <div class="col-md-3 col-sm-6 col-12 h-150" id="Total">
-                <div class="info-box">
-                    <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Total da fatura</span>
-                        <span class="info-box-number" id="valor_total_selecionado">
+                <div class="col-md-3 col-sm-6 col-12 h-150" id="Total">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Total da fatura</span>
+                            <span class="info-box-number" id="valor_total_selecionado">
                             {{ 'R$ ' . str_replace("_",'.', str_replace(".",',', str_replace(",",'_', number_format($totalFatura, 2)))) }}
                         </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-3 col-sm-6 col-12" id="Fechamento">
-                <div class="info-box">
-                    <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
-                    <div class="info-box-content">
-                        <span class="info-box-text">Fechamento da fatura</span>
-                        <span class="info-box-number">
+                <div class="col-md-3 col-sm-6 col-12" id="Fechamento">
+                    <div class="info-box">
+                        <span class="info-box-icon bg-success"><i class="fa fa-coins"></i></span>
+                        <div class="info-box-content">
+                            <span class="info-box-text">Fechamento da fatura</span>
+                            <span class="info-box-number">
                         @if ($faturas->count() != 0)
-                                @if (isset($fatura) && $fatura->Fechada == 0)
-                                    ---
+                                    @if (isset($fatura) && $fatura->Fechada == 0)
+                                        ---
+                                    @else
+                                        {{ isset($fatura) ? date('d/m/Y', strtotime($fatura->Data_fechamento)) : '---' }}
+                                    @endif
                                 @else
-                                    {{ isset($fatura) ? date('d/m/Y', strtotime($fatura->Data_fechamento)) : '---' }}
+                                    ---
                                 @endif
-                            @else
-                                ---
-                            @endif
                         </span>
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <div class="col-md-6 col-sm-6 col-12" id="Botoes">
-                <div class="info-box">
-                    <div class="card-body row">
-                        <div class="col-12">
-                            @if ($faturas->count() != 0)
-                                @if (isset($fatura) && $fatura->Fechada == 0)
+                <div class="col-md-6 col-sm-6 col-12" id="Botoes">
+                    <div class="info-box">
+                        <div class="card-body row">
+                            <div class="col-12">
+                                @if ($faturas->count() != 0)
+                                    @if (isset($fatura) && $fatura->Fechada == 0)
+                                        <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                                            <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+                                            <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
+                                                <span class="fa fa-plus"></span>
+                                            </button>
+                                        </form>
+                                    @endif
+                                @else
                                     <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
                                         <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
                                         <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
@@ -180,93 +188,87 @@
                                         </button>
                                     </form>
                                 @endif
-                            @else
-                                <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                                    <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
-                                    <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
-                                        <span class="fa fa-plus"></span>
-                                    </button>
-                                </form>
-                            @endif
-                        </div>
+                            </div>
 
-                        <div class="col-12">
-                            @if ($faturas->count() != 0)
-                                @if (isset($fatura) && $fatura->Fechada  == 0)
-                                    <button type="submit" class="btn btn-warning btn-block" title="Fechar fatura"
-                                            data-toggle="modal" data-target="#fechaFatura">
-                                        <span class="fas fa-money-bill-wave"></span>
-                                    </button>
-                                    <form id="fatura" role="form" action="{{ route('cartoes.fatura_fechar') }}" method="GET">
-                                        <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
-                                        <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
-                                        <div class="modal fade" id="fechaFatura">
-                                            <div class="modal-dialog  modal-lg">
-                                                <div class="modal-content">
-                                                    <div class="modal-header">
-                                                        <h4 class="modal-title"> Fechar fatura </h4>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                                            <span aria-hidden="true">&times;</span>
-                                                        </button>
-                                                    </div>
-                                                    <div class="modal-body">
-                                                        <div class="alert alert-warning alert-dismissible">
-                                                            <label>Total da fatura: </label>
-                                                            {{ 'R$ ' .  str_replace("_",'.',
-                                                                        str_replace(".",',',
-                                                                        str_replace(",",'_',
-                                                                        number_format($totalFatura, 2
-                                                                        )))) }}
-                                                        </div>
-
-                                                        <label>Data</label>
-                                                        <div class="form-group">
-                                                            <div class="input-group date" id="Data_Fechamento" data-target-input="nearest">
-                                                                <div class="input-group-append" data-target="#Data_Fechamento" data-toggle="datetimepicker">
-                                                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                                                                </div>
-                                                                <input type="text" class="form-control datetimepicker-input" data-target="#Data_Fechamento" name="Data_Fechamento"
-                                                                       data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
-                                                                       placeholder="dd/mm/yyyy" value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
-                                                                />
-                                                            </div>
-                                                        </div>
-
-                                                        <label>Conta</label>
-                                                        <select class="custom-select" id="Conta" name="Conta">
-                                                            <option selected data-default>- Selecione uma conta -</option>
-                                                            @foreach($contas as $conta)
-                                                                <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Nome }}  </option>
-                                                            @endforeach
-                                                        </select>
-                                                        <div class="card-footer">
-                                                            <div class="float-right">
-                                                                <button type="submit" class="btn btn-success">Pagar fatura</button>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </form>
-                                @else
-                                    <form id="fatura{{ Session::get('ID_Cartao') }}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
-                                        <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
-                                        <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
-                                        <button type="submit" class="btn btn-danger btn-block" title="Reabrir fatura"
-                                                onclick="return confirm('Deseja realmente reabrir a fatura?')">
+                            <div class="col-12">
+                                @if ($faturas->count() != 0)
+                                    @if (isset($fatura) && $fatura->Fechada  == 0)
+                                        {{-- ALTERAÇÃO 1: Mudei o type para "button" e removi o <form> e o modal daqui --}}
+                                        <button type="button" class="btn btn-warning btn-block" title="Fechar fatura"
+                                                data-toggle="modal" data-target="#fechaFatura">
                                             <span class="fas fa-money-bill-wave"></span>
                                         </button>
-                                    </form>
+                                    @else
+                                        <form id="fatura{{ Session::get('ID_Cartao') }}" role="form" action="{{ route('cartoes.fatura_reabrir') }}" method="GET">
+                                            <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
+                                            <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
+                                            <button type="submit" class="btn btn-danger btn-block" title="Reabrir fatura"
+                                                    onclick="return confirm('Deseja realmente reabrir a fatura?')">
+                                                <span class="fas fa-money-bill-wave"></span>
+                                            </button>
+                                        </form>
+                                    @endif
                                 @endif
-                            @endif
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-        </div>
     </div>
+
+
+    {{-- ALTERAÇÃO 2: O FORMULÁRIO E O MODAL FORAM MOVIDOS PARA CÁ (PARA FORA DO CARD FLUTUANTE) --}}
+    <form id="fatura" role="form" action="{{ route('cartoes.fatura_fechar') }}" method="GET">
+        <input type="hidden" name="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
+        <input type="hidden" name="Ano_Mes" value="{{$Ano_Mes}}">
+        <div class="modal fade" id="fechaFatura">
+            <div class="modal-dialog  modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title"> Fechar fatura </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning alert-dismissible">
+                            <label>Total da fatura: </label>
+                            {{-- ALTERAÇÃO 3: Adicionado ID 'modal_total_fatura' para o JS atualizar o valor --}}
+                            <span id="modal_total_fatura" style="font-weight: bold;">R$ 0,00</span>
+                        </div>
+
+                        <label>Data</label>
+                        <div class="form-group">
+                            <div class="input-group date" id="Data_Fechamento" data-target-input="nearest">
+                                <div class="input-group-append" data-target="#Data_Fechamento" data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                                <input type="text" class="form-control datetimepicker-input" data-target="#Data_Fechamento" name="Data_Fechamento"
+                                       data-inputmask-alias="datetime" data-inputmask-inputformat="dd/mm/yyyy" data-mask
+                                       placeholder="dd/mm/yyyy" value="{{ old('Data', \Carbon\Carbon::now()->format('d/m/Y')) }}"
+                                />
+                            </div>
+                        </div>
+
+                        <label>Conta</label>
+                        <select class="custom-select" id="Conta" name="Conta">
+                            <option selected data-default>- Selecione uma conta -</option>
+                            @foreach($contas as $conta)
+                                <option value="{{$conta->ID_Conta}}"> {{$conta->Banco . ' - ' . $conta->Nome }}  </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    {{-- ALTERAÇÃO 4: Adicionado um 'modal-footer' adequado para os botões --}}
+                    <div class="modal-footer justify-content-between">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-success">Pagar fatura</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
 
 @stop
 
@@ -441,6 +443,22 @@
                 const checkboxes = document.querySelectorAll('.linha-checkbox');
                 checkboxes.forEach(cb => cb.checked = this.checked);
                 atualizarTotalSelecionado();
+            });
+        });
+    </script>
+
+    {{-- ALTERAÇÃO 5: SCRIPT ADICIONADO para copiar o valor total para o modal quando ele for aberto --}}
+    <script>
+        $(document).ready(function() {
+            // Este evento é disparado QUANDO O MODAL COMEÇA A ABRIR
+            $('#fechaFatura').on('show.bs.modal', function (event) {
+
+                // 1. Pega o valor total dinâmico que seu JS já calculou (da barra flutuante)
+                var totalDinamico = $('#valor_total_selecionado').text();
+
+                // 2. Coloca esse valor dentro do span do modal
+                var modal = $(this);
+                modal.find('#modal_total_fatura').text(totalDinamico);
             });
         });
     </script>
