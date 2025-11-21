@@ -2,206 +2,315 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Models\{Categoria, Conta, Cartao, Despesa, Receita};
-use Carbon\Carbon;
-use Illuminate\Support\Facades\DB;
+// Importa as classes necessárias
+use Illuminate\Http\Request; // Para lidar com a requisição HTTP e os filtros
+use App\Models\{Categoria, Conta, Cartao, Despesa, Receita}; // Models do seu sistema
+use Carbon\Carbon; // Para manipulação de datas
+use Illuminate\Support\Facades\DB; // Para usar funções de banco de dados (DB::raw)
 
 class RelatorioController extends Controller
 {
     /**
-     * Função privada para construir a query de despesas.
+     * Exibe a página de análise avançada com dados filtrados.
+     *
+     * @param Request $request Contém os filtros enviados pelo formulário (GET)
+     * @return \Illuminate\View\View Retorna a view 'relatorioAnalitico' com os dados processados
      */
-    private function buildDespesasQuery($dataInicio, $dataFim, $filtroCategorias, $filtroContas, $filtroCartoes)
-    {
-        return Despesa::select(
-            'despesa.Data',
-            DB::raw("CAST(despesa.Descricao AS CHAR CHARACTER SET utf8mb4) as Descricao"),
-            'despesa.Valor',
-            'despesa.ID_Categoria',
-            'despesa.ID_Conta',
-            'fatura.ID_Cartao',
-            DB::raw("CAST('D' AS CHAR CHARACTER SET utf8mb4) as Tipo"),
-            DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
-            DB::raw("CAST(CONCAT(IFNULL(conta.Nome, ''), ' - ', IFNULL(conta.Banco, '')) AS CHAR CHARACTER SET utf8mb4) as Conta_Nome"),
-            DB::raw("CAST(cartao.Nome AS CHAR CHARACTER SET utf8mb4) as Cartao_Nome")
-        )
-            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->leftJoin('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
-            ->leftJoin('fatura', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
-            ->leftJoin('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
-            ->whereBetween('despesa.Data', [$dataInicio, $dataFim])
-            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
-            ->when($filtroContas || $filtroCartoes, function ($q) use ($filtroContas, $filtroCartoes) {
-                $q->where(function ($sub) use ($filtroContas, $filtroCartoes) {
-                    if ($filtroContas) $sub->orWhereIn('despesa.ID_Conta', $filtroContas);
-                    if ($filtroCartoes) $sub->orWhereIn('fatura.ID_Cartao', $filtroCartoes);
-                });
-            });
-    }
 
-    /**
-     * Exibe a página de análise avançada.
-     */
     public function analitico(Request $request)
     {
-        // --- 1. CARREGAR DADOS DOS FILTROS ---
+        // --- 1. CARREGAR DADOS PARA OS FILTROS ---
         $categorias = Categoria::orderBy('Nome')->get();
         $contas = Conta::orderBy('Nome')->get();
         $cartoes = Cartao::orderBy('Nome')->get();
 
-        // --- 2. PARSE DOS FILTROS DE ENTRADA ---
+        // --- 2. PARSE DOS FILTROS ---
         $dataInicio = Carbon::createFromFormat('d/m/Y', $request->input('data_inicio', Carbon::now()->startOfYear()->format('d/m/Y')))->startOfDay();
         $dataFim = Carbon::createFromFormat('d/m/Y', $request->input('data_fim', Carbon::now()->endOfYear()->format('d/m/Y')))->endOfDay();
         $tipo = $request->input('tipo', 'todos');
-        $agrupar = $request->input('agrupar', 'month');
+        $dateFormat = '%Y-%m';
+        $phpFormat = 'Y-m';
         $filtroCategorias = $request->input('categorias');
         $filtroContas = $request->input('contas');
         $filtroCartoes = $request->input('cartoes');
 
-        // --- 3. CONSULTA BASE DE RECEITAS ---
-        $queryReceitas = Receita::select(
-            'receita.Data',
-            DB::raw("CAST(receita.Descricao AS CHAR CHARACTER SET utf8mb4) as Descricao"),
-            'receita.Valor',
-            'receita.ID_Categoria',
-            'receita.ID_Conta',
-            DB::raw('NULL as ID_Cartao'),
-            DB::raw("CAST('R' AS CHAR CHARACTER SET utf8mb4) as Tipo"),
-            DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
-            DB::raw("CAST(CONCAT(conta.Nome, ' - ', conta.Banco) AS CHAR CHARACTER SET utf8mb4) as Conta_Nome"),
-            DB::raw("CAST(NULL AS CHAR CHARACTER SET utf8mb4) as Cartao_Nome")
-        )
-            ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
-            ->whereBetween('receita.Data', [$dataInicio, $dataFim])
-            ->when($filtroCategorias, fn ($q) => $q->whereIn('receita.ID_Categoria', $filtroCategorias))
-            ->when($filtroContas, fn ($q) => $q->whereIn('receita.ID_Conta', $filtroContas))
-            ->when($filtroCartoes, fn ($q) => $q->whereRaw('1 = 0'));
-
-        // --- 4. CONSULTA BASE DE DESPESAS (Período Atual) ---
-        $queryDespesas = $this->buildDespesasQuery($dataInicio, $dataFim, $filtroCategorias, $filtroContas, $filtroCartoes);
-
-        // --- 5. COMBINA AS CONSULTAS (UNION) ---
-        if ($tipo == 'R') {
-            $queryUnion = $queryReceitas;
-        } elseif ($tipo == 'D') {
-            $queryUnion = $queryDespesas;
-        } else {
-            $queryUnion = (clone $queryReceitas)->unionAll($queryDespesas);
+        // --- 3. GERAR LABELS (EIXO X) ---
+        $labels = collect();
+        // O ERRO ESTAVA AQUI: Ao chamar startOfMonth() direto, você alterava as variáveis originais.
+        // CORREÇÃO: Usamos copy() para não estragar a dataFim usada nas queries SQL abaixo.
+        $periodIterator = new \Carbon\CarbonPeriod(
+            $dataInicio->copy()->startOfMonth(),'1 month', $dataFim->copy()->startOfMonth()
+        );
+        foreach ($periodIterator as $date) {
+            $labels->push($date->format($phpFormat));
         }
 
-        // --- 6. PREPARA DADOS PARA "TODOS OS LANÇAMENTOS" (Tabela) ---
-        $detalhadoData = (clone $queryUnion)->orderBy('Data', 'desc')->get();
 
-        // --- 7. PREPARA DADOS PARA "EVOLUÇÃO FINANCEIRA" (Gráfico) ---
-        $dateFormat = match ($agrupar) {
-            'day' => '%Y-%m-%d',
-            'month' => '%Y-%m',
-            'year' => '%Y'
-        };
+        // --- 4. PREPARA DADOS PARA "EVOLUÇÃO FINANCEIRA" (COM DEBUG) ---
 
-        $receitasAgrupadas = (clone $queryReceitas)
-            ->select(DB::raw("DATE_FORMAT(Data, '$dateFormat') as periodo"), DB::raw('SUM(Valor) as total'))
-            ->groupBy('periodo')->orderBy('periodo')->get()->pluck('total', 'periodo');
+        // [A] RECEITAS
+        $receitasQuery = Receita::select(DB::raw("DATE_FORMAT(Data, '$dateFormat') as periodo"), DB::raw('SUM(Valor) as total'))
+            ->whereBetween('Data', [$dataInicio, $dataFim])
+            ->where('Efetivada', 1)
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('ID_Conta', $filtroContas))
+            ->groupBy('periodo');
 
-        $despesasAgrupadas = (clone $queryDespesas)
-            ->select(DB::raw("DATE_FORMAT(Data, '$dateFormat') as periodo"), DB::raw('SUM(Valor) as total'))
-            ->groupBy('periodo')->orderBy('periodo')->get()->pluck('total', 'periodo');
+        // --- DEBUG RECEITAS ---
+        // dd('SQL Receitas:', $receitasQuery->toSql(), $receitasQuery->getBindings());
 
-        // *** CORREÇÃO AQUI: ->values() ***
-        // Força $labels a ser um array numérico [0 => '2025-01', 1 => '2025-02']
-        $labels = $receitasAgrupadas->keys()->merge($despesasAgrupadas->keys())->unique()->sort()->values();
+        $receitasAgrupadas = $receitasQuery->pluck('total', 'periodo');
+
+
+        // [B] DESPESAS SEM CARTÃO (Débito)
+        $despesasSemCartaoQuery = DB::table('despesa')
+            ->select(DB::raw("DATE_FORMAT(despesa.Data, '$dateFormat') as periodo"), DB::raw('SUM(despesa.Valor) as total'))
+            ->whereBetween('despesa.Data', [$dataInicio, $dataFim])
+            ->whereNotExists(function($query) {
+                $query->select(DB::raw(1))->from('fatura')->whereColumn('despesa.ID_Despesa', 'fatura.ID_Despesa');
+            })
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('despesa.ID_Conta', $filtroContas))
+            ->when($filtroCartoes, fn ($q) => $q->whereRaw('1 = 0'))
+            ->groupBy('periodo');
+
+        // --- DEBUG DESPESAS SEM CARTÃO ---
+        // dd('SQL Sem Cartão:', $despesasSemCartaoQuery->toSql(), $despesasSemCartaoQuery->getBindings());
+
+        $despesasSemCartaoGrouped = $despesasSemCartaoQuery->pluck('total', 'periodo');
+
+
+        // [C] DESPESAS CARTÃO PAGO
+        $despesasCartaoPagoQuery = DB::table('fatura')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->select(DB::raw("DATE_FORMAT(fatura.Data_fechamento, '$dateFormat') as periodo"), DB::raw('SUM(despesa.Valor) as total'))
+            ->where('fatura.Fechada', 1)
+            ->whereBetween('fatura.Data_fechamento', [$dataInicio, $dataFim])
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('fatura.Conta_fechamento', $filtroContas))
+            ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes))
+            ->groupBy('periodo');
+
+        // --- DEBUG CARTÃO PAGO ---
+        // dd('SQL Cartão Pago:', $despesasCartaoPagoQuery->toSql(), $despesasCartaoPagoQuery->getBindings());
+
+        $despesasCartaoPagoGrouped = $despesasCartaoPagoQuery->pluck('total', 'periodo');
+
+
+        // [D] DESPESAS CARTÃO ABERTO
+        $despesasCartaoAbertoQuery = DB::table('fatura')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->select(DB::raw("fatura.Ano_Mes as periodo"), DB::raw('SUM(despesa.Valor) as total'))
+            ->whereNull('fatura.Data_fechamento')
+            // ATENÇÃO AQUI: Verifique se o formato gerado pelo Carbon bate com o do banco (ex: '2025-12')
+            ->whereBetween('fatura.Ano_Mes', [$dataInicio->format('Y-m'), $dataFim->format('Y-m')])
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes))
+            ->when($filtroContas, fn ($q) => $q->whereRaw('1 = 0')) // Zera se houver filtro de conta
+            ->groupBy('periodo');
+
+        // --- DEBUG CARTÃO ABERTO ---
+        // dd('SQL Cartão Aberto:', $despesasCartaoAbertoQuery->toSql(), $despesasCartaoAbertoQuery->getBindings());
+
+        $despesasCartaoAbertoGrouped = $despesasCartaoAbertoQuery->pluck('total', 'periodo');
+
+
+        // --- DEBUG GERAL DOS RESULTADOS ---
+        // Se quiser ver os arrays finais antes de somar, descomente abaixo:
+        /*
+        dd(
+            'Range Datas:', $dataInicio->toDateTimeString(), $dataFim->toDateTimeString(),
+            'Sem Cartão:', $despesasSemCartaoGrouped,
+            'Cartão Pago:', $despesasCartaoPagoGrouped,
+            'Cartão Aberto:', $despesasCartaoAbertoGrouped
+        );
+        */
+
+        // [E] COMBINA OS TOTAIS DE DESPESAS
+        $despesasTotais = $labels->mapWithKeys(function ($mes) use ($despesasSemCartaoGrouped, $despesasCartaoPagoGrouped, $despesasCartaoAbertoGrouped) {
+            $total = $despesasSemCartaoGrouped->get($mes, 0)
+                + $despesasCartaoPagoGrouped->get($mes, 0)
+                + $despesasCartaoAbertoGrouped->get($mes, 0);
+            return [$mes => $total];
+        });
 
         $evolucaoData = [
-            'labels' => $labels, // Agora é um array
+            'labels' => $labels,
             'datasets' => [
-                [
-                    'label' => 'Receitas',
-                    'backgroundColor' => 'rgba(40, 167, 69, 0.8)',
-                    // *** CORREÇÃO AQUI: ->values() ***
-                    // Força 'data' a ser um array numérico [0 => 15000, 1 => 13000]
-                    'data' => $labels->map(fn ($label) => $receitasAgrupadas->get($label, 0))->values(),
-                ],
-                [
-                    'label' => 'Despesas',
-                    'backgroundColor' => 'rgba(220, 53, 69, 0.8)',
-                    // *** CORREÇÃO AQUI: ->values() ***
-                    'data' => $labels->map(fn ($label) => $despesasAgrupadas->get($label, 0))->values(),
-                ]
+                ['label' => 'Receitas', 'backgroundColor' => 'rgba(40, 167, 69, 0.8)', 'data' => $labels->map(fn ($l) => $receitasAgrupadas->get($l, 0))->values()],
+                ['label' => 'Despesas', 'backgroundColor' => 'rgba(220, 53, 69, 0.8)', 'data' => $despesasTotais->values()]
             ]
         ];
-        // *** FIM DA CORREÇÃO 7 ***
 
+        // --- 5. DADOS PARA TABELA DETALHADA ---
 
-        // --- 8. PREPARA DADOS PARA "TOP 10 DESPESAS" (Gráfico) ---
-        $topDespesasQuery = (clone $queryDespesas)
+        // Query Receitas (Mantida)
+        $queryReceitas = Receita::select(
+            'receita.Data',
+            DB::raw("CAST(receita.Descricao AS CHAR) as Descricao"),
+            'receita.Valor',
+            DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"),
+            DB::raw("CAST(CONCAT(IFNULL(conta.Nome, 'N/A'), ' - ', IFNULL(conta.Banco, '')) AS CHAR) as Conta_Banco"),
+            DB::raw("CAST(NULL AS CHAR) as Cartao_Nome"),
+            DB::raw("CAST('R' AS CHAR) as Tipo")
+        )
+            ->leftJoin('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
+            ->whereBetween('receita.Data', [$dataInicio, $dataFim])
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('receita.ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('receita.ID_Conta', $filtroContas));
+
+        // Query Despesas SEM Cartão
+        $queryDespesasSemCartao = DB::table('despesa')
             ->select(
-                DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
-                DB::raw('SUM(Valor) as total')
+                'despesa.Data',
+                DB::raw("CAST(despesa.Descricao AS CHAR) as Descricao"),
+                'despesa.Valor',
+                DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"),
+                DB::raw("CAST(CONCAT(IFNULL(conta.Nome, ''), ' - ', IFNULL(conta.Banco, '')) AS CHAR) as Conta_Banco"),
+                DB::raw("CAST(NULL AS CHAR) as Cartao_Nome"),
+                DB::raw("CAST('D' AS CHAR) as Tipo")
             )
-            ->groupBy('categoria.Nome')
-            ->orderBy('total', 'desc')
-            ->limit(10)
-            ->get();
+            ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
+            ->whereBetween('despesa.Data', [$dataInicio, $dataFim])
+            ->whereNotExists(function($query) { $query->select(DB::raw(1))->from('fatura')->whereColumn('despesa.ID_Despesa', 'fatura.ID_Despesa'); })
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('despesa.ID_Conta', $filtroContas))
+            ->when($filtroCartoes, fn ($q) => $q->whereRaw('1 = 0'));
+
+        // Query Cartão PAGO
+        $queryCartaoPago = DB::table('fatura')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+            ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->select(
+                'fatura.Data_fechamento as Data', // Data efetiva do pagamento
+                DB::raw("CAST(despesa.Descricao AS CHAR) as Descricao"),
+                'despesa.Valor',
+                DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"),
+                DB::raw("CAST(CONCAT(IFNULL(conta.Nome, 'N/A'), ' - ', IFNULL(conta.Banco, '')) AS CHAR) as Conta_Banco"),
+                DB::raw("CAST(cartao.Nome AS CHAR) as Cartao_Nome"),
+                DB::raw("CAST('D' AS CHAR) as Tipo")
+            )
+            ->where('fatura.Fechada', 1)
+            ->whereBetween('fatura.Data_fechamento', [$dataInicio, $dataFim])
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroContas, fn ($q) => $q->whereIn('fatura.Conta_fechamento', $filtroContas))
+            ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes));
+
+        // Query Cartão ABERTO (NOVO)
+        $queryCartaoAberto = DB::table('fatura')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->select(
+            // Como a data de fechamento é NULL, usamos a data da compra para exibir na tabela,
+            // ou montamos uma data ficticia baseada no mês. Vou usar a data da compra para ficar informativo.
+                'despesa.Data',
+                DB::raw("CAST(despesa.Descricao AS CHAR) as Descricao"),
+                'despesa.Valor',
+                DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"),
+                DB::raw("CAST('Fatura em Aberto' AS CHAR) as Conta_Banco"), // Indicativo visual
+                DB::raw("CAST(cartao.Nome AS CHAR) as Cartao_Nome"),
+                DB::raw("CAST('D' AS CHAR) as Tipo")
+            )
+            ->whereNull('fatura.Data_fechamento')
+            ->whereBetween('fatura.Ano_Mes', [$dataInicio->format('Y-m'), $dataFim->format('Y-m')])
+            ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+            ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes))
+            ->when($filtroContas, fn ($q) => $q->whereRaw('1 = 0')); // Zera se filtrar conta
+
+        // União Final
+        if ($tipo == 'R') {
+            $detalhadoData = $queryReceitas->orderBy('Data', 'desc')->get();
+        } elseif ($tipo == 'D') {
+            $detalhadoData = $queryDespesasSemCartao
+                ->unionAll($queryCartaoPago)
+                ->unionAll($queryCartaoAberto)
+                ->orderBy('Data', 'desc')->get();
+        } else {
+            $detalhadoData = $queryReceitas
+                ->unionAll($queryDespesasSemCartao)
+                ->unionAll($queryCartaoPago)
+                ->unionAll($queryCartaoAberto)
+                ->orderBy('Data', 'desc')->get();
+        }
+
+        // --- 6. INDICADORES (HELPER ATUALIZADO) ---
+        $getDespesasPorCategoria = function($startDate, $endDate) use ($filtroCategorias, $filtroContas, $filtroCartoes) {
+            // 1. Sem Cartão
+            $semCartao = DB::table('despesa')
+                ->select(DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"), DB::raw('SUM(despesa.Valor) as total'))
+                ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+                ->whereBetween('despesa.Data', [$startDate, $endDate])
+                ->whereNotExists(function($q) { $q->select(DB::raw(1))->from('fatura')->whereColumn('despesa.ID_Despesa', 'fatura.ID_Despesa'); })
+                ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+                ->when($filtroContas, fn ($q) => $q->whereIn('despesa.ID_Conta', $filtroContas))
+                ->when($filtroCartoes, fn ($q) => $q->whereRaw('1 = 0'))
+                ->groupBy('Categoria_Nome')->pluck('total', 'Categoria_Nome');
+
+            // 2. Cartão Pago
+            $cartaoPago = DB::table('fatura')
+                ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+                ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+                ->select(DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"), DB::raw('SUM(despesa.Valor) as total'))
+                ->where('fatura.Fechada', 1)
+                ->whereBetween('fatura.Data_fechamento', [$startDate, $endDate])
+                ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+                ->when($filtroContas, fn ($q) => $q->whereIn('fatura.Conta_fechamento', $filtroContas))
+                ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes))
+                ->groupBy('Categoria_Nome')->pluck('total', 'Categoria_Nome');
+
+            // 3. Cartão Aberto
+            $cartaoAberto = DB::table('fatura')
+                ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+                ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+                ->select(DB::raw("CAST(IFNULL(categoria.Nome, 'Sem Categoria') AS CHAR) as Categoria_Nome"), DB::raw('SUM(despesa.Valor) as total'))
+                ->whereNull('fatura.Data_fechamento')
+                ->whereBetween('fatura.Ano_Mes', [$startDate->format('Y-m'), $endDate->format('Y-m')])
+                ->when($filtroCategorias, fn ($q) => $q->whereIn('despesa.ID_Categoria', $filtroCategorias))
+                ->when($filtroCartoes, fn ($q) => $q->whereIn('fatura.ID_Cartao', $filtroCartoes))
+                ->when($filtroContas, fn ($q) => $q->whereRaw('1 = 0'))
+                ->groupBy('Categoria_Nome')->pluck('total', 'Categoria_Nome');
+
+            // Soma tudo
+            $allCats = $semCartao->keys()->merge($cartaoPago->keys())->merge($cartaoAberto->keys())->unique();
+            $finalResult = collect();
+            foreach($allCats as $cat) {
+                $finalResult[$cat] = $semCartao->get($cat, 0) + $cartaoPago->get($cat, 0) + $cartaoAberto->get($cat, 0);
+            }
+            return $finalResult;
+        };
+
+        // --- 7. GERA INDICADORES E RETORNA VIEW ---
+        $currentDespesasCategorias = $getDespesasPorCategoria($dataInicio, $dataFim);
 
         $topDespesasData = [
-            // *** CORREÇÃO AQUI: ->values() ***
-            'labels' => $topDespesasQuery->pluck('Categoria_Nome')->values(),
-            'datasets' => [[
-                // *** CORREÇÃO AQUI: ->values() ***
-                'data' => $topDespesasQuery->pluck('total')->values(),
-                'backgroundColor' => ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6f42c1', '#e83e8c', '#6c757d'],
-            ]]
+            'labels' => $currentDespesasCategorias->sortDesc()->take(10)->keys()->values(),
+            'datasets' => [['data' => $currentDespesasCategorias->sortDesc()->take(10)->values(), 'backgroundColor' => ['#dc3545', '#fd7e14', '#ffc107', '#28a745', '#20c997', '#17a2b8', '#007bff', '#6f42c1', '#e83e8c', '#6c757d']]]
         ];
-        // *** FIM DA CORREÇÃO 8 ***
 
-        // --- 9. PREPARA DADOS PARA "COMPARATIVO DE DESPESAS" (Tabela) ---
         $currentDays = $dataFim->diffInDays($dataInicio);
         $prevDataFim = $dataInicio->copy()->subDay();
         $prevDataInicio = $prevDataFim->copy()->subDays($currentDays);
+        $previousDespesas = $getDespesasPorCategoria($prevDataInicio, $prevDataFim);
 
-        $currentDespesas = (clone $queryDespesas)
-            ->select(
-                DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
-                DB::raw('SUM(Valor) as total')
-            )
-            ->groupBy('categoria.Nome')
-            ->pluck('total', 'Categoria_Nome');
-
-        $queryDespesasAnterior = $this->buildDespesasQuery($prevDataInicio, $prevDataFim, $filtroCategorias, $filtroContas, $filtroCartoes);
-
-        $previousDespesas = (clone $queryDespesasAnterior)
-            ->select(
-                DB::raw("CAST(categoria.Nome AS CHAR CHARACTER SET utf8mb4) as Categoria_Nome"),
-                DB::raw('SUM(Valor) as total')
-            )
-            ->groupBy('categoria.Nome')
-            ->pluck('total', 'Categoria_Nome');
-
-        $allCategorias = $currentDespesas->keys()->merge($previousDespesas->keys())->unique();
-
-        $comparativoData = $allCategorias->map(function ($categoria) use ($currentDespesas, $previousDespesas) {
-            $atual = $currentDespesas->get($categoria, 0);
+        $allCategorias = $currentDespesasCategorias->keys()->merge($previousDespesas->keys())->unique();
+        $comparativoData = $allCategorias->map(function ($categoria) use ($currentDespesasCategorias, $previousDespesas) {
+            $atual = $currentDespesasCategorias->get($categoria, 0);
             $anterior = $previousDespesas->get($categoria, 0);
             $variacao = $atual - $anterior;
             $variacao_perc = ($anterior > 0) ? ($variacao / $anterior) * 100 : ($atual > 0 ? 100 : 0);
-
             return ['categoria' => $categoria, 'atual' => $atual, 'anterior' => $anterior, 'variacao' => $variacao, 'variacao_perc' => $variacao_perc];
         })->sortByDesc('atual');
 
-
-        // --- 10. RETORNA A VIEW COM TODOS OS DADOS ---
         return view('relatorioAnalitico', [
-            'categorias' => $categorias,
-            'contas' => $contas,
-            'cartoes' => $cartoes,
-            'evolucaoData' => $evolucaoData,
-            'comparativoData' => $comparativoData,
-            'topDespesasData' => $topDespesasData,
-            'detalhadoData' => $detalhadoData,
-            'inputs' => $request->all(),
-            'periodoAnterior' => $prevDataInicio->format('d/m/Y') . ' - ' . $prevDataFim->format('d/m/Y')
+            'categorias' => $categorias, 'contas' => $contas, 'cartoes' => $cartoes,
+            'evolucaoData' => $evolucaoData, 'comparativoData' => $comparativoData,
+            'topDespesasData' => $topDespesasData, 'detalhadoData' => $detalhadoData,
+            'inputs' => $request->all(), 'periodoAnterior' => $prevDataInicio->format('d/m/Y') . ' - ' . $prevDataFim->format('d/m/Y')
         ]);
     }
 }
