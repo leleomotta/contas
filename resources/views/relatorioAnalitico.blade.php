@@ -121,9 +121,62 @@
         </form>
     </div>
 
-    {{-- 2. LINHA PARA OS GRÁFICOS E TABELAS --}}
+    {{-- 2. LINHA DE RESUMO (KPIs - SALDO) --}}
+    {{-- Cálculo PHP dos totais usando os dados já preparados para o gráfico --}}
+    @php
+        // Dataset 0 = Receitas, Dataset 1 = Despesas
+        // Usamos o método sum() da Collection do Laravel
+        $totalReceitas = $evolucaoData['datasets'][0]['data']->sum();
+        $totalDespesas = $evolucaoData['datasets'][1]['data']->sum();
+        $saldo = $totalReceitas - $totalDespesas;
+    @endphp
+
     <div class="row">
-        {{-- Coluna para Gráfico de Evolução e Tabela Detalhada --}}
+        {{-- Box Receitas --}}
+        <div class="col-lg-4 col-6">
+            <div class="small-box bg-success">
+                <div class="inner">
+                    <h3>R$ {{ number_format($totalReceitas, 2, ',', '.') }}</h3>
+                    <p>Total Receitas</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- Box Despesas --}}
+        <div class="col-lg-4 col-6">
+            <div class="small-box bg-danger">
+                <div class="inner">
+                    <h3>R$ {{ number_format($totalDespesas, 2, ',', '.') }}</h3>
+                    <p>Total Despesas</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+            </div>
+        </div>
+
+        {{-- Box Saldo --}}
+        <div class="col-lg-4 col-6">
+            {{-- Se Saldo >= 0 fica Azul (info), senão Amarelo (warning) --}}
+            <div class="small-box {{ $saldo >= 0 ? 'bg-info' : 'bg-warning' }}">
+                <div class="inner">
+                    <h3>R$ {{ number_format($saldo, 2, ',', '.') }}</h3>
+                    <p>Saldo do Período</p>
+                </div>
+                <div class="icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    {{-- 3. LINHA PARA OS GRÁFICOS E TABELAS --}}
+    <div class="row">
+        {{-- Coluna Esquerda: Gráfico Evolução e Tabela Detalhada --}}
         <div class="col-lg-8">
 
             {{-- Gráfico 1: Evolução Financeira --}}
@@ -154,39 +207,37 @@
                         </tr>
                         </thead>
                         <tbody>
-                            @forelse ($detalhadoData as $item)
-                                <tr>
-                                    <td>{{ \Carbon\Carbon::parse($item->Data)->format('d/m/Y') }}</td>
-                                    <td>{{ $item->Descricao }}</td>
-                                    <td>
-                                        @if ($item->Tipo == 'R')
-                                            <span class="badge badge-success">Receita</span>
-                                        @else
-                                            <span class="badge badge-danger">Despesa</span>
-                                        @endif
-                                    </td>
-                                    <td>{{ $item->Categoria_Nome }}</td>
-                                    <td>
-                                        {{-- Mostra a Conta ou o Cartão --}}
-                                        {{ $item->Conta_Nome ?? $item->Cartao_Nome ?? '-' }}
-                                    </td>
-                                    <td class="font-weight-bold {{ $item->Tipo == 'R' ? 'text-success' : 'text-danger' }}">
-                                        R$ {{ number_format($item->Valor, 2, ',', '.') }}
-                                    </td>
-                                </tr>
-                            @empty
-                                {{-- Esta linha é mostrada pelo DataTables, mas é bom ter um fallback --}}
-                                <tr>
-                                    <td colspan="6" class="text-center">Nenhum lançamento encontrado.</td>
-                                </tr>
-                            @endforelse
+                        @forelse ($detalhadoData as $item)
+                            <tr>
+                                {{-- Ajuste para exibir data correta dependendo se é objeto Carbon ou string --}}
+                                <td>{{ \Carbon\Carbon::parse($item->Data)->format('d/m/Y') }}</td>
+                                <td>{{ $item->Descricao }}</td>
+                                <td>
+                                    @if ($item->Tipo == 'R')
+                                        <span class="badge badge-success">Receita</span>
+                                    @else
+                                        <span class="badge badge-danger">Despesa</span>
+                                    @endif
+                                </td>
+                                <td>{{ $item->Categoria_Nome }}</td>
+                                <td>
+                                    {{-- Mostra a Conta ou o Cartão, priorizando Conta --}}
+                                    {{ $item->Conta_Banco ? $item->Conta_Banco : ($item->Cartao_Nome ?? '-') }}
+                                </td>
+                                <td class="font-weight-bold {{ $item->Tipo == 'R' ? 'text-success' : 'text-danger' }}">
+                                    R$ {{ number_format($item->Valor, 2, ',', '.') }}
+                                </td>
+                            </tr>
+                        @empty
+
+                        @endforelse
                         </tbody>
                     </table>
                 </div>
             </div>
         </div>
 
-        {{-- Coluna para Gráfico Top 10 e Tabela Comparativa --}}
+        {{-- Coluna Direita: Top 10 e Comparativo --}}
         <div class="col-lg-4">
 
             {{-- Gráfico 2: Top 10 Despesas --}}
@@ -204,7 +255,6 @@
                 <div class="card-header">
                     <h3 class="card-title">
                         📈 Comparativo de Despesas
-                        {{-- NOVO: Ícone de "hint" com tooltip --}}
                         <i class="fa fa-info-circle text-muted ml-2"
                            data-toggle="tooltip"
                            data-placement="top"
@@ -214,7 +264,6 @@
                 </div>
                 <div class="card-body table-responsive p-0">
 
-                    {{-- INFORMA O PERÍODO ANTERIOR --}}
                     <div class="p-2 text-sm text-muted">
                         Período Anterior: {{ $periodoAnterior ?? 'N/A' }}
                     </div>
@@ -224,12 +273,11 @@
                         <tr>
                             <th>Categoria</th>
                             <th>Período Atual</th>
-                            <th>Período Anterior</th>
-                            <th>Variação</th>
+                            <th>Anterior</th>
+                            <th>%</th>
                         </tr>
                         </thead>
                         <tbody>
-                        {{-- PREENCHE OS DADOS --}}
                         @php $totalAtual = 0; $totalAnterior = 0; @endphp
                         @forelse ($comparativoData as $item)
                             @php $totalAtual += $item['atual']; $totalAnterior += $item['anterior']; @endphp
@@ -239,13 +287,13 @@
                                 <td>R$ {{ number_format($item['anterior'], 2, ',', '.') }}</td>
                                 <td>
                                     @if ($item['variacao'] > 0)
-                                        <span class="text-danger font-weight-bold">
-                                                <i class="fa fa-arrow-up"></i> {{ number_format($item['variacao_perc'], 1, ',', '.') }}%
-                                            </span>
+                                        <span class="text-danger font-weight-bold" title="Aumentou R$ {{ number_format($item['variacao'], 2, ',', '.') }}">
+                                            <i class="fa fa-arrow-up"></i> {{ number_format($item['variacao_perc'], 0) }}%
+                                        </span>
                                     @elseif ($item['variacao'] < 0)
-                                        <span class="text-success font-weight-bold">
-                                                <i class="fa fa-arrow-down"></i> {{ number_format($item['variacao_perc'], 1, ',', '.') }}%
-                                            </span>
+                                        <span class="text-success font-weight-bold" title="Diminuiu R$ {{ number_format(abs($item['variacao']), 2, ',', '.') }}">
+                                            <i class="fa fa-arrow-down"></i> {{ number_format(abs($item['variacao_perc']), 0) }}%
+                                        </span>
                                     @else
                                         <span class="text-muted">-</span>
                                     @endif
@@ -255,7 +303,6 @@
                             <tr><td colspan="4" class="text-center">Nenhum dado.</td></tr>
                         @endforelse
 
-                        {{-- LINHA DE TOTAL --}}
                         @if ($comparativoData->count() > 0)
                             @php
                                 $totalVariacao = $totalAtual - $totalAnterior;
@@ -267,15 +314,11 @@
                                 <td>R$ {{ number_format($totalAnterior, 2, ',', '.') }}</td>
                                 <td>
                                     @if ($totalVariacao > 0)
-                                        <span class="text-danger">
-                                                <i class="fa fa-arrow-up"></i> {{ number_format($totalVariacaoPerc, 1, ',', '.') }}%
-                                            </span>
+                                        <span class="text-danger"><i class="fa fa-arrow-up"></i> {{ number_format($totalVariacaoPerc, 0) }}%</span>
                                     @elseif ($totalVariacao < 0)
-                                        <span class="text-success">
-                                                <i class="fa fa-arrow-down"></i> {{ number_format($totalVariacaoPerc, 1, ',', '.') }}%
-                                            </span>
+                                        <span class="text-success"><i class="fa fa-arrow-down"></i> {{ number_format(abs($totalVariacaoPerc), 0) }}%</span>
                                     @else
-                                        <span class="text-muted">-</span>
+                                        -
                                     @endif
                                 </td>
                             </tr>
@@ -290,12 +333,8 @@
 
 @stop
 
-{{--
-    SEÇÃO DE CSS
-    Inclui libs para Datepicker e Select (iguais às suas outras telas)
---}}
 @section('css')
-    {{-- Tempus Dominus (Datepicker) --}}
+    {{-- Tempus Dominus --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
     {{-- Bootstrap Select --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-select@1.13.14/dist/css/bootstrap-select.min.css">
@@ -303,24 +342,16 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap4.min.css">
 @stop
 
-{{--
-    SEÇÃO DE JS
-    Inclui libs para Datepicker, Select, Chart.js e DataTables
---}}
 @section('js')
-    {{-- Moment.js (dependência do Tempus Dominus) --}}
+    {{-- Moment.js --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.30.1/moment.min.js"></script>
-    {{-- Tempus Dominus (Datepicker) --}}
+    {{-- Tempus Dominus --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.39.0/js/tempusdominus-bootstrap-4.js"></script>
-
-    {{-- Bootstrap Select (VERSÕES UNIFICADAS para 1.13.18) --}}
+    {{-- Bootstrap Select --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/bootstrap-select.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.13.18/js/i18n/defaults-pt_BR.min.js"></script>
-
-    {{-- !!! A CORREÇÃO ESTÁ AQUI !!! --}}
-    {{-- Adicionando o Chart.js v2.9.4, que é compatível com AdminLTE e com o código abaixo --}}
+    {{-- Chart.js v2.9.4 (Importante para compatibilidade) --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.9.4/Chart.min.js"></script>
-
     {{-- DataTables --}}
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
     <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap4.min.js"></script>
@@ -328,46 +359,40 @@
     <script>
         $(document).ready(function() {
 
-            // 1. Inicializar Datepickers
+            // 1. Datepickers
             $('#DataInicio').datetimepicker({ format: 'DD/MM/YYYY' });
             $('#DataFim').datetimepicker({ format: 'DD/MM/YYYY' });
 
-            // 2. Inicializar Bootstrap Select
+            // 2. Selects
             $('.selectpicker').selectpicker();
 
-            // 2b. Inicializar Tooltips
+            // 3. Tooltips
             $('[data-toggle="tooltip"]').tooltip();
 
-            // 3. Inicializar Tabela Detalhada (DataTables)
+            // 4. Tabela Detalhada
             $('#tabelaDetalhada').DataTable({
-                "language": {
-                    "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json"
-                },
+                "language": { "url": "https://cdn.datatables.net/plug-ins/1.13.6/i18n/pt-BR.json" },
                 "order": [[0, "desc"]]
             });
 
-            // 4. Lógica dos Gráficos (Sintaxe v2.9, que agora irá funcionar)
+            // 5. Gráficos (ChartJS v2.9)
 
-            // --- GRÁFICO 1: EVOLUÇÃO FINANCEIRA (Sintaxe v2.9) ---
+            // --- EVOLUÇÃO ---
             var ctxEvolucao = document.getElementById('evolucaoFinanceiraChart').getContext('2d');
             var evolucaoData = @json($evolucaoData);
 
-            new Chart(ctxEvolucao, { // Esta linha agora deve funcionar
+            new Chart(ctxEvolucao, {
                 type: 'bar',
                 data: evolucaoData,
                 options: {
                     responsive: true,
                     maintainAspectRatio: true,
                     scales: {
-                        xAxes: [{
-                            stacked: false,
-                        }],
+                        xAxes: [{ stacked: false }],
                         yAxes: [{
                             stacked: false,
                             ticks: {
-                                callback: function(value) {
-                                    return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-                                }
+                                callback: function(value) { return 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 }); }
                             }
                         }]
                     },
@@ -375,9 +400,8 @@
                         callbacks: {
                             label: function(tooltipItem, data) {
                                 let label = data.datasets[tooltipItem.datasetIndex].label || '';
-                                if (label) { label += ': '; }
-                                let value = tooltipItem.yLabel;
-                                label += 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
+                                if (label) label += ': ';
+                                label += 'R$ ' + tooltipItem.yLabel.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
                                 return label;
                             }
                         }
@@ -385,48 +409,39 @@
                 }
             });
 
-            // --- GRÁFICO 2: TOP 10 DESPESAS (Sintaxe v2.9) ---
+            // --- TOP 10 ---
             var ctxTopDespesas = document.getElementById('topDespesasChart').getContext('2d');
             var topDespesasData = @json($topDespesasData);
 
             if (topDespesasData.labels && topDespesasData.labels.length > 0) {
-                new Chart(ctxTopDespesas, { // Esta linha agora deve funcionar
+                new Chart(ctxTopDespesas, {
                     type: 'pie',
                     data: topDespesasData,
                     options: {
                         responsive: true,
                         maintainAspectRatio: false,
-                        legend: {
-                            position: 'top',
-                            labels: {
-                                boxWidth: 20,
-                                padding: 10
-                            }
-                        },
+                        legend: { position: 'right' },
                         tooltips: {
                             callbacks: {
                                 label: function(tooltipItem, data) {
                                     let label = data.labels[tooltipItem.index] || '';
                                     let value = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] || 0;
-
                                     let total = 0;
                                     data.datasets[tooltipItem.datasetIndex].data.forEach(v => total += parseFloat(v));
                                     let percentage = ((value / total) * 100).toFixed(1) + '%';
-                                    let valueFormatted = 'R$ ' + value.toLocaleString('pt-BR', { minimumFractionDigits: 2 });
-
-                                    return ` ${label}: ${valueFormatted} (${percentage})`;
+                                    return ` ${label}: R$ ${parseFloat(value).toLocaleString('pt-BR', {minimumFractionDigits: 2})} (${percentage})`;
                                 }
                             }
                         }
                     }
                 });
             } else {
+                // Fallback se não houver dados
                 ctxTopDespesas.font = "16px Arial";
                 ctxTopDespesas.fillStyle = "#6c757d";
                 ctxTopDespesas.textAlign = "center";
                 ctxTopDespesas.fillText("Nenhuma despesa no período.", ctxTopDespesas.canvas.width / 2, ctxTopDespesas.canvas.height / 2);
             }
-
         });
     </script>
 @stop

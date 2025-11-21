@@ -51,7 +51,7 @@ class RelatorioController extends Controller
         // [A] RECEITAS
         $receitasQuery = Receita::select(DB::raw("DATE_FORMAT(Data, '$dateFormat') as periodo"), DB::raw('SUM(Valor) as total'))
             ->whereBetween('Data', [$dataInicio, $dataFim])
-            ->where('Efetivada', 1)
+            //->where('Efetivada', 1)
             ->when($filtroCategorias, fn ($q) => $q->whereIn('ID_Categoria', $filtroCategorias))
             ->when($filtroContas, fn ($q) => $q->whereIn('ID_Conta', $filtroContas))
             ->groupBy('periodo');
