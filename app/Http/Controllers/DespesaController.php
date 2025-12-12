@@ -16,6 +16,43 @@ use Illuminate\Support\Facades\Redirect;
 class DespesaController extends Controller
 {
     /**
+     * Gera o date_filter (YYYY-MM) a partir de uma data (YYYY-MM-DD).
+     * Se a data estiver vazia/inválida, usa um fallback (ex: request('date_filter'))
+     * e, se ainda assim não existir, usa o mês atual.
+     */
+    private function dateFilterFromDate(?string $date, ?string $fallbackDateFilter = null): string
+    {
+        if (!empty($date)) {
+            try {
+                return Carbon::parse($date)->format('Y-m'); // ex: 2025-12
+            } catch (\Exception $e) {
+                // cai para fallback
+            }
+        }
+
+        if (!empty($fallbackDateFilter)) {
+            return $fallbackDateFilter;
+        }
+
+        return Carbon::now()->format('Y-m');
+    }
+
+    /**
+     * Redireciona para a listagem de despesas no mês da própria despesa.
+     * - Prioridade: mês da Data da despesa
+     * - Fallback: date_filter da request
+     * - Último fallback: mês atual
+     */
+    private function redirectToDespesasMonth(Despesa $despesa, Request $request)
+    {
+        $dateFilter = $this->dateFilterFromDate($despesa->Data, $request->input('date_filter'));
+
+        return redirect()->route('despesas.showAll', [
+            'date_filter' => $dateFilter,
+        ]);
+    }
+
+    /**
      * Monta a URL da listagem de despesas preservando o date_filter (YYYY-MM).
      * Se não vier date_filter, usa como fallback o mês/ano da própria despesa.
      */
@@ -39,11 +76,11 @@ class DespesaController extends Controller
      */
     public function destroy(Request $request, int $ID_Despesa)
     {
-        $despesa = Despesa::find($ID_Despesa);
+        $despesa = Despesa::findOrFail($ID_Despesa);
 
         // REGRA: despesa EFETIVADA não pode ser excluída
         if ((int) $despesa->Efetivada === 1) {
-            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+            return $this->redirectToDespesasMonth($despesa, $request)
                 ->with('error', 'Esta despesa está EFETIVADA e não pode ser excluída. Desefetive para excluir.');
         }
 
@@ -54,14 +91,14 @@ class DespesaController extends Controller
 
             DB::commit();
 
-            $url ='/despesas?date_filter=' . Carbon::now()->isoFormat('Y') . '-' .
-                Carbon::now()->isoFormat('MM');
-            return Redirect::to($url);
-
+            return $this->redirectToDespesasMonth($despesa, $request)
+                ->with('success', 'Despesa excluída com sucesso.');
         } catch (\Exception $e) {
             DB::rollback();
 
-            return back();
+            // Se der erro, volta para o mês da despesa também
+            return $this->redirectToDespesasMonth($despesa, $request)
+                ->with('error', 'Erro ao excluir despesa.');
         }
     }
 
@@ -77,10 +114,9 @@ class DespesaController extends Controller
 
         // REGRA: despesa EFETIVADA não pode ser editada
         if ((int) $despesa->Efetivada === 1) {
-            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+            return $this->redirectToDespesasMonth($despesa, $request)
                 ->with('error', 'Esta despesa está EFETIVADA e não pode ser editada. Desefetive para alterar.');
         }
-
         $contas = (new Conta)->showAll();
         $categorias = (new Categoria)->show('D');
 
@@ -99,16 +135,16 @@ class DespesaController extends Controller
      */
     public function efetiva(Request $request)
     {
-        $despesa = Despesa::find($request->ID_Despesa);
+        $despesa = Despesa::findOrFail($request->ID_Despesa);
+
+        // Permite efetivar e desefetivar (regra do sistema)
         $despesa->Efetivada = !$despesa->Efetivada;
         $despesa->save();
-        $dateFilter = $request->date_filter;
-        if (is_null($dateFilter)) {
-            $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-        }
-        $url ='/despesas?date_filter=' . $dateFilter;
-        return Redirect::to($url);
+
+        return $this->redirectToDespesasMonth($despesa, $request)
+            ->with('success', $despesa->Efetivada ? 'Despesa efetivada com sucesso.' : 'Despesa desefetivada com sucesso.');
     }
+
 
     /**
      * Filtra a listagem de despesas com base nos parâmetros da requisição.
@@ -258,8 +294,12 @@ class DespesaController extends Controller
             $despesa->save();
         }
 
-        $url ='/despesas?date_filter=' . $dataInicial->isoFormat('Y') . '-' . $dataInicial->isoFormat('MM');
-        return Redirect::to($url);
+        $dateFilter = $dataInicial->format('Y-m'); // mês da despesa lançada (data inicial)
+
+        return redirect()->route('despesas.showAll', [
+            'date_filter' => $dateFilter,
+        ]);
+
     }
 
     /**
@@ -271,24 +311,25 @@ class DespesaController extends Controller
      */
     public function update(Request $request, int $ID_Despesa)
     {
-        $despesa = Despesa::find($ID_Despesa);
+        $despesa = Despesa::findOrFail($ID_Despesa);
 
         // REGRA: despesa EFETIVADA não pode ser alterada
         if ((int) $despesa->Efetivada === 1) {
-            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+            return $this->redirectToDespesasMonth($despesa, $request)
                 ->with('error', 'Esta despesa está EFETIVADA e não pode ser alterada. Desefetive para alterar.');
         }
 
         $despesa->Descricao = $request->Descricao;
         $despesa->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
-        $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));
+        $despesa->Data = implode("-", array_reverse(explode("/", $request->Data)));
         $despesa->ID_Conta = $request->Conta;
         $despesa->ID_Categoria = $request->Categoria;
-
         $despesa->Efetivada = (isset($request->Efetivada)) ? 1 : 0;
         $despesa->save();
 
-        return redirect()->route('despesas.showAll');
+        return $this->redirectToDespesasMonth($despesa, $request)
+            ->with('success', 'Despesa atualizada com sucesso.');
     }
+
 
 }
