@@ -125,11 +125,22 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-landmark"></i></span>
                         </div>
-                        <input type="number" id="Ano" name="Ano" min="1900" max="2500"
+
+                        {{-- ANO: largura fixa para não esticar no input-group --}}
+                        <input type="number"
+                               id="Ano" name="Ano"
+                               min="1900" max="2500"
+                               class="form-control form-control-sm fatura-ano"
                                value="{{ old('Ano', \Carbon\Carbon::now()->format('Y')) }}">
-                        <input type="number" id="Mes" name="Mes" min="1" max="12"
+
+                        {{-- MÊS: permitimos 0 e 13 para o spinner “passar do limite” e o JS normalizar --}}
+                        <input type="number"
+                               id="Mes" name="Mes"
+                               min="0" max="13" step="1"
+                               class="form-control form-control-sm fatura-mes"
                                value="{{ old('Mes', \Carbon\Carbon::now()->format('m')) }}">
                     </div>
+
                 </div>
 
                 <div class="card-footer pt-2 pb-1">
@@ -180,6 +191,19 @@
             margin: 0;
         }
     </style>
+    <style>
+        /* Inputs do seletor de Fatura (Ano/Mês) - impede o mês de ficar gigante */
+        .input-group .fatura-ano {
+            flex: 0 0 90px !important;   /* não cresce, largura fixa */
+            max-width: 90px !important;
+        }
+
+        .input-group .fatura-mes {
+            flex: 0 0 70px !important;   /* não cresce, largura fixa */
+            max-width: 70px !important;
+        }
+    </style>
+
 @stop
 
 @section('js')
@@ -210,4 +234,61 @@
             selectParcelada.addEventListener("change", toggleParcelas);
         });
     </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const inputAno = document.getElementById("Ano");
+            const inputMes = document.getElementById("Mes");
+
+            // Segurança: se por algum motivo não existir na tela, não faz nada.
+            if (!inputAno || !inputMes) return;
+
+            /**
+             * Normaliza Ano/Mês para sempre ficar no intervalo 1..12
+             * com “vai-um” para o ano:
+             * - 2025 + mês 13 => 2026-01
+             * - 2026 + mês 0  => 2025-12
+             */
+            function normalizarAnoMes() {
+                let ano = parseInt(inputAno.value, 10);
+                let mes = parseInt(inputMes.value, 10);
+
+                // Se o usuário apagar o campo, evita NaN quebrando a tela.
+                if (Number.isNaN(ano)) ano = new Date().getFullYear();
+                if (Number.isNaN(mes)) mes = new Date().getMonth() + 1;
+
+                // Enquanto mês estiver fora de 1..12, ajusta “carregando” o ano
+                while (mes > 12) {
+                    mes -= 12;
+                    ano += 1;
+                }
+                while (mes < 1) {
+                    mes += 12;
+                    ano -= 1;
+                }
+
+                inputAno.value = ano;
+                inputMes.value = mes; // number input pode exibir "1" ao invés de "01" (normal)
+            }
+
+            // Normaliza ao sair do campo e ao mudar (spinner/teclado)
+            inputMes.addEventListener("change", normalizarAnoMes);
+            inputMes.addEventListener("blur", normalizarAnoMes);
+            inputAno.addEventListener("change", normalizarAnoMes);
+            inputAno.addEventListener("blur", normalizarAnoMes);
+
+            // Para setas do teclado (↑ ↓) e scroll do mouse no input number
+            inputMes.addEventListener("keydown", function (e) {
+                if (e.key === "ArrowUp" || e.key === "ArrowDown") {
+                    setTimeout(normalizarAnoMes, 0);
+                }
+            });
+            inputMes.addEventListener("wheel", function () {
+                setTimeout(normalizarAnoMes, 0);
+            });
+
+            // Garante que ao carregar a página já fica consistente
+            normalizarAnoMes();
+        });
+    </script>
+
 @stop
