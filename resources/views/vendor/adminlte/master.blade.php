@@ -70,6 +70,27 @@
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
 
+    {{-- FIX: Datepicker/Datetimepicker ficando atrás do footer (AdminLTE) --}}
+    <style>
+        /* Tempus Dominus (usado no seu filtro mensal) */
+        .bootstrap-datetimepicker-widget {
+            z-index: 2000 !important; /* acima do footer, navbar, cards etc */
+        }
+
+        /* Bootstrap Datepicker (usado em algumas telas) */
+        .datepicker,
+        .datepicker.dropdown-menu {
+            z-index: 2000 !important;
+        }
+
+        /* Se alguma tela usar jQuery UI datepicker */
+        .ui-datepicker {
+            z-index: 2000 !important;
+        }
+    </style>
+
+
+
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
         <link rel="shortcut icon" href="{{ asset('favicons/favicon.ico') }}" />
