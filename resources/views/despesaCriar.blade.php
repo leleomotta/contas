@@ -30,13 +30,31 @@
                         </div>
                     </div>
 
-                    <label >Descrição</label>
+                    <label>Descrição</label>
                     <div class="input-group">
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                         </div>
-                        <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a despesa">
+
+                        {{--
+                            list="despesa_descricoes" conecta este input ao <datalist> abaixo.
+                            Isso faz o browser sugerir opções enquanto o usuário digita,
+                            mas ainda permite digitar um valor totalmente novo.
+                        --}}
+                        <input
+                            type="text"
+                            name="Descricao"
+                            class="form-control"
+                            id="Descricao"
+                            list="despesa_descricoes"
+                            placeholder="Digite uma descrição para a despesa"
+                            autocomplete="off"
+                        >
                     </div>
+
+                    {{-- Datalist que será preenchido via AJAX --}}
+                    <datalist id="despesa_descricoes"></datalist>
+
 
                     <label >Valor</label>
                     <div class="input-group">
@@ -283,4 +301,83 @@
             });
         });
     </script>
+    <script>
+        $(document).ready(function () {
+
+            /**
+             * URL do endpoint que criamos no web.php
+             * (rota nomeada é melhor do que “hardcode”).
+             */
+            const urlDescricoes = "{{ route('despesas.descricoes') }}";
+
+            // Controle simples de “debounce” (evita bater no servidor a cada tecla)
+            let debounceTimer = null;
+
+            /**
+             * Preenche o <datalist> com as descrições vindas do backend.
+             * Usamos DOM API (createElement) para evitar qualquer risco de injeção em HTML.
+             */
+            function preencherDatalist(lista) {
+                const datalist = document.getElementById('despesa_descricoes');
+                datalist.innerHTML = ''; // limpa sugestões anteriores
+
+                (lista || []).forEach((texto) => {
+                    const opt = document.createElement('option');
+                    opt.value = texto; // o browser usa o value como sugestão
+                    datalist.appendChild(opt);
+                });
+            }
+
+            /**
+             * Faz GET no backend e atualiza o datalist.
+             */
+            function buscarDescricoes(q) {
+                $.getJSON(urlDescricoes, { q: q, limit: 15 })
+                    .done(function (data) {
+                        preencherDatalist(data);
+                    })
+                    .fail(function () {
+                        // Se falhar, só não mostra sugestão (sem travar o formulário).
+                        preencherDatalist([]);
+                    });
+            }
+
+            /**
+             * Ao digitar:
+             * - com 0/1 caractere: não busca (ou você pode buscar “top 15” se quiser)
+             * - com 2+: busca sugestões no backend
+             */
+            $('#Descricao').on('input', function () {
+                const q = ($(this).val() || '').trim();
+
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(function () {
+                    if (q.length < 2) {
+                        // Opcional: se quiser, pode mostrar as “mais comuns” mesmo sem termo:
+                        // buscarDescricoes('');
+                        preencherDatalist([]);
+                        return;
+                    }
+
+                    buscarDescricoes(q);
+                }, 250);
+            });
+
+            /**
+             * Opcional (UX): quando o usuário focar no campo vazio,
+             * carregar as descrições mais comuns.
+             */
+            $('#Descricao').on('focus', function () {
+                const q = ($(this).val() || '').trim();
+                const datalist = document.getElementById('despesa_descricoes');
+
+                if (q.length === 0 && datalist.children.length === 0) {
+                    buscarDescricoes(''); // retorna as mais usadas (limit 15)
+                }
+            });
+
+        });
+    </script>
+
 @stop

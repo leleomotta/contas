@@ -16,6 +16,59 @@ use Illuminate\Support\Facades\Session;
 class CartaoController extends Controller
 {
     /**
+     * Retorna descrições (únicas) já existentes de DESPESAS DE CARTÃO.
+     *
+     * Estratégia:
+     * - Join despesa + fatura para garantir que são despesas vinculadas ao cartão (fatura).
+     * - TRIM() evita duplicidade por espaços.
+     * - GROUP BY garante unicidade.
+     * - COUNT(*) permite ordenar por “mais usadas”.
+     *
+     * Query params:
+     * - q (string): termo digitado (opcional)
+     * - limit (int): máximo de itens (opcional, padrão 15, máximo 50)
+     * - ID_Cartao (int): se informado, filtra somente descrições daquele cartão (opcional)
+     */
+    public function despesaDescricoes(Request $request)
+    {
+        // Termo digitado pelo usuário (ex.: "uber")
+        $q = trim((string) $request->query('q', ''));
+
+        // ID do cartão selecionado no formulário (opcional, mas melhora MUITO a relevância)
+        $idCartao = $request->query('ID_Cartao');
+
+        // Limite defensivo para não retornar “um caminhão” de dados
+        $limit = (int) $request->query('limit', 15);
+        $limit = max($limit, 1);
+        $limit = min($limit, 50);
+
+        // Query base: só despesas que estão ligadas na fatura (cartão)
+        $query = DB::table('despesa')
+            ->join('fatura', 'fatura.ID_Despesa', '=', 'despesa.ID_Despesa')
+            ->selectRaw('TRIM(despesa.Descricao) as Descricao, COUNT(*) as total')
+            ->whereNotNull('despesa.Descricao')
+            ->whereRaw("TRIM(despesa.Descricao) <> ''");
+
+        // Se o usuário selecionou um cartão, filtramos por ele
+        if (!empty($idCartao)) {
+            $query->where('fatura.ID_Cartao', (int) $idCartao);
+        }
+
+        // Se veio termo, aplica LIKE
+        if ($q !== '') {
+            $query->where('despesa.Descricao', 'like', '%' . $q . '%');
+        }
+
+        // Agrupa por descrição “limpa”, ordena por mais frequentes, limita e retorna só as descrições
+        $descricoes = $query
+            ->groupBy(DB::raw('TRIM(despesa.Descricao)'))
+            ->orderByDesc('total')
+            ->limit($limit)
+            ->pluck('Descricao');
+
+        return response()->json($descricoes);
+    }
+    /**
      * Remove o recurso de cartão especificado do armazenamento.
      *
      * @param Cartao $cartao

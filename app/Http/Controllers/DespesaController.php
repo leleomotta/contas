@@ -67,6 +67,52 @@ class DespesaController extends Controller
         return '/despesas?date_filter=' . $dateFilter;
     }
 
+    /**
+     * Retorna descrições (únicas) já existentes em "despesa" para autocomplete.
+     *
+     * Por que assim?
+     * - TRIM() evita duplicidade por espaços ("Aluguel" vs "Aluguel ").
+     * - GROUP BY retorna apenas valores únicos.
+     * - COUNT(*) permite ordenar por "mais usadas" (melhor UX).
+     * - limit evita payload gigante.
+     *
+     * Query params esperados:
+     * - q (string): termo digitado (opcional)
+     * - limit (int): quantidade máxima (opcional, padrão 15, máximo 50)
+     */
+    public function descricoes(Request $request)
+    {
+        // Termo digitado pelo usuário (ex: "alug")
+        $q = trim((string) $request->query('q', ''));
+
+        // Limite defensivo (evita retorno absurdo)
+        $limit = (int) $request->query('limit', 15);
+        $limit = max($limit, 1);
+        $limit = min($limit, 50);
+
+        $descricoes = \App\Models\Despesa::query()
+            // Seleciona a descrição "limpa" + total de ocorrências (para ordenar)
+            ->selectRaw('TRIM(Descricao) as Descricao, COUNT(*) as total')
+            ->whereNotNull('Descricao')
+            // Ignora strings vazias (ou só espaços)
+            ->whereRaw("TRIM(Descricao) <> ''")
+            // Se veio termo, filtra por LIKE
+            ->when($q !== '', function ($query) use ($q) {
+                // LIKE com %termo% para combinar no meio também
+                $query->where('Descricao', 'like', '%' . $q . '%');
+            })
+            // Agrupa por descrição (única)
+            ->groupBy(DB::raw('TRIM(Descricao)'))
+            // Ordena: mais usadas primeiro
+            ->orderByDesc('total')
+            // Tira variações e limita
+            ->limit($limit)
+            // Retorna apenas a coluna Descricao (array simples)
+            ->pluck('Descricao');
+
+        return response()->json($descricoes);
+    }
+
 
     /**
      * Remove a despesa especificada do armazenamento.

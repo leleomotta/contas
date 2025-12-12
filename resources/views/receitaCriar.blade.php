@@ -30,14 +30,29 @@
                     </div>
                 </div>
 
-
-                <label >Descrição</label>
+                <label>Descrição</label>
                 <div class="input-group">
                     <div class="input-group-prepend">
                         <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                     </div>
-                    <input type="text" name="Descricao" class="form-control" id="Descricao" placeholder="Digite uma descrição para a receita">
+
+                    {{--
+                        list="receita_descricoes" conecta o input ao <datalist>.
+                        O usuário continua podendo digitar qualquer coisa, mas recebe sugestões.
+                    --}}
+                    <input
+                        type="text"
+                        name="Descricao"
+                        class="form-control"
+                        id="Descricao"
+                        list="receita_descricoes"
+                        placeholder="Digite uma descrição para a receita"
+                        autocomplete="off"
+                    >
                 </div>
+
+                {{-- Datalist preenchido via AJAX --}}
+                <datalist id="receita_descricoes"></datalist>
 
                 <label >Valor</label>
                 <div class="input-group">
@@ -240,4 +255,78 @@
             });
         });
     </script>
+    <script>
+    /**
+    * URL do endpoint que criamos (rota nomeada).
+    * Evita “hardcode” de URL e facilita manutenção.
+    */
+    const urlDescricoesReceita = "{{ route('receitas.descricoes') }}";
+
+    // “Debounce”: evita bater no servidor a cada tecla digitada
+    let debounceReceita = null;
+
+    /**
+    * Preenche o <datalist> com segurança usando DOM API.
+        * (evita montar HTML na mão e previne injeções acidentais)
+        */
+        function preencherDatalistReceita(lista) {
+        const datalist = document.getElementById('receita_descricoes');
+        datalist.innerHTML = '';
+
+        (lista || []).forEach((texto) => {
+        const opt = document.createElement('option');
+        opt.value = texto;
+        datalist.appendChild(opt);
+        });
+        }
+
+        /**
+        * Busca no backend (GET JSON) e atualiza o datalist.
+        */
+        function buscarDescricoesReceita(q) {
+        $.getJSON(urlDescricoesReceita, { q: q, limit: 15 })
+        .done(function (data) {
+        preencherDatalistReceita(data);
+        })
+        .fail(function () {
+        // Falhou? Só zera as sugestões e segue a vida.
+        preencherDatalistReceita([]);
+        });
+        }
+
+        /**
+        * Ao digitar:
+        * - com menos de 2 chars, não busca (reduz chamadas)
+        * - com 2+, busca no backend
+        */
+        $('#Descricao').on('input', function () {
+        const q = ($(this).val() || '').trim();
+
+        clearTimeout(debounceReceita);
+
+        debounceReceita = setTimeout(function () {
+        if (q.length < 2) {
+        preencherDatalistReceita([]);
+        return;
+        }
+
+        buscarDescricoesReceita(q);
+        }, 250);
+        });
+
+        /**
+        * UX opcional:
+        * ao focar no campo vazio, carrega as mais comuns (sem termo).
+        */
+        $('#Descricao').on('focus', function () {
+        const q = ($(this).val() || '').trim();
+        const datalist = document.getElementById('receita_descricoes');
+
+        if (q.length === 0 && datalist.children.length === 0) {
+        buscarDescricoesReceita('');
+        }
+        });
+
+    </script>
+
 @stop

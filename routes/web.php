@@ -70,6 +70,14 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('despesas/efetiva/{ID_Despesa}',[DespesaController::class, 'efetiva'])->name('despesas.efetiva');
     Route::get('despesas/editar/{ID_Despesa}',[DespesaController::class, 'edit'])->name('despesas.edit');
     Route::put('despesas/atualiza/{ID_Despesa}',[DespesaController::class, 'update'])->name('despesas.update');
+    /**
+     * Endpoint para autocomplete de descrições (retorna JSON).
+     * - GET porque é apenas consulta (não altera nada).
+     * - Fica protegido pelo mesmo middleware de auth do grupo.
+     * Exemplo: /despesas/descricoes?q=alug&limit=15
+     */
+    Route::get('despesas/descricoes', [DespesaController::class, 'descricoes'])->name('despesas.descricoes');
+
     //----------------- DESPESAS -----------------
 
     //----------------- FATURA -----------------
@@ -84,6 +92,12 @@ Route::group(['middleware'=>['auth']], function(){
     Route::put('fatura/despesas/atualiza/{ID_Despesa}',[CartaoController::class, 'update_despesa'])->name('cartoes.update_despesa');
     Route::get('fatura/fechar',[CartaoController::class, 'fatura_fechar'])->name('cartoes.fatura_fechar');
     Route::get('fatura/reabrir',[CartaoController::class, 'fatura_reabrir'])->name('cartoes.fatura_reabrir');
+    /**
+     * Endpoint AJAX para autocomplete de descrições das despesas de cartão.
+     * Exemplo:
+     *   /fatura/despesa/descricoes?q=ifoo&limit=15&ID_Cartao=3
+     */
+    Route::get('fatura/despesa/descricoes', [CartaoController::class, 'despesaDescricoes'])->name('cartoes.despesaDescricoes');
     //----------------- FATURA -----------------
 
     //----------------- RECORRENCIA -----------------
@@ -107,6 +121,12 @@ Route::group(['middleware'=>['auth']], function(){
     Route::get('receitas/efetiva/{ID_Receita}',[ReceitaController::class, 'efetiva'])->name('receitas.efetiva');
     Route::get('receitas/editar/{ID_Receita}',[ReceitaController::class, 'edit'])->name('receitas.edit');
     Route::put('receitas/atualiza/{ID_Receita}',[ReceitaController::class, 'update'])->name('receitas.update');
+    /**
+     * Endpoint para autocomplete de descrições (retorna JSON).
+     * Exemplo:
+     *   /receitas/descricoes?q=sal&limit=15
+     */
+    Route::get('receitas/descricoes', [ReceitaController::class, 'descricoes'])->name('receitas.descricoes');
     //----------------- RECEITAS -----------------
 
     //----------------- RELATÓRIO -----------------

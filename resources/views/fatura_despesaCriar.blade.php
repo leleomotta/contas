@@ -46,9 +46,28 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-info-circle"></i></span>
                         </div>
-                        <input type="text" name="Descricao" class="form-control" id="Descricao" value="{{ old('Descricao') }}"
-                               placeholder="Digite uma descrição para a despesa">
+
+                        {{--
+                            list="cartao_despesa_descricoes" conecta o input ao datalist.
+                            O usuário pode:
+                            - escolher uma sugestão existente, OU
+                            - digitar uma descrição nova normalmente.
+                        --}}
+                        <input
+                            type="text"
+                            name="Descricao"
+                            class="form-control"
+                            id="Descricao"
+                            list="cartao_despesa_descricoes"
+                            value="{{ old('Descricao') }}"
+                            placeholder="Digite uma descrição para a despesa"
+                            autocomplete="off"
+                        >
                     </div>
+
+                    {{-- Datalist preenchido via AJAX --}}
+                    <datalist id="cartao_despesa_descricoes"></datalist>
+
                 </div>
 
                 <div class="form-group mb-2">
@@ -290,5 +309,110 @@
             normalizarAnoMes();
         });
     </script>
+    <script>
+        $(document).ready(function () {
+
+            /**
+             * Endpoint que criamos no CartaoController
+             * (rota nomeada => sem hardcode de URL).
+             */
+            const urlDescricoesCartao = "{{ route('cartoes.despesaDescricoes') }}";
+
+            // Debounce: reduz número de requisições enquanto o usuário digita
+            let debounceTimer = null;
+
+            /**
+             * Pega o ID do cartão selecionado no <select>.
+             * IMPORTANTE:
+             * - Garanta que o <select> do cartão tenha id="ID_Cartao"
+             *   (no seu form ele já usa name="ID_Cartao"; manter id igual facilita).
+             */
+            function getIdCartaoSelecionado() {
+                const val = $('#ID_Cartao').val();
+                return val ? val : '';
+            }
+
+            /**
+             * Preenche o datalist usando DOM API (mais seguro do que montar HTML na mão).
+             */
+            function preencherDatalist(lista) {
+                const datalist = document.getElementById('cartao_despesa_descricoes');
+                datalist.innerHTML = '';
+
+                (lista || []).forEach((texto) => {
+                    const opt = document.createElement('option');
+                    opt.value = texto;
+                    datalist.appendChild(opt);
+                });
+            }
+
+            /**
+             * Faz a busca no backend.
+             * Mandamos também o ID_Cartao para filtrar descrições daquele cartão (melhor UX).
+             */
+            function buscarDescricoes(q) {
+                $.getJSON(urlDescricoesCartao, {
+                    q: q,
+                    limit: 15,
+                    ID_Cartao: getIdCartaoSelecionado()
+                })
+                    .done(function (data) {
+                        preencherDatalist(data);
+                    })
+                    .fail(function () {
+                        preencherDatalist([]);
+                    });
+            }
+
+            /**
+             * Ao digitar: a partir de 2 caracteres buscamos no backend.
+             */
+            $('#Descricao').on('input', function () {
+                const q = ($(this).val() || '').trim();
+
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(function () {
+                    if (q.length < 2) {
+                        preencherDatalist([]);
+                        return;
+                    }
+                    buscarDescricoes(q);
+                }, 250);
+            });
+
+            /**
+             * UX: ao focar no campo vazio, carrega as “mais comuns”.
+             */
+            $('#Descricao').on('focus', function () {
+                const q = ($(this).val() || '').trim();
+                const datalist = document.getElementById('cartao_despesa_descricoes');
+
+                // Se está vazio e ainda não carregou nada, traz “top 15”
+                if (q.length === 0 && datalist.children.length === 0) {
+                    buscarDescricoes('');
+                }
+            });
+
+            /**
+             * Se o usuário trocar o cartão, faz sentido resetar as sugestões,
+             * porque o conjunto “mais relevante” muda.
+             *
+             * Observação: como você usa bootstrap-select, alguns casos disparam
+             * o evento 'changed.bs.select' em vez de 'change'. Vamos cobrir os dois.
+             */
+            $('#ID_Cartao').on('change changed.bs.select', function () {
+                preencherDatalist([]);
+
+                // Se o usuário já está com algo digitado, podemos refazer a busca
+                const q = ($('#Descricao').val() || '').trim();
+                if (q.length >= 2) {
+                    buscarDescricoes(q);
+                }
+            });
+
+        });
+    </script>
+
 
 @stop

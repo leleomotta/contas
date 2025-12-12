@@ -72,6 +72,50 @@ class ReceitaController extends Controller
         return '/receitas?date_filter=' . $dateFilter;
     }
 
+    /**
+     * Retorna descrições (únicas) já existentes em "receita" para autocomplete.
+     *
+     * Por que essa query:
+     * - TRIM() remove espaços e evita duplicidade ("Salário" vs "Salário ")
+     * - GROUP BY garante valores únicos
+     * - COUNT(*) permite ordenar por "mais usadas" (melhor UX)
+     * - limit evita payload gigante
+     *
+     * Query params:
+     * - q: termo digitado (opcional)
+     * - limit: máximo de itens (opcional; padrão 15; máximo 50)
+     */
+    public function descricoes(Request $request)
+    {
+        // Termo digitado no input (ex.: "sal")
+        $q = trim((string) $request->query('q', ''));
+
+        // Limite “defensivo” (evita retorno exagerado)
+        $limit = (int) $request->query('limit', 15);
+        $limit = max($limit, 1);
+        $limit = min($limit, 50);
+
+        $descricoes = \App\Models\Receita::query()
+            // Seleciona a descrição “limpa” + total (para ordenar)
+            ->selectRaw('TRIM(Descricao) as Descricao, COUNT(*) as total')
+            ->whereNotNull('Descricao')
+            // Ignora strings vazias/espaços
+            ->whereRaw("TRIM(Descricao) <> ''")
+            // Se veio termo, filtra por LIKE
+            ->when($q !== '', function ($query) use ($q) {
+                $query->where('Descricao', 'like', '%' . $q . '%');
+            })
+            // Únicas (por TRIM)
+            ->groupBy(DB::raw('TRIM(Descricao)'))
+            // Mais usadas primeiro
+            ->orderByDesc('total')
+            // Limita
+            ->limit($limit)
+            // Retorna array simples só com a coluna Descricao
+            ->pluck('Descricao');
+
+        return response()->json($descricoes);
+    }
 
     /**
      * Remove a receita especificada do armazenamento.
