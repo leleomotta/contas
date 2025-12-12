@@ -1,3 +1,13 @@
+@php
+    /**
+     * Fallback de segurança:
+     * - prioridade: variável enviada pelo Controller ($ID_Cartao)
+     * - depois: querystring (?ID_Cartao=)
+     * - por fim: sessão (caso algum fluxo ainda use session)
+     */
+    $ID_Cartao = $ID_Cartao ?? request('ID_Cartao') ?? session('ID_Cartao');
+@endphp
+
 @extends('adminlte::page')
 
 @section('title', 'Fatura - Listar')
@@ -173,21 +183,22 @@
                             <div class="col-12">
                                 @if ($faturas->count() != 0)
                                     @if (isset($fatura) && $fatura->Fechada == 0)
-                                        <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                                            <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+                                        <form id="fatura{{ $ID_Cartao }}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                                            <input type="hidden" name="ID_Cartao" value="{{ $ID_Cartao }}">
                                             <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
                                                 <span class="fa fa-plus"></span>
                                             </button>
                                         </form>
                                     @endif
                                 @else
-                                    <form id="fatura{{Session::get('ID_Cartao')}}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
-                                        <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+                                    <form id="fatura{{ $ID_Cartao }}" role="form" action="{{ route('cartoes.new_despesa') }}" method="GET">
+                                        <input type="hidden" name="ID_Cartao" value="{{ $ID_Cartao }}">
                                         <button type="submit" class="btn btn-success btn-block" title="Adicionar despesa">
                                             <span class="fa fa-plus"></span>
                                         </button>
                                     </form>
                                 @endif
+
                             </div>
 
                             <div class="col-12">

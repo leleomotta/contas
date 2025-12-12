@@ -36,6 +36,11 @@ class CartaoController extends Controller
     {
         $despesa = Despesa::find($request->ID_Despesa);
         $fatura = Fatura::find($request->ID_Despesa);
+
+        // Guarda antes de deletar (depois do delete você perde a referência)
+        $anoMes = $fatura->Ano_Mes;
+        $idCartao = $request->ID_Cartao;
+
         try {
             DB::beginTransaction();
             $fatura->delete();
@@ -43,7 +48,11 @@ class CartaoController extends Controller
 
             DB::commit();
 
-            return redirect()->route('cartoes.fatura', array('ID_Cartao' => $request->ID_Cartao) );
+            //return redirect()->route('cartoes.fatura', array('ID_Cartao' => $request->ID_Cartao) );
+            return redirect()->route('cartoes.fatura', [
+                'ID_Cartao' => $idCartao,
+                'Ano_Mes'   => $anoMes,
+            ]);
 
         } catch (\Exception $e) {
             DB::rollback();
@@ -79,14 +88,26 @@ class CartaoController extends Controller
      */
     public function fatura(Request $request)
     {
-        $ID_Cartao = $request->session()->get('ID_Cartao') ?? $request->ID_Cartao;
-
         /*
-        $Ano_Mes = is_null($request->Ano_Mes)
-            ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
-            : $request->Ano_Mes;
+        $ID_Cartao = $request->session()->get('ID_Cartao') ?? $request->ID_Cartao;
+        //$Ano_Mes = $request->Ano_Mes;
+        $Ano_Mes = $request->Ano_Mes
+            ?? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         */
-        $Ano_Mes = $request->Ano_Mes;
+
+        // 1) Prioriza o ID_Cartao que veio na URL (GET). Se não vier, usa o que estiver na sessão.
+        $ID_Cartao = $request->filled('ID_Cartao')
+            ? (int) $request->ID_Cartao
+            : (int) $request->session()->get('ID_Cartao');
+
+        // 2) Se veio na URL, sincroniza a sessão (assim botões/formulários que usam Session ficam corretos).
+        if ($request->filled('ID_Cartao')) {
+            $request->session()->put('ID_Cartao', $ID_Cartao);
+        }
+
+        // 3) Se não vier Ano_Mes, evita tela “em branco” e usa o mês atual.
+        $Ano_Mes = $request->Ano_Mes ?: Carbon::now()->format('Y-m');
+
         // Busca o status de fechamento da fatura
         $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
         $cartao = Cartao::where('ID_Cartao', $ID_Cartao)->first()->Nome;
@@ -120,6 +141,7 @@ class CartaoController extends Controller
             //'cartoes' => $cartoes,
             'Ano_Mes' => $Ano_Mes, // Adiciona o Ano_Mes atualizado à view
             'fechada' => $fechada, // Adiciona a variável 'fechada' à view
+            'ID_Cartao' => $ID_Cartao, // <-- IMPORTANTÍSSIMO: evita Undefined variable no Blade
         ]);
     }
 
@@ -324,7 +346,11 @@ class CartaoController extends Controller
             $fatura->save();
         }
 
-        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
+        //return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
+        return redirect()->route('cartoes.fatura', [
+            'ID_Cartao' => $request->ID_Cartao,
+            'Ano_Mes'   => $Ano_Mes, // ex: 2025-12
+        ]);
     }
 
     /**
@@ -375,6 +401,12 @@ class CartaoController extends Controller
         $despesa->save();
         $fatura->save();
 
-        return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
+        //return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
+        // Se o usuário alterou a fatura (Ano/Mês), redireciona para o novo Ano_Mes
+        return redirect()->route('cartoes.fatura', [
+            'ID_Cartao' => $request->ID_Cartao,
+            'Ano_Mes'   => $novoAnoMes, // ou $fatura->Ano_Mes após salvar
+        ]);
+
     }
 }
