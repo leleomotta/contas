@@ -16,14 +16,37 @@ use Illuminate\Support\Facades\Redirect;
 class DespesaController extends Controller
 {
     /**
+     * Monta a URL da listagem de despesas preservando o date_filter (YYYY-MM).
+     * Se não vier date_filter, usa como fallback o mês/ano da própria despesa.
+     */
+    private function despesasListUrl(?string $dateFilter = null, ?string $fallbackDate = null): string
+    {
+        if (empty($dateFilter)) {
+            // Se não veio filtro, tenta usar a data da despesa; se não tiver, usa o mês atual
+            $ref = $fallbackDate ? Carbon::parse($fallbackDate) : Carbon::now();
+            $dateFilter = $ref->isoFormat('Y') . '-' . $ref->isoFormat('MM');
+        }
+
+        return '/despesas?date_filter=' . $dateFilter;
+    }
+
+
+    /**
      * Remove a despesa especificada do armazenamento.
      *
      * @param int $ID_Despesa
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(int $ID_Despesa)
+    public function destroy(Request $request, int $ID_Despesa)
     {
         $despesa = Despesa::find($ID_Despesa);
+
+        // REGRA: despesa EFETIVADA não pode ser excluída
+        if ((int) $despesa->Efetivada === 1) {
+            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+                ->with('error', 'Esta despesa está EFETIVADA e não pode ser excluída. Desefetive para excluir.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -48,9 +71,16 @@ class DespesaController extends Controller
      * @param int $ID_Despesa
      * @return \Illuminate\View\View
      */
-    public function edit(int $ID_Despesa)
+    public function edit(Request $request, int $ID_Despesa)
     {
         $despesa = Despesa::find($ID_Despesa);
+
+        // REGRA: despesa EFETIVADA não pode ser editada
+        if ((int) $despesa->Efetivada === 1) {
+            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+                ->with('error', 'Esta despesa está EFETIVADA e não pode ser editada. Desefetive para alterar.');
+        }
+
         $contas = (new Conta)->showAll();
         $categorias = (new Categoria)->show('D');
 
@@ -242,6 +272,13 @@ class DespesaController extends Controller
     public function update(Request $request, int $ID_Despesa)
     {
         $despesa = Despesa::find($ID_Despesa);
+
+        // REGRA: despesa EFETIVADA não pode ser alterada
+        if ((int) $despesa->Efetivada === 1) {
+            return redirect()->to($this->despesasListUrl($request->input('date_filter'), $despesa->Data))
+                ->with('error', 'Esta despesa está EFETIVADA e não pode ser alterada. Desefetive para alterar.');
+        }
+
         $despesa->Descricao = $request->Descricao;
         $despesa->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
         $despesa->Data = implode("-",array_reverse(explode("/",$request->Data)));

@@ -14,14 +14,41 @@ use Illuminate\Support\Facades\Redirect;
 class ReceitaController extends Controller
 {
     /**
+     * Monta uma URL de retorno para a listagem de receitas preservando (quando existir)
+     * o filtro mensal (date_filter=YYYY-MM).
+     *
+     * OBS: este sistema usa a listagem /receitas com querystring date_filter,
+     * então esta função ajuda a manter a navegação consistente após redirects.
+     *
+     * @param string|null $dateFilter Formato esperado: YYYY-MM
+     * @return string
+     */
+    private function receitasListUrl(?string $dateFilter = null): string
+    {
+        // Se não vier filtro, volta para o mês atual
+        $dateFilter = $dateFilter ?: Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
+
+        return '/receitas?date_filter=' . $dateFilter;
+    }
+
+
+    /**
      * Remove a receita especificada do armazenamento.
      *
      * @param int $ID_Receita
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function destroy(int $ID_Receita)
+    public function destroy(Request $request, int $ID_Receita)
     {
         $receita = Receita::find($ID_Receita);
+
+        // REGRA DE NEGÓCIO:
+        // Receitas EFETIVADAS (Efetivada = 1) NÃO podem ser alteradas/excluídas.
+        if ((int) $receita->Efetivada === 1) {
+            return redirect()->to($this->receitasListUrl($request->input('date_filter')))
+                ->with('error', 'Esta receita está EFETIVADA e não pode ser excluída.');
+        }
+
         try {
             DB::beginTransaction();
 
@@ -45,9 +72,17 @@ class ReceitaController extends Controller
      * @param int $ID_Receita
      * @return \Illuminate\View\View
      */
-    public function edit(int $ID_Receita)
+    public function edit(Request $request, int $ID_Receita)
     {
         $receita = Receita::find($ID_Receita);
+
+        // REGRA DE NEGÓCIO:
+        // Receitas EFETIVADAS (Efetivada = 1) NÃO podem ser alteradas.
+        if ((int) $receita->Efetivada === 1) {
+            return redirect()->to($this->receitasListUrl($request->input('date_filter')))
+                ->with('error', 'Esta receita está EFETIVADA e não pode ser editada.');
+        }
+
         $contas = (new \App\Models\Conta)->showAll();
         $categorias = (new \App\Models\Categoria)->show('R');
 
@@ -220,6 +255,14 @@ class ReceitaController extends Controller
     public function update(Request $request, int $ID_Receita)
     {
         $receita = Receita::find($ID_Receita);
+
+        // REGRA DE NEGÓCIO:
+        // Receitas EFETIVADAS (Efetivada = 1) NÃO podem ser alteradas.
+        if ((int) $receita->Efetivada === 1) {
+            return redirect()->to($this->receitasListUrl($request->input('date_filter')))
+                ->with('error', 'Esta receita está EFETIVADA e não pode ser alterada.');
+        }
+
         $receita->Descricao = $request->Descricao;
         $receita->Valor = str_replace(",",'.',str_replace(".","", str_replace("R$ ","",$request->Valor)));
         $receita->Data = implode("-",array_reverse(explode("/",$request->Data)));
