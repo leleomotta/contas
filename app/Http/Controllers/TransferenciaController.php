@@ -90,7 +90,16 @@ class TransferenciaController extends Controller
     public function showAll()
     {
         // Carrega todas as transferências com os relacionamentos de contas de origem e destino
-        $transferencias = Transferencia::with(['contaOrigem', 'contaDestino'])->get();
+        //$transferencias = Transferencia::with(['contaOrigem', 'contaDestino'])->get();
+        // Carrega todas as transferências já trazendo as contas relacionadas
+        $transferencias = Transferencia::with(['contaOrigem', 'contaDestino'])
+            // Ordena pela coluna Data (campo DATE no banco)
+            // Use 'DESC' para mais recentes primeiro (recomendado para listagem)
+            ->orderBy('Data', 'DESC')
+            // Desempate: se houver mais de uma transferência na mesma data,
+            // garante uma ordem consistente pela chave primária
+            ->orderBy('ID_Transferencia', 'DESC')
+            ->get();
 
         // Extrai as contas únicas para as abas de origem e destino
         $contasOrigem = $transferencias->pluck('contaOrigem')->unique('ID_Conta');

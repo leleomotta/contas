@@ -1,10 +1,28 @@
-@php use Illuminate\Support\Carbon; @endphp
+@php
+    use Illuminate\Support\Carbon;
+
+    /**
+     * ======================================================================
+     * FILTRO DE DATA (APENAS 1 VEZ PARA A VIEW TODA)
+     * ======================================================================
+     * - Evita usar $_GET diretamente (padrão Laravel: request())
+     * - Se não vier date_filter, usa o mês atual
+     * - Gera start_date e end_date do mês selecionado
+     */
+    $dateFilter = request('date_filter', now()->format('Y-m'));
+
+    // Monta uma data "segura" dentro do mês (dia 15) para calcular início/fim do mês
+    $dt = Carbon::createFromFormat('Y-m-d', $dateFilter . '-15');
+
+    $start_date = $dt->copy()->startOfMonth()->toDateString();
+    $end_date   = $dt->copy()->endOfMonth()->toDateString();
+@endphp
+
 @extends('adminlte::page')
 
 @section('title', 'Conta - Listar')
 
 @section('content_header')
-
 @stop
 
 @section('content')
@@ -21,12 +39,17 @@
                                 <div class="input-group-text"><i class="fa fa-angle-left"></i></div>
                             </div>
 
-                            <input type="text" class="form-control datetimepicker-input"
-                                   id="Data" name="Data"
+                            <input type="text"
+                                   class="form-control datetimepicker-input"
+                                   id="Data"
+                                   name="Data"
                                    data-target="#divData"
                                    data-toggle="datetimepicker"
                                    placeholder="aaaa-mm"
-                                   style="text-align:center;" />
+                                   style="text-align:center;"
+                                   {{-- Mantém o valor já no server-side (menos JS e mais confiável) --}}
+                                   value="{{ $dateFilter }}"
+                            />
 
                             <div class="input-group-append" onclick="avancaData()">
                                 <div class="input-group-text"><i class="fa fa-angle-right"></i></div>
@@ -42,9 +65,12 @@
                         <li class="nav-item"><a class="nav-link " href="#tab_3" data-toggle="tab">Tabela</a></li>
                     </ul>
                 </div><!-- /.card-header -->
+
                 <div class="card-body">
                     <div class="tab-content">
-                        <!-- .tab-pane -->
+                        <!-- ====================================================================== -->
+                        <!-- TAB 1 - CONTAS ATIVAS -->
+                        <!-- ====================================================================== -->
                         <div class="tab-pane active" id="tab_1">
                             <div class="card-body">
                                 @foreach($contasAtivas->chunk(3) as $ativas)
@@ -52,28 +78,24 @@
                                         @foreach($ativas as $conta)
                                             <div class="col-md-4">
                                                 <!-- Widget: user widget style 1 -->
-                                                <div class="card card-widget widget-user" >
+                                                <div class="card card-widget widget-user">
                                                     @php
-                                                        if (empty($_GET)) {
-                                                             $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-                                                        }
-                                                        else{
-                                                            $dateFilter = $_GET['date_filter'];
-                                                        }
-                                                        $dt = Carbon::now();
-                                                        $dt->setDateFrom($dateFilter . '-15');
-                                                        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-                                                        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
-                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
-                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
-                                                        $despesaMes = $despesaMes->merge($cartaoPagoMes);
-                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
-                                                        $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
-                                                    @endphp
+                                                        /**
+                                                         * ==================================================================
+                                                         * CÁLCULOS POR CONTA (ATIVAS)
+                                                         * ==================================================================
+                                                         * Usa $start_date e $end_date calculados UMA VEZ no topo da view.
+                                                         */
 
-                                                        <!-- Add the bg color to the header using any of the bg-* classes -->
-                                                    <!-- <div class="widget-user-header bg-info"> -->
+                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date, $end_date, $conta->ID_Conta);
+
+                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date, $end_date, $conta->ID_Conta);
+                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date, $end_date, $conta->ID_Conta);
+                                                        $despesaMes = $despesaMes->merge($cartaoPagoMes);
+
+                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date, $end_date, $conta->ID_Conta);
+                                                        $tranferencias_SaidaMes   = (new \App\Models\Transferencia())->tranferenciasSaida($start_date, $end_date, $conta->ID_Conta);
+                                                    @endphp
 
                                                     <div class="widget-user-header text-white"
                                                          style="background:{{ $conta->Cor }}">
@@ -81,12 +103,18 @@
                                                         <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
                                                     </div>
 
-                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
+                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' => $conta->ID_Conta]) }}'">
                                                         <div class="widget-user-image">
                                                             @if (! $conta->Imagem == null)
-                                                                <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
+                                                                <img class="img-circle elevation-2"
+                                                                     src="data:image/jpeg;base64,{{ base64_encode($conta->Imagem) }}"
+                                                                     alt="Imagem">
                                                             @else
-                                                                <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
+                                                                <img class="img-circle elevation-2"
+                                                                     border="0"
+                                                                     align="middle"
+                                                                     src="{{ URL::asset('/storage/banco.png') }}"
+                                                                     alt="Banco">
                                                             @endif
                                                         </div>
                                                     </a>
@@ -100,22 +128,24 @@
                                                                     </h5>
                                                                     <span class="description-text">SALDO ATUAL</span>
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
+
+                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">
+                                                                        RECEITAS
+                                                                    </span>
 
                                                                     <!-- Modal de detalhe -->
                                                                     <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Receitas </h4>
+                                                                                    <h4 class="modal-title">Receitas</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -155,32 +185,30 @@
                                                                                         </tr>
                                                                                         </tfoot>
                                                                                     </table>
-
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
-
+                                                                    <!-- /Modal -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
+
+                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">
+                                                                        DESPESAS
+                                                                    </span>
 
                                                                     <!-- Modal de detalhe -->
                                                                     <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Despesas </h4>
+                                                                                    <h4 class="modal-title">Despesas</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -222,31 +250,30 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
+                                                                    <!-- /Modal -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-
                                                         </div>
-                                                        <!-- /.row -->
+
                                                         <div class="row">
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
 
-                                                                    <!-- Modal de detalhe -->
+                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">
+                                                                        Transf. Entrada
+                                                                    </span>
+
+                                                                    <!-- Modal -->
                                                                     <div class="modal fade" id="entra{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Transferências de Entrada </h4>
+                                                                                    <h4 class="modal-title">Transferências de Entrada</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -279,31 +306,28 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
-
+                                                                    <!-- /Modal -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span class="description-text"></span>
 
-                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
+                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">
+                                                                        Transf. Saída
+                                                                    </span>
 
-                                                                    <!-- Modal de detalhe -->
+                                                                    <!-- Modal -->
                                                                     <div class="modal fade" id="sai{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Transferências de Saída </h4>
+                                                                                    <h4 class="modal-title">Transferências de Saída</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -336,71 +360,69 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
-
+                                                                    <!-- /Modal -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
                                                                     </h5>
 
-                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
+                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">
+                                                                        SALDO MÊS
+                                                                    </span>
+
                                                                     @php
+                                                                        /**
+                                                                         * Monta um "extrato do mês" combinando receitas, despesas, transf. entrada e saída,
+                                                                         * e ordena por Data.
+                                                                         */
                                                                         $despesas = $despesaMes;
                                                                         $despesas->each(function ($despesa) {
                                                                             $despesa->Valor = -$despesa->Valor;
                                                                         });
-                                                                        //junta despesas e receitas
+
                                                                         $saldo = $despesas->merge($receitaMes);
 
-                                                                        $entradas = $tranferencias_EntradaMes;
-                                                                        $entradas = $entradas->map(function ($item) {
-                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                        $entradas = $tranferencias_EntradaMes->map(function ($item) {
+                                                                            $item->Efetivada = 'X';
                                                                             $item->Categoria = 'Transf. Ent.';
                                                                             $item->Descricao = 'Transf. Ent.';
                                                                             $item->NomeCategoria = '-';
                                                                             return $item;
                                                                         });
 
-                                                                        //junta despesas e receitas com entradas
                                                                         $saldo = $saldo->merge($entradas);
-                                                                        //
 
-                                                                        $saidas = $tranferencias_SaidaMes;
-                                                                        $saidas = $saidas->map(function ($item) {
-                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                        $saidas = $tranferencias_SaidaMes->map(function ($item) {
+                                                                            $item->Efetivada = 'X';
                                                                             $item->Categoria = 'Transf. Saida';
                                                                             $item->Descricao = 'Transf. Saida';
                                                                             $item->NomeCategoria = '-';
                                                                             return $item;
                                                                         });
+
                                                                         $saidas->each(function ($saida) {
                                                                             $saida->Valor = -$saida->Valor;
                                                                         });
 
-                                                                        //junta despesas e receitas com entradas e saídas
                                                                         $saldo = $saldo->merge($saidas);
 
-                                                                        $sorted = $saldo->sortBy(function($conta)
-                                                                        {
-                                                                            return $conta->Data;
+                                                                        $sorted = $saldo->sortBy(function($item) {
+                                                                            return $item->Data;
                                                                         });
                                                                     @endphp
 
-                                                                        <!-- Modal de detalhe -->
+                                                                        <!-- Modal -->
                                                                     <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Saldo do mes </h4>
+                                                                                    <h4 class="modal-title">Saldo do mês</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -442,15 +464,11 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
+                                                                    <!-- /Modal -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-
                                                         </div>
                                                     </div>
                                                 </div>
@@ -461,40 +479,34 @@
                                 @endforeach
                             </div>
                         </div>
-                        <!-- /.tab-pane -->
+                        <!-- /TAB 1 -->
 
-                        <!-- .tab-pane -->
+                        <!-- ====================================================================== -->
+                        <!-- TAB 2 - CONTAS INATIVAS / ARQUIVADAS -->
+                        <!-- ====================================================================== -->
                         <div class="tab-pane" id="tab_2">
                             <div class="card-body">
                                 @foreach($contasArquivadas->chunk(3) as $inativas)
                                     <div class="row">
                                         @foreach($inativas as $conta)
                                             <div class="col-md-4">
-                                                <!-- Widget: user widget style 1 -->
-                                                <div class="card card-widget widget-user" >
+                                                <div class="card card-widget widget-user">
                                                     @php
-                                                        if (empty($_GET)) {
-                                                             $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-                                                        }
-                                                        else{
-                                                            $dateFilter = $_GET['date_filter'];
-                                                        }
-                                                        $dt = Carbon::now();
-                                                        $dt->setDateFrom($dateFilter . '-15');
-                                                        $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
-                                                        $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
-                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date,$end_date,$conta->ID_Conta);
-                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date,$end_date,$conta->ID_Conta);
+                                                        /**
+                                                         * ==================================================================
+                                                         * CÁLCULOS POR CONTA (ARQUIVADAS)
+                                                         * ==================================================================
+                                                         * Usa o mesmo período calculado no topo da view.
+                                                         */
+                                                        $despesaMes = (new \App\Models\Despesa)->despesasSemCartao($start_date, $end_date, $conta->ID_Conta);
+                                                        $cartaoPagoMes = (new \App\Models\Despesa)->despesasDeCartao($start_date, $end_date, $conta->ID_Conta);
                                                         $despesaMes = $despesaMes->merge($cartaoPagoMes);
 
-                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date,$end_date,$conta->ID_Conta);
+                                                        $receitaMes = (new \App\Models\Receita)->receitas($start_date, $end_date, $conta->ID_Conta);
 
-                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date,$end_date,$conta->ID_Conta);
-
-                                                        $tranferencias_SaidaMes = (new \App\Models\Transferencia())->tranferenciasSaida($start_date,$end_date,$conta->ID_Conta);
+                                                        $tranferencias_EntradaMes = (new \App\Models\Transferencia())->tranferenciasEntrada($start_date, $end_date, $conta->ID_Conta);
+                                                        $tranferencias_SaidaMes   = (new \App\Models\Transferencia())->tranferenciasSaida($start_date, $end_date, $conta->ID_Conta);
                                                     @endphp
-                                                        <!-- Add the bg color to the header using any of the bg-* classes -->
-                                                    <!-- <div class="widget-user-header bg-info"> -->
 
                                                     <div class="widget-user-header text-white"
                                                          style="background:{{ $conta->Cor }}">
@@ -502,17 +514,23 @@
                                                         <h5 class="widget-user-desc">{{ $conta->Banco }}</h5>
                                                     </div>
 
-                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' =>$conta->ID_Conta]) }}'" >
+                                                    <a onclick="window.location='{{ route('contas.edit', ['ID_Conta' => $conta->ID_Conta]) }}'">
                                                         <div class="widget-user-image">
-
                                                             @if (! $conta->Imagem == null)
-                                                                <img class="img-circle elevation-2" src='data:image/jpeg;base64,{{base64_encode( $conta->Imagem ) }} ' alt="Imagem">
+                                                                <img class="img-circle elevation-2"
+                                                                     src="data:image/jpeg;base64,{{ base64_encode($conta->Imagem) }}"
+                                                                     alt="Imagem">
                                                             @else
-                                                                <img class="img-circle elevation-2" border=0 ALIGN=MIDDLE src="{{URL::asset('/storage/banco.png')}}" alt="Banco">
+                                                                <img class="img-circle elevation-2"
+                                                                     border="0"
+                                                                     align="middle"
+                                                                     src="{{ URL::asset('/storage/banco.png') }}"
+                                                                     alt="Banco">
                                                             @endif
                                                         </div>
                                                     </a>
 
+                                                    {{-- A partir daqui, mantém o seu layout original (mesmo conteúdo da TAB 1) --}}
                                                     <div class="card-footer">
                                                         <div class="row">
                                                             <div class="col-sm-4 border-right">
@@ -522,23 +540,23 @@
                                                                     </h5>
                                                                     <span class="description-text">SALDO ATUAL</span>
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
                                                                     </h5>
 
-                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">RECEITAS</span>
+                                                                    <span data-toggle="modal" data-target="#receitas{{$conta->ID_Conta}}" class="description-text">
+                                                                        RECEITAS
+                                                                    </span>
 
-                                                                    <!-- Modal de detalhe -->
                                                                     <div class="modal fade" id="receitas{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Receitas </h4>
+                                                                                    <h4 class="modal-title">Receitas</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -580,35 +598,31 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">DESPESAS</span>
 
-                                                                    <!-- Modal de detalhe -->
+                                                                    <span data-toggle="modal" data-target="#despesas{{$conta->ID_Conta}}" class="description-text">
+                                                                        DESPESAS
+                                                                    </span>
+
                                                                     <div class="modal fade" id="despesas{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Despesas </h4>
+                                                                                    <h4 class="modal-title">Despesas</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
                                                                                 </div>
                                                                                 <div class="modal-body">
-
-
                                                                                     <table id="Despesas" class="table table-bordered table-hover">
                                                                                         <thead>
                                                                                         <tr>
@@ -643,34 +657,30 @@
                                                                                         </tr>
                                                                                         </tfoot>
                                                                                     </table>
-
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-
                                                         </div>
-                                                        <!-- /.row -->
+
                                                         <div class="row">
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">Transf. Entrada</span>
 
-                                                                    <!-- Modal de detalhe -->
+                                                                    <span data-toggle="modal" data-target="#entra{{$conta->ID_Conta}}" class="description-text">
+                                                                        Transf. Entrada
+                                                                    </span>
+
                                                                     <div class="modal fade" id="entra{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Transferências de Entrada </h4>
+                                                                                    <h4 class="modal-title">Transferências de Entrada</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -703,28 +713,26 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4 border-right">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">Transf. Saída</span>
 
-                                                                    <!-- Modal de detalhe -->
+                                                                    <span data-toggle="modal" data-target="#sai{{$conta->ID_Conta}}" class="description-text">
+                                                                        Transf. Saída
+                                                                    </span>
+
                                                                     <div class="modal fade" id="sai{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Transferências de Saída </h4>
+                                                                                    <h4 class="modal-title">Transferências de Saída</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -757,69 +765,63 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
                                                                 </div>
-                                                                <!-- /.description-block -->
                                                             </div>
-                                                            <!-- /.col -->
+
                                                             <div class="col-sm-4">
                                                                 <div class="description-block">
                                                                     <h5 class="description-header" data-inputmask="'alias': 'numeric', 'prefix': 'R$ '">
                                                                         {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
                                                                     </h5>
-                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">SALDO MÊS</span>
+
+                                                                    <span data-toggle="modal" data-target="#saldo{{$conta->ID_Conta}}" class="description-text">
+                                                                        SALDO MÊS
+                                                                    </span>
+
                                                                     @php
                                                                         $despesas = $despesaMes;
                                                                         $despesas->each(function ($despesa) {
                                                                             $despesa->Valor = -$despesa->Valor;
                                                                         });
-                                                                        //junta despesas e receitas
+
                                                                         $saldo = $despesas->merge($receitaMes);
 
-                                                                        $entradas = $tranferencias_EntradaMes;
-                                                                        $entradas = $entradas->map(function ($item) {
-                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                        $entradas = $tranferencias_EntradaMes->map(function ($item) {
+                                                                            $item->Efetivada = 'X';
                                                                             $item->Categoria = 'Transf. Ent.';
                                                                             $item->Descricao = 'Transf. Ent.';
                                                                             $item->NomeCategoria = '-';
                                                                             return $item;
                                                                         });
 
-                                                                        //junta despesas e receitas com entradas
                                                                         $saldo = $saldo->merge($entradas);
-                                                                        //
 
-                                                                        $saidas = $tranferencias_SaidaMes;
-                                                                        $saidas = $saidas->map(function ($item) {
-                                                                            $item->Efetivada = 'X'; // Adiciona a coluna 'age' com valor 30
+                                                                        $saidas = $tranferencias_SaidaMes->map(function ($item) {
+                                                                            $item->Efetivada = 'X';
                                                                             $item->Categoria = 'Transf. Saida';
                                                                             $item->Descricao = 'Transf. Saida';
                                                                             $item->NomeCategoria = '-';
                                                                             return $item;
                                                                         });
+
                                                                         $saidas->each(function ($saida) {
                                                                             $saida->Valor = -$saida->Valor;
                                                                         });
 
-                                                                        //junta despesas e receitas com entradas e saídas
                                                                         $saldo = $saldo->merge($saidas);
 
-                                                                        $sorted = $saldo->sortBy(function($conta)
-                                                                        {
-                                                                            return $conta->Data;
+                                                                        $sorted = $saldo->sortBy(function($item) {
+                                                                            return $item->Data;
                                                                         });
                                                                     @endphp
 
-                                                                        <!-- Modal de detalhe -->
                                                                     <div class="modal fade" id="saldo{{$conta->ID_Conta}}">
-                                                                        <div class="modal-dialog  modal-lg">
+                                                                        <div class="modal-dialog modal-lg">
                                                                             <div class="modal-content">
                                                                                 <div class="modal-header">
-                                                                                    <h4 class="modal-title"> Saldo do mes </h4>
+                                                                                    <h4 class="modal-title">Saldo do mês</h4>
                                                                                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                                                                                         <span aria-hidden="true">&times;</span>
                                                                                     </button>
@@ -861,17 +863,14 @@
                                                                                     </table>
                                                                                 </div>
                                                                             </div>
-                                                                            <!-- /.modal-content -->
                                                                         </div>
-                                                                        <!-- /.modal-dialog -->
                                                                     </div>
-                                                                    <!-- Modal de detalhe -->
-                                                                </div>
-                                                                <!-- /.description-block -->
-                                                            </div>
 
+                                                                </div>
+                                                            </div>
                                                         </div>
                                                     </div>
+
                                                 </div>
                                                 <!-- /.widget-user -->
                                             </div>
@@ -881,11 +880,32 @@
 
                             </div>
                         </div>
-                        <!-- /.tab-pane -->
+                        <!-- /TAB 2 -->
 
-                        <!-- .tab-pane -->
+                        <!-- ====================================================================== -->
+                        <!-- TAB 3 - TABELA (COM SWITCH MOSTRAR/OCULTAR ARQUIVADAS) -->
+                        <!-- ====================================================================== -->
                         <div class="tab-pane " id="tab_3">
                             <div class="card-body">
+
+                                <div class="mb-2 d-flex justify-content-end align-items-center">
+                                    {{-- Switch para mostrar/ocultar contas arquivadas na tabela --}}
+                                    <div class="custom-control custom-switch mr-3">
+                                        <input type="checkbox"
+                                               class="custom-control-input"
+                                               id="toggleArquivadas">
+                                        <label class="custom-control-label" for="toggleArquivadas">
+                                            Mostrar contas inativas/arquivadas
+                                        </label>
+                                    </div>
+
+                                    <button type="button"
+                                            class="btn btn-success btn-sm"
+                                            onclick="copiarTabelaExcel()">
+                                        <i class="fas fa-file-excel"></i> Copiar para Excel
+                                    </button>
+                                </div>
+
                                 <table id="example1" class="table table-bordered table-hover">
                                     <thead>
                                     <tr>
@@ -899,47 +919,54 @@
                                         <th style="text-align: center">Saldo Mes</th>
                                     </tr>
                                     </thead>
+
                                     <tbody>
-
                                     @php
-                                        $contasAtivas = $contasAtivas->merge($contasArquivadas);
-                                        $sorted = $contasAtivas->sortBy(function($conta)
-                                        {
-                                            return $conta->ID_Conta;
-                                        });
-                                    @endphp
-                                    @foreach($sorted as $conta)
+                                        /**
+                                         * ==================================================================
+                                         * IMPORTANTE:
+                                         * - NÃO alteramos $contasAtivas aqui (evita efeitos colaterais).
+                                         * - Criamos uma lista "contasTabela" com ativas + arquivadas.
+                                         * - Criamos um "mapa" de IDs arquivadas para identificar linhas.
+                                         */
+                                        $idsArquivadas = $contasArquivadas->pluck('ID_Conta')->flip();
 
-                                        <tr>
+                                        $contasTabela = $contasAtivas
+                                            ->merge($contasArquivadas)
+                                            ->sortBy('ID_Conta');
+                                    @endphp
+
+                                    @foreach($contasTabela as $conta)
+                                        @php
+                                            // true se esta conta faz parte de contasArquivadas
+                                            $isArquivada = isset($idsArquivadas[$conta->ID_Conta]);
+
+                                            // seu destaque existente
+                                            $isConta99 = ((int)$conta->ID_Conta === 99);
+                                        @endphp
+
+                                        <tr
+                                            class="{{ $isArquivada ? 'conta-arquivada table-secondary' : '' }}"
+                                            data-arquivada="{{ $isArquivada ? 1 : 0 }}"
+                                            style="{{ $isConta99 ? 'background-color: #fff3cd;' : '' }}"
+                                        >
                                             <td>
                                                 {{ $conta->ID_Conta . ' - ' . $conta->Nome . ' - ' . $conta->Banco }}
-                                            </td>
-                                            <td>
-                                                {{ $conta->Ano_Mes }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->Saldo, 2, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}
-                                            </td>
-                                            <td>
-                                                {{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}
-                                            </td>
 
+                                                {{-- Badge opcional pra ficar claro visualmente --}}
+                                                @if($isArquivada)
+                                                    <span class="badge badge-secondary ml-2">Arquivada</span>
+                                                @endif
+                                            </td>
+                                            <td>{{ $conta->Ano_Mes }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->Saldo, 2, ',', '.') }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->Receitas, 2, ',', '.') }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->Despesas, 2, ',', '.') }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->Entradas, 2, ',', '.') }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->Saidas, 2, ',', '.') }}</td>
+                                            <td>{{ 'R$ ' . number_format($conta->SaldoMes, 2, ',', '.') }}</td>
                                         </tr>
-
                                     @endforeach
-
                                     </tbody>
 
                                     <tfoot>
@@ -957,7 +984,7 @@
                                 </table>
                             </div>
                         </div>
-                        <!-- /.tab-pane -->
+                        <!-- /TAB 3 -->
 
                     </div>
                     <!-- /.tab-content -->
@@ -965,16 +992,17 @@
             </div>
         </div>
     </div>
-
-
-
 @stop
 
 @section('css')
     {{-- Add here extra stylesheets --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    {{-- <link rel="stylesheet" href="/css/admin_custom.css"> --}}
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css" integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    {{-- OBS: você está carregando Bootstrap 5 aqui; AdminLTE 3 usa Bootstrap 4. --}}
+    {{-- Se aparecer alguma "quebra" de layout, esse é o primeiro ponto pra revisar. --}}
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.2.3/css/bootstrap.min.css"
+          integrity="sha512-SbiR/eusphKoMVVXysTKG/7VseWii+Y3FdHrt0EpKgpToZeemhqHeZeLWLhJutz/2ut2Vw1uQEj2MbRF+TVBUA=="
+          crossorigin="anonymous"
+          referrerpolicy="no-referrer" />
 
     {{-- Data --}}
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tempusdominus-bootstrap-4@5.39.2/build/css/tempusdominus-bootstrap-4.min.css">
@@ -987,23 +1015,31 @@
 
 @section('js')
     <script>
+        /**
+         * ======================================================================
+         * NAVEGAÇÃO DE MÊS (VOLTA/AVANÇA)
+         * ======================================================================
+         * Monta a URL com date_filter e recarrega.
+         */
         function voltaData() {
             const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
             let ano = parseInt(anoStr);
             let mes = parseInt(mesStr);
+
             mes = mes - 1;
             if (mes === 0) {
                 mes = 12;
                 ano = ano - 1;
             }
+
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '-' + mes;
 
-            var data = ano + '-' + mes;
+            const data = ano + '-' + mes;
+            document.getElementById('Data').value = data;
 
-            url = '{{ route("contas.showAll",array("date_filter" => 'DATA' ) ) }}';
+            let url = '{{ route("contas.showAll", ["date_filter" => "DATA"]) }}';
             url = url.replace('DATA', data);
 
             window.location.href = url;
@@ -1013,24 +1049,24 @@
             const [anoStr, mesStr] = document.getElementById('Data').value.split('-');
             let ano = parseInt(anoStr);
             let mes = parseInt(mesStr);
+
             mes = mes + 1;
             if (mes === 13) {
                 mes = 1;
                 ano = ano + 1;
             }
+
             if (mes >= 1 && mes <= 9) {
                 mes = "0" + mes;
             }
-            document.getElementById('Data').value = ano + '-' + mes;
 
+            const data = ano + '-' + mes;
+            document.getElementById('Data').value = data;
 
-            var data = ano + '-' + mes;
-
-            url = '{{ route("contas.showAll",array("date_filter" => 'DATA' ) ) }}';
+            let url = '{{ route("contas.showAll", ["date_filter" => "DATA"]) }}';
             url = url.replace('DATA', data);
 
             window.location.href = url;
-
         }
 
         function redirecionaParaDataSelecionada() {
@@ -1039,24 +1075,6 @@
             url = url.replace('DATA', data);
             window.location.href = url;
         }
-
-        window.onload = function() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const myParam = urlParams.get('date_filter');
-            if (myParam == null) {
-                const dateObj = new Date();
-                var month   = dateObj.getUTCMonth() + 1; // months from 1-12
-                if (month >= 1 && month <= 9) {
-                    month = "0" + month;
-                }
-                const year    = dateObj.getUTCFullYear();
-                const date_filter = year + '-' + month;
-                document.getElementById('Data').value = date_filter;
-            }
-            else{
-                document.getElementById('Data').value = myParam;
-            }
-        };
     </script>
 
     <!-- INPUT DATE -->
@@ -1068,15 +1086,25 @@
 
     <!-- INPUT DATE -->
     <script>
+        /**
+         * ======================================================================
+         * DATEPICKER (TEMPUSDOMINUS)
+         * ======================================================================
+         * - Inicia com o valor já definido no input (server-side)
+         * - Ao fechar o picker, se mudou, redireciona
+         */
         let ultimaData = $('#Data').val();
-        //Date picker
+
         $('#divData').datetimepicker({
             format: 'YYYY-MM',
             viewMode: 'months',
             minViewMode: 'months',
             locale: 'pt-br',
-            defaultDate: moment(), // já inicia com data atual
+
+            // Garante que o picker abra exatamente no mês do input
+            defaultDate: moment($('#Data').val() + '-01', 'YYYY-MM-DD'),
         });
+
         $('#divData').on('hide.datetimepicker', function () {
             const novaData = $('#Data').val();
 
@@ -1085,7 +1113,76 @@
                 redirecionaParaDataSelecionada();
             }
         });
+
         $('[data-mask]').inputmask();
     </script>
-    <!-- INPUT DATE -->
+
+    <script>
+        /**
+         * ======================================================================
+         * COPIAR TABELA PARA EXCEL
+         * ======================================================================
+         * - Copia a tabela "example1" como HTML/seleção
+         * - Linhas ocultas (display:none) não serão copiadas
+         */
+        function copiarTabelaExcel() {
+            const tabela = document.getElementById('example1');
+
+            if (!tabela) {
+                alert('Tabela não encontrada.');
+                return;
+            }
+
+            const range = document.createRange();
+            range.selectNode(tabela);
+
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+
+            try {
+                document.execCommand('copy');
+            } catch (err) {
+                alert('Erro ao copiar a tabela.');
+            }
+
+            selection.removeAllRanges();
+        }
+    </script>
+
+    <script>
+        /**
+         * ======================================================================
+         * MOSTRAR/OCULTAR ARQUIVADAS NA ABA TABELA
+         * ======================================================================
+         * - Linhas arquivadas possuem data-arquivada="1"
+         * - Switch controla display
+         * - Preferência salva no localStorage
+         */
+        function aplicarFiltroArquivadasTabela(mostrar) {
+            const linhasArquivadas = document.querySelectorAll('#example1 tbody tr[data-arquivada="1"]');
+
+            linhasArquivadas.forEach((tr) => {
+                tr.style.display = mostrar ? '' : 'none';
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const toggle = document.getElementById('toggleArquivadas');
+            if (!toggle) return;
+
+            // Recupera preferência (default: ocultar)
+            const salvo = localStorage.getItem('mostrarArquivadasTabela');
+            const mostrarInicial = (salvo === '1');
+
+            toggle.checked = mostrarInicial;
+            aplicarFiltroArquivadasTabela(mostrarInicial);
+
+            toggle.addEventListener('change', function () {
+                const mostrarAgora = toggle.checked;
+                localStorage.setItem('mostrarArquivadasTabela', mostrarAgora ? '1' : '0');
+                aplicarFiltroArquivadasTabela(mostrarAgora);
+            });
+        });
+    </script>
 @stop
