@@ -433,31 +433,34 @@ return [
 
         [
             'text' => 'Cartões',
-            'icon' => 'fa fa-credit-card',
+            'icon' => 'fas fa-credit-card',
             'submenu' => [
                 [
                     'text' => 'Listar',
-                    'url' => '/cartoes',
-                    'icon' => 'fa fa-list nav-icon',
-                    //'label' => 3,
+                    'url'  => '/cartoes',
+                    'icon' => 'fas fa-list',
                     'label_color' => 'success',
                 ],
                 [
+                    'text'  => 'Faturas',
+                    'route' => 'faturas.listar',
+                    'icon'  => 'far fa-calendar-alt',
+                ],
+                [
                     'text' => 'Adicionar Cartão',
-                    'url' => '/cartoes/novo',
-                    'icon' => 'fa fa-plus nav-icon',
-                    //'label' => 3,
+                    'url'  => '/cartoes/novo',
+                    'icon' => 'fas fa-plus',
                     'label_color' => 'success',
                 ],
                 [
                     'text' => 'Adicionar Despesa',
-                    'url' => '/fatura/despesa/novo',
-                    'icon' => 'fa fa-plus nav-icon',
-                    //'label' => 3,
+                    'url'  => '/fatura/despesa/novo',
+                    'icon' => 'fas fa-plus',
                     'label_color' => 'success',
                 ],
             ],
         ],
+
 
         [
             'text' => 'Relatório',

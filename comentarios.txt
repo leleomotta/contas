@@ -76,3 +76,6 @@ Alterções banco 20251024
 
 alter table recorrencia add COLUMN Tipo ENUM('D', 'R') after Descricao;
 ALTER TABLE receita ADD COLUMN `Recorrente` BOOLEAN DEFAULT FALSE AFTER `Efetivada`;
+
+
+Alter table cartao add COLUMN Arquivado tinyint(1) default 0 after Cor

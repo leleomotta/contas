@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContaController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\FaturaController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -92,6 +93,17 @@ Route::group(['middleware'=>['auth']], function(){
     Route::put('fatura/despesas/atualiza/{ID_Despesa}',[CartaoController::class, 'update_despesa'])->name('cartoes.update_despesa');
     Route::get('fatura/fechar',[CartaoController::class, 'fatura_fechar'])->name('cartoes.fatura_fechar');
     Route::get('fatura/reabrir',[CartaoController::class, 'fatura_reabrir'])->name('cartoes.fatura_reabrir');
+    /**
+     * Lista (histórico) de faturas com filtros (incluindo Cartão).
+     * View: resources/views/faturas_Listar.blade.php  => view('faturas_Listar')
+     */
+    Route::get('/faturas/listar', [FaturaController::class, 'index'])->name('faturas.listar');
+
+    /**
+     * Detalhe da fatura do mês (Ano_Mes) para um cartão.
+     * Ex.: /cartoes/3/faturas/2025-12
+     */
+    Route::get('/cartoes/{cartao}/faturas/{anoMes}', [FaturaController::class, 'show'])->name('faturas.show');
     /**
      * Endpoint AJAX para autocomplete de descrições das despesas de cartão.
      * Exemplo:

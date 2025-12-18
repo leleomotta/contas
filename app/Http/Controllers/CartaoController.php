@@ -68,6 +68,7 @@ class CartaoController extends Controller
 
         return response()->json($descricoes);
     }
+
     /**
      * Remove o recurso de cartão especificado do armazenamento.
      *
@@ -101,7 +102,6 @@ class CartaoController extends Controller
 
             DB::commit();
 
-            //return redirect()->route('cartoes.fatura', array('ID_Cartao' => $request->ID_Cartao) );
             return redirect()->route('cartoes.fatura', [
                 'ID_Cartao' => $idCartao,
                 'Ano_Mes'   => $anoMes,
@@ -109,7 +109,6 @@ class CartaoController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
-
             return back();
         }
     }
@@ -141,13 +140,6 @@ class CartaoController extends Controller
      */
     public function fatura(Request $request)
     {
-        /*
-        $ID_Cartao = $request->session()->get('ID_Cartao') ?? $request->ID_Cartao;
-        //$Ano_Mes = $request->Ano_Mes;
-        $Ano_Mes = $request->Ano_Mes
-            ?? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-        */
-
         // 1) Prioriza o ID_Cartao que veio na URL (GET). Se não vier, usa o que estiver na sessão.
         $ID_Cartao = $request->filled('ID_Cartao')
             ? (int) $request->ID_Cartao
@@ -167,13 +159,6 @@ class CartaoController extends Controller
 
         $fechada = ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1);
 
-        /*
-        if ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1) {
-            $data = Carbon::createFromFormat('Y-m', $Ano_Mes)->addMonth();
-            $Ano_Mes = $data->format('Y-m');
-        }
-        */
-
         $fatura = new Fatura();
         $contas = (new \App\Models\Conta)->showAll();
         $cartoes = Cartao::all();
@@ -185,30 +170,26 @@ class CartaoController extends Controller
         Log::info('AnoMes: ' . $Ano_Mes);
         Log::info('ID_Cartao: ' . $ID_Cartao);
 
-        return view('faturaListar', [
+        return view('fatura_despesaListar', [
             'faturas' => $fatura->show($Ano_Mes, $ID_Cartao),
-            //'totalFatura' => $fatura->totalFatura($Ano_Mes, $ID_Cartao),
             'totalFatura' => 0,
             'contas' => $contas,
             'cartao' => $cartao,
-            //'cartoes' => $cartoes,
-            'Ano_Mes' => $Ano_Mes, // Adiciona o Ano_Mes atualizado à view
-            'fechada' => $fechada, // Adiciona a variável 'fechada' à view
-            'ID_Cartao' => $ID_Cartao, // <-- IMPORTANTÍSSIMO: evita Undefined variable no Blade
+            'Ano_Mes' => $Ano_Mes,
+            'fechada' => $fechada,
+            'ID_Cartao' => $ID_Cartao,
         ]);
     }
 
     /**
      * Fecha a fatura de um cartão e move as despesas para uma conta.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function fatura_fechar(Request $request)
     {
         $Ano_Mes = is_null($request->Ano_Mes)
             ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
             : $request->Ano_Mes;
+
         $ID_Cartao = $request->ID_Cartao;
         $Data = implode("-", array_reverse(explode("/", $request->Data_Fechamento)));
         $Conta = $request->Conta;
@@ -220,15 +201,13 @@ class CartaoController extends Controller
 
     /**
      * Reabre uma fatura fechada.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function fatura_reabrir(Request $request)
     {
         $Ano_Mes = is_null($request->Ano_Mes)
             ? Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM')
             : $request->Ano_Mes;
+
         $ID_Cartao = $request->ID_Cartao;
 
         (new Fatura)->fatura_reabrir($Ano_Mes, $ID_Cartao);
@@ -248,8 +227,6 @@ class CartaoController extends Controller
 
     /**
      * Exibe o formulário para criar um novo cartão.
-     *
-     * @return \Illuminate\View\View
      */
     public function new()
     {
@@ -262,8 +239,6 @@ class CartaoController extends Controller
 
     /**
      * Exibe o formulário para criar uma nova despesa de fatura.
-     *
-     * @return \Illuminate\View\View
      */
     public function new_despesa()
     {
@@ -290,25 +265,62 @@ class CartaoController extends Controller
     }
 
     /**
-     * Exibe a listagem de todos os cartões.
+     * ✅ Exibe a listagem de todos os cartões (AGORA com Ativos/Inativos via Arquivado).
      *
-     * @return \Illuminate\View\View
+     * URL:
+     * - /cartoes?status=ativos   => Arquivado = 0
+     * - /cartoes?status=inativos => Arquivado = 1
+     *
+     * Observação:
+     * - Mantive o uso do método Cartao->show($Ano_Mes) para não quebrar sua query atual
+     * - Depois filtramos na Collection usando o campo Arquivado.
      */
-    public function showAll()
+    public function showAll(Request $request)
     {
+        // Mês atual (o seu código usa isoFormat; deixei o mesmo padrão)
         $Ano_Mes = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
-        $cartoes = new Cartao();
+
+        // status vindo da URL (default: ativos)
+        $status = (string) $request->query('status', 'ativos');
+
+        // Define o valor esperado no banco
+        // ativos   => Arquivado = 0
+        // inativos => Arquivado = 1
+        $arquivado = ($status === 'inativos') ? 1 : 0;
+
+        // Limpa seleção anterior de cartão (se for a lógica que você quer manter)
         Session::forget('ID_Cartao');
+
+        // Usa sua query atual (provavelmente já calcula Ano_Mes, Valor, N_Despesas...)
+        $cartoesModel = new Cartao();
+        $cartoes = collect($cartoesModel->show($Ano_Mes));
+
+
+        /**
+         * Filtra pelos arquivados/ativos.
+         * IMPORTANTE:
+         * - isso depende do campo "Arquivado" existir no resultado do show().
+         * - se vier null, consideramos como 0 (ativo) para não “sumir” cartão antigo.
+         */
+        $cartoes = $cartoes->filter(function ($c) use ($arquivado) {
+            // Se Arquivado não existir, deixa passar só nos "ativos" por segurança
+            if (!isset($c->Arquivado)) {
+                return $arquivado === 0;
+            }
+
+            return (int)$c->Arquivado === $arquivado;
+        })->values();
+
+
         return view('cartaoListar', [
-            'cartoes' => $cartoes->show($Ano_Mes)
+            'cartoes' => $cartoes,
+            'status'  => $status, // para marcar o botão ativo no blade
         ]);
+
     }
 
     /**
      * Armazena um novo cartão no banco de dados.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store(Request $request)
     {
@@ -320,6 +332,10 @@ class CartaoController extends Controller
         $cartao->ID_Conta = $request->Conta;
         $cartao->Cor = $request->corCartao;
 
+        // Se o campo Arquivado existir, garantimos que novo cartão nasce ativo
+        // (se não existir, o Eloquent ignora)
+        $cartao->Arquivado = 0;
+
         $cartao->save();
 
         return redirect()->route('cartoes.showAll');
@@ -327,9 +343,6 @@ class CartaoController extends Controller
 
     /**
      * Salva uma nova despesa parcelada ou não para uma fatura.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function store_despesa(Request $request)
     {
@@ -399,19 +412,14 @@ class CartaoController extends Controller
             $fatura->save();
         }
 
-        //return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
         return redirect()->route('cartoes.fatura', [
             'ID_Cartao' => $request->ID_Cartao,
-            'Ano_Mes'   => $Ano_Mes, // ex: 2025-12
+            'Ano_Mes'   => $Ano_Mes,
         ]);
     }
 
     /**
      * Atualiza o recurso de cartão especificado no armazenamento.
-     *
-     * @param Request $request
-     * @param Cartao $cartao
-     * @return void
      */
     public function update(Request $request, Cartao $cartao)
     {
@@ -420,9 +428,6 @@ class CartaoController extends Controller
 
     /**
      * Atualiza uma despesa de fatura.
-     *
-     * @param Request $request
-     * @return \Illuminate\Http\RedirectResponse
      */
     public function update_despesa(Request $request)
     {
@@ -454,12 +459,9 @@ class CartaoController extends Controller
         $despesa->save();
         $fatura->save();
 
-        //return redirect()->route('cartoes.fatura', ['ID_Cartao' => $request->ID_Cartao]);
-        // Se o usuário alterou a fatura (Ano/Mês), redireciona para o novo Ano_Mes
         return redirect()->route('cartoes.fatura', [
             'ID_Cartao' => $request->ID_Cartao,
-            'Ano_Mes'   => $novoAnoMes, // ou $fatura->Ano_Mes após salvar
+            'Ano_Mes'   => $novoAnoMes,
         ]);
-
     }
 }
