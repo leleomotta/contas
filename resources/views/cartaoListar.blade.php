@@ -3,19 +3,37 @@
 @section('title', 'Cartão - Listar')
 
 @section('content_header')
-    <div class="d-flex justify-content-between align-items-center">
-        <h1>Cartões</h1>
+    @php
+        /**
+         * Status atual vindo da querystring:
+         * - /cartoes?status=ativos
+         * - /cartoes?status=inativos
+         *
+         * Se não vier nada, default = ativos
+         */
+        $statusAtual = request()->query('status', 'ativos');
+    @endphp
 
-        {{-- Botões Ativos / Inativos (igual tela de contas) --}}
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h1 class="mb-0">Cartões</h1>
+
         <div class="btn-group">
-            <a href="{{ url('/cartoes?status=ativos') }}"
-               class="btn btn-sm {{ $status === 'ativos' ? 'btn-primary' : 'btn-outline-primary' }}">
+            {{-- Botão ATIVOS: fica "primary" quando selecionado, senão "outline" --}}
+            <a href="{{ route('cartoes.showAll', ['status' => 'ativos']) }}"
+               class="btn {{ $statusAtual === 'ativos' ? 'btn-primary' : 'btn-outline-primary' }}">
                 Ativos
             </a>
 
-            <a href="{{ url('/cartoes?status=inativos') }}"
-               class="btn btn-sm {{ $status === 'inativos' ? 'btn-primary' : 'btn-outline-primary' }}">
+            {{-- Botão INATIVOS: fica "primary" quando selecionado, senão "outline" --}}
+            <a href="{{ route('cartoes.showAll', ['status' => 'inativos']) }}"
+               class="btn {{ $statusAtual === 'inativos' ? 'btn-primary' : 'btn-outline-primary' }}">
                 Inativos
+            </a>
+
+            {{-- Botão adicionar (separado visualmente do toggle) --}}
+            <a href="{{ route('cartoes.new') }}"
+               class="btn btn-success ml-2">
+                <i class="fas fa-plus"></i> Adicionar Cartão
             </a>
         </div>
     </div>
@@ -71,7 +89,6 @@
                                 {{-- Botão Fatura --}}
                                 <div class="col-sm-4">
                                     <div class="description-block">
-
                                         <form id="fatura{{ $cartao->ID_Cartao }}"
                                               action="{{ route('cartoes.fatura') }}"
                                               method="GET">
@@ -89,11 +106,11 @@
                                             </a>
 
                                         </form>
-
                                     </div>
                                 </div>
 
                             </div>
+                            <!-- /.row -->
                         </div>
                     </div>
                     <!-- /.widget-user -->

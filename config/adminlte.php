@@ -321,15 +321,6 @@ return [
                     'label_color' => 'success',
                 ],
                 [
-                    'text' => 'Adicionar',
-                    'url' => '/contas/novo',
-                    //'url' => {{ route('') }},
-                    //'url' => route('contas.new') ,
-                    'icon' => 'fa fa-plus nav-icon',
-                    //'label' => 3,
-                    'label_color' => 'success',
-                ],
-                [
                     'text' => 'Tranferências',
                     'url' => '/transferencias',
                     //'url' => {{ route('') }},
@@ -440,17 +431,15 @@ return [
                     'url'  => '/cartoes',
                     'icon' => 'fas fa-list',
                     'label_color' => 'success',
+
+                    // Ativo em /cartoes (e subpáginas), e também em /fatura (somente a tela da fatura)
+                    // IMPORTANTE: não usar 'fatura*' aqui, senão ativa também em /fatura/despesa/novo
+                    'active' => ['cartoes', 'cartoes/*', 'fatura'],
                 ],
                 [
                     'text'  => 'Faturas',
                     'route' => 'faturas.listar',
                     'icon'  => 'far fa-calendar-alt',
-                ],
-                [
-                    'text' => 'Adicionar Cartão',
-                    'url'  => '/cartoes/novo',
-                    'icon' => 'fas fa-plus',
-                    'label_color' => 'success',
                 ],
                 [
                     'text' => 'Adicionar Despesa',
