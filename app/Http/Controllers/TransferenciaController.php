@@ -89,27 +89,22 @@ class TransferenciaController extends Controller
      */
     public function showAll()
     {
-        // Carrega todas as transferências com os relacionamentos de contas de origem e destino
-        //$transferencias = Transferencia::with(['contaOrigem', 'contaDestino'])->get();
-        // Carrega todas as transferências já trazendo as contas relacionadas
-        $transferencias = Transferencia::with(['contaOrigem', 'contaDestino'])
-            // Ordena pela coluna Data (campo DATE no banco)
-            // Use 'DESC' para mais recentes primeiro (recomendado para listagem)
+        $transferencias = Transferencia::query()
+            // ✅ Garante que existe conta de origem relacionada
+            ->whereHas('contaOrigem')
+            // ✅ Garante que existe conta de destino relacionada
+            ->whereHas('contaDestino')
+            // ✅ Carrega as relações (evita N+1)
+            ->with(['contaOrigem', 'contaDestino'])
             ->orderBy('Data', 'DESC')
-            // Desempate: se houver mais de uma transferência na mesma data,
-            // garante uma ordem consistente pela chave primária
             ->orderBy('ID_Transferencia', 'DESC')
             ->get();
 
-        // Extrai as contas únicas para as abas de origem e destino
-        $contasOrigem = $transferencias->pluck('contaOrigem')->unique('ID_Conta');
-        $contasDestino = $transferencias->pluck('contaDestino')->unique('ID_Conta');
+        // ✅ Monta as abas sem nulos e com índices 0..N
+        $contasOrigem = $transferencias->pluck('contaOrigem')->filter()->unique('ID_Conta')->values();
+        $contasDestino = $transferencias->pluck('contaDestino')->filter()->unique('ID_Conta')->values();
 
-        return view('transferenciaListar', [
-            'transferencias' => $transferencias,
-            'contasOrigem' => $contasOrigem,
-            'contasDestino' => $contasDestino
-        ]);
+        return view('transferenciaListar', compact('transferencias', 'contasOrigem', 'contasDestino'));
     }
 
     /**
