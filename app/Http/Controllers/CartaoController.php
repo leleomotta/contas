@@ -311,7 +311,6 @@ class CartaoController extends Controller
             return (int)$c->Arquivado === $arquivado;
         })->values();
 
-
         return view('cartaoListar', [
             'cartoes' => $cartoes,
             'status'  => $status, // para marcar o botão ativo no blade
@@ -346,6 +345,21 @@ class CartaoController extends Controller
      */
     public function store_despesa(Request $request)
     {
+        // ADICIONE ESTA VALIDAÇÃO:
+        $request->validate([
+            'Data'      => 'required',
+            'Descricao' => 'required',
+            'Valor'     => 'required',
+            'Categoria' => 'required',
+            'ID_Cartao' => 'required',
+        ], [
+            // Mensagens personalizadas
+            'Data.required'      => 'Por favor, informe a data da despesa.',
+            'Descricao.required' => 'A descrição da despesa é obrigatória.',
+            'Valor.required'     => 'O valor da despesa não pode ficar vazio.',
+            'Categoria.required' => 'Selecione uma categoria para organizar seus gastos.',
+            'ID_Cartao.required' => 'É necessário selecionar um cartão para esta despesa.',
+        ]);
         $Ano = $request->Ano;
         $Mes = str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
         $Ano_Mes = $Ano . '-' . $Mes;

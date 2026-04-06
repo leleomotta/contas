@@ -106,18 +106,17 @@
                         <div class="input-group-prepend">
                             <span class="input-group-text"><i class="fa fa-list-alt"></i></span>
                         </div>
-
-                        <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true">
-                            <option selected data-default>- Selecione uma categoria -</option>
+                        <select name="Categoria" id="Categoria" class="form-control selectpicker" data-live-search="true" required>
+                            <option value="" selected>- Selecione uma categoria -</option>
                             @foreach($categorias as $categoria)
                                 <option value="{{$categoria->ID_Categoria}}"
-                                        data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};"
-                                        {{ old('Categoria') == $categoria->ID_Categoria ? 'selected' : '' }}>
-                                <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'
-                                >
+                                        {{ old('Categoria') == $categoria->ID_Categoria ? 'selected' : '' }}
+                                        data-content='<span class="icone-circulo" style="background-color: {{ $categoria->Cor  }};">
+                                        <i class="{{ $categoria->Link }}"></i></span> {{ $categoria->Nome }}'>
                                 </option>
                             @endforeach
                         </select>
+
                     </div>
                 </div>
                 <div class="form-group mb-2">

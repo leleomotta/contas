@@ -45,6 +45,7 @@ class Cartao extends Model
              */
             ->groupBy('cartao.ID_Cartao', 'cartao.Arquivado')
             ->orderBy('cartao.Nome', 'ASC')
+            //->toSql(); dd($cartoes);
             ->get();
 
         foreach ($cartoes as $cartao) {
@@ -77,6 +78,7 @@ class Cartao extends Model
                     ['fatura.Ano_Mes', '=', $Ano_Mes_local],
                     ['fatura.ID_Cartao', '=', $cartao->ID_Cartao],
                 ])
+                //->toSql(); dd($soma);
                 ->first();
 
             $cartao->Valor = $soma->Valor ?? 0;
