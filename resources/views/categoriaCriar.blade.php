@@ -56,7 +56,23 @@
                 </select>
             </div>
 
-            <input type="hidden" id="ID_Categoria_Pai" name="ID_Categoria_Pai" value="{{ $categoriaPai }}">
+            <!-- Substitua o input hidden por este bloco -->
+            <div class="form-group">
+                <label>Categoria Pai (Opcional)</label>
+                <div class="input-group">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"> <i class="fa fa-folder"></i> </span>
+                    </div>
+                    <select name="ID_Categoria_Pai" id="ID_Categoria_Pai" class="form-control selectpicker" data-live-search="true" disabled>
+                        <option value="" data-tipo="todos">Nenhuma (Esta será uma Categoria Principal)</option>
+                        @foreach($categorias as $cat)
+                            <option value="{{ $cat->ID_Categoria }}" data-tipo="{{ $cat->Tipo }}" {{ $categoriaPai == $cat->ID_Categoria ? 'selected' : '' }}>
+                                {{ $cat->Nome }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+            </div>
             <input type="hidden" id="TipoCat2" name="TipoCat2" value="">
         </div>
         <div class="card-footer">
@@ -159,33 +175,33 @@
 
             $('#cadastro').validate({
                 rules: {
-                    Nome:{
-                        required: true
-                        //date: true
-                    },
-                    corCategoria:{
+                    Nome: {
                         required: true
                     },
-                    Tipo:{
+                    corCategoria: {
+                        required: true
+                    },
+                    // CORREÇÃO: O nome correto do campo no form é TipoCat
+                    TipoCat: {
                         valueNotEquals: "- Selecione um tipo de categoria -"
                     }
-
                 },
                 messages: {
                     Nome: {
                         required: "Por favor, entre com um nome para a Categoria."
                     },
-                    corCategoria:{
+                    corCategoria: {
                         required: "Por favor, entre com uma cor para a Categoria."
                     },
-                    Tipo:{
-                        valueNotEquals: "Por favor, selecione um tipo de Categoria"
+                    // CORREÇÃO: Atualizado para TipoCat
+                    TipoCat: {
+                        valueNotEquals: "Por favor, selecione um tipo de Categoria."
                     }
                 },
                 errorElement: 'span',
                 errorPlacement: function (error, element) {
                     error.addClass('invalid-feedback');
-                    element.closest('.form-group').append(error);
+                    element.closest('.form-group, .input-group').append(error);
                 },
                 highlight: function (element, errorClass, validClass) {
                     $(element).addClass('is-invalid');
@@ -194,6 +210,49 @@
                     $(element).removeClass('is-invalid');
                 }
             });
+
+            // ==========================================
+            // LÓGICA DE FILTRO DA CATEGORIA PAI
+            // ==========================================
+            function aplicarFiltroCategoriaPai() {
+                var tipoSelecionado = $('#TipoCat').val();
+
+                // Se o campo principal estiver desabilitado (preenchido via backend), usamos o valor do hidden
+                if ($('#TipoCat').prop('disabled')) {
+                    tipoSelecionado = $('#TipoCat2').val();
+                }
+
+                // LÓGICA DE HABILITAÇÃO:
+                // Só habilita se o tipo for 'D' (Despesa) ou 'R' (Receita)
+                if (tipoSelecionado === 'D' || tipoSelecionado === 'R') {
+                    $('#ID_Categoria_Pai').prop('disabled', false);
+                } else {
+                    $('#ID_Categoria_Pai').prop('disabled', true).val(''); // Limpa a seleção se desabilitar
+                }
+
+                // LÓGICA DE FILTRO:
+                $('#ID_Categoria_Pai option').each(function() {
+                    var tipoOpcao = $(this).data('tipo');
+                    if (tipoOpcao === 'todos' || tipoOpcao === tipoSelecionado) {
+                        $(this).prop('disabled', false).show();
+                    } else {
+                        $(this).prop('disabled', true).hide();
+                    }
+                });
+
+                // Atualiza o componente visual do bootstrap-select
+                $('#ID_Categoria_Pai').selectpicker('refresh');
+            }
+
+            // Quando o usuário mudar o Tipo (Receita/Despesa), dispara o filtro
+            $('#TipoCat').on('change', function() {
+                $('#ID_Categoria_Pai').val(''); // Limpa a seleção anterior para evitar conflitos
+                aplicarFiltroCategoriaPai();
+            });
+
+            // Roda a função assim que a página carrega
+            // (útil para quando a página já vem com o Tipo preenchido via botão de criar subcategoria)
+            aplicarFiltroCategoriaPai();
         });
     </script>
 

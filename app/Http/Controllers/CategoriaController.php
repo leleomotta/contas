@@ -73,11 +73,14 @@ class CategoriaController extends Controller
     public function new(Request $request)
     {
         $icones = (new \App\Models\Icone)->showAll();
+        // Busca todas as categorias para o select de Categoria Pai
+        $categorias = Categoria::orderBy('Nome', 'ASC')->get();
 
         return view('categoriaCriar', [
             'categoriaPai' => $request->ID_Categoria_Pai,
             'TipoCategoria' => $request->Tipo,
-            'icones' => $icones
+            'icones' => $icones,
+            'categorias' => $categorias // Nova variável para a View
         ]);
     }
 
@@ -126,7 +129,7 @@ class CategoriaController extends Controller
         else{
             $categoria->Tipo = $request->TipoCat;
         }
-        $categoria->Icone = $request->Icone;
+        $categoria->ID_Icone = $request->Icone;
         $categoria->ID_Categoria_Pai = $request->ID_Categoria_Pai;
 
         $categoria->save();
