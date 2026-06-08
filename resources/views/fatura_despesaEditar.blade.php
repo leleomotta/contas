@@ -9,7 +9,7 @@
     <form id="cadastro" role="form" action="{{ route('cartoes.update_despesa',['ID_Despesa' =>  $despesa['ID_Despesa']]) }}" method="post" enctype="multipart/form-data">
         @csrf
         @method('PUT')
-        <input type="hidden" name="ID_Cartao" value="{{Session::get('ID_Cartao')}}">
+        <input type="hidden" name="ID_Cartao" id="ID_Cartao" value="{{ Session::get('ID_Cartao') }}">
         <div class="card card-warning">
             <div class="card-header">
                 <h3 class="card-title">Editar despesa de cartão</h3>
@@ -57,7 +57,11 @@
                         </div>
                         <input type="text" name="Descricao" class="form-control" id="Descricao"
                                placeholder="Digite uma descrição para a despesa"
-                               value="{{ $despesa['Descricao'] }}">
+                               value="{{ $despesa['Descricao'] }}"
+                               list="cartao_despesa_descricoes"
+                               autocomplete="off">
+
+                        <datalist id="cartao_despesa_descricoes"></datalist>
                     </div>
 
                     {{-- VALOR --}}
@@ -312,6 +316,195 @@
 
             // Garante que ao carregar a página já fica consistente
             normalizarAnoMes();
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*
+             * Endpoint já usado na tela de criação de despesa de cartão.
+             */
+            const urlDescricoesCartao = "{{ route('cartoes.despesaDescricoes') }}";
+
+            let debounceTimer = null;
+
+            /*
+             * Guarda as sugestões retornadas pelo backend.
+             *
+             * Cada item vem assim:
+             *
+             * {
+             *   descricao: "Netflix",
+             *   id_categoria: 5,
+             *   categoria: "Assinaturas -> Streaming",
+             *   sugestao: "Netflix (Assinaturas -> Streaming)",
+             *   total: 3
+             * }
+             */
+            let sugestoesDespesaCartao = [];
+
+            /*
+             * Na tela de edição, o cartão NÃO é selecionável.
+             * Ele vem em um campo hidden.
+             *
+             * Este método apenas lê o cartão atual.
+             * Não altera nada no formulário.
+             */
+            function getIdCartaoAtual() {
+                const val = $('#ID_Cartao').val();
+                return val ? val : '';
+            }
+
+            /*
+             * Preenche o datalist com o texto exibido ao usuário.
+             */
+            function preencherDatalist(lista) {
+                const datalist = document.getElementById('cartao_despesa_descricoes');
+
+                if (!datalist) {
+                    return;
+                }
+
+                datalist.innerHTML = '';
+
+                sugestoesDespesaCartao = lista || [];
+
+                sugestoesDespesaCartao.forEach((item) => {
+                    const opt = document.createElement('option');
+
+                    /*
+                     * Texto que aparecerá no autocomplete:
+                     *
+                     * Netflix (Assinaturas -> Streaming)
+                     */
+                    opt.value = item.sugestao;
+
+                    /*
+                     * Dados separados para uso interno.
+                     */
+                    opt.setAttribute('data-descricao', item.descricao);
+                    opt.setAttribute('data-id-categoria', item.id_categoria || '');
+                    opt.setAttribute('data-categoria', item.categoria || '');
+
+                    datalist.appendChild(opt);
+                });
+            }
+
+            /*
+             * Busca descrições no backend.
+             *
+             * Enviamos o ID_Cartao apenas para filtrar as sugestões
+             * pelo cartão atual da tela.
+             */
+            function buscarDescricoes(q) {
+                $.getJSON(urlDescricoesCartao, {
+                    q: q,
+                    limit: 15,
+                    ID_Cartao: getIdCartaoAtual()
+                })
+                    .done(function (data) {
+                        preencherDatalist(data);
+                    })
+                    .fail(function () {
+                        preencherDatalist([]);
+                    });
+            }
+
+            /*
+             * Aplica a sugestão escolhida.
+             *
+             * Exemplo exibido:
+             *
+             * Netflix (Assinaturas -> Streaming)
+             *
+             * Depois da seleção:
+             *
+             * Descrição: Netflix
+             * Categoria: Assinaturas -> Streaming
+             */
+            function aplicarSugestaoSelecionada() {
+                const valorDigitado = ($('#Descricao').val() || '').trim();
+
+                const item = sugestoesDespesaCartao.find((s) => s.sugestao === valorDigitado);
+
+                if (!item) {
+                    return;
+                }
+
+                /*
+                 * Limpa a descrição, removendo a categoria entre parênteses.
+                 */
+                $('#Descricao').val(item.descricao);
+
+                /*
+                 * Seleciona a categoria correspondente.
+                 */
+                if (item.id_categoria) {
+                    if ($.fn.selectpicker) {
+                        $('#Categoria').selectpicker('val', String(item.id_categoria));
+                        $('#Categoria').selectpicker('refresh');
+                    } else {
+                        $('#Categoria').val(item.id_categoria);
+                    }
+
+                    $('#Categoria').trigger('change');
+                }
+            }
+
+            /*
+             * Ao digitar no campo descrição.
+             */
+            $('#Descricao').on('input', function () {
+                const q = ($(this).val() || '').trim();
+
+                /*
+                 * Se o usuário acabou de selecionar exatamente uma sugestão,
+                 * aplicamos imediatamente.
+                 */
+                aplicarSugestaoSelecionada();
+
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(function () {
+                    const textoAtual = ($('#Descricao').val() || '').trim();
+
+                    if (textoAtual.length < 2) {
+                        preencherDatalist([]);
+                        return;
+                    }
+
+                    buscarDescricoes(textoAtual);
+                }, 250);
+            });
+
+            /*
+             * Alguns navegadores aplicam a opção do datalist no change ou blur.
+             */
+            $('#Descricao').on('change blur', function () {
+                aplicarSugestaoSelecionada();
+            });
+
+            /*
+             * Ao focar no campo vazio, carrega as descrições mais usadas
+             * para o cartão atual.
+             */
+            $('#Descricao').on('focus', function () {
+                const q = ($(this).val() || '').trim();
+                const datalist = document.getElementById('cartao_despesa_descricoes');
+
+                if (q.length === 0 && datalist && datalist.children.length === 0) {
+                    buscarDescricoes('');
+                }
+            });
+
+            /*
+             * Garantia final antes de salvar.
+             */
+            $('#cadastro').on('submit', function () {
+                aplicarSugestaoSelecionada();
+            });
+
         });
     </script>
 

@@ -38,7 +38,11 @@
                         </div>
                         <input type="text" name="Descricao" class="form-control" id="Descricao"
                                placeholder="Digite uma descrição para a despesa"
-                               value="{{ $despesa['Descricao'] }}">
+                               value="{{ $despesa['Descricao'] }}"
+                               list="despesa_descricoes"
+                               autocomplete="off">
+
+                        <datalist id="despesa_descricoes"></datalist>
                     </div>
 
                     <label >Valor</label>
@@ -241,6 +245,184 @@
                     $(element).removeClass('is-invalid');
                 }
             });
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*
+             * Reaproveitamos o mesmo endpoint usado na tela de criação de despesa.
+             * Ele já retorna descrição + categoria.
+             */
+            const urlDescricoes = "{{ route('despesas.descricoes') }}";
+
+            /*
+             * Debounce para evitar muitas chamadas ao servidor enquanto o usuário digita.
+             */
+            let debounceTimer = null;
+
+            /*
+             * Aqui guardamos as sugestões retornadas pelo backend.
+             *
+             * Cada item vem assim:
+             *
+             * {
+             *   descricao: "Mercado BH",
+             *   id_categoria: 5,
+             *   categoria: "Alimentação -> Supermercado",
+             *   sugestao: "Mercado BH (Alimentação -> Supermercado)",
+             *   total: 3
+             * }
+             */
+            let sugestoesDespesa = [];
+
+            /*
+             * Preenche o datalist com as sugestões.
+             *
+             * O usuário verá:
+             *
+             * Mercado BH (Alimentação -> Supermercado)
+             *
+             * Mas o sistema mantém separados:
+             * - descrição limpa;
+             * - ID da categoria;
+             * - nome da categoria.
+             */
+            function preencherDatalist(lista) {
+                const datalist = document.getElementById('despesa_descricoes');
+                datalist.innerHTML = '';
+
+                sugestoesDespesa = lista || [];
+
+                sugestoesDespesa.forEach((item) => {
+                    const opt = document.createElement('option');
+
+                    /*
+                     * Texto exibido no autocomplete.
+                     */
+                    opt.value = item.sugestao;
+
+                    /*
+                     * Dados extras guardados na option.
+                     */
+                    opt.setAttribute('data-descricao', item.descricao);
+                    opt.setAttribute('data-id-categoria', item.id_categoria || '');
+                    opt.setAttribute('data-categoria', item.categoria || '');
+
+                    datalist.appendChild(opt);
+                });
+            }
+
+            /*
+             * Busca as descrições no backend.
+             */
+            function buscarDescricoes(q) {
+                $.getJSON(urlDescricoes, {
+                    q: q,
+                    limit: 15
+                })
+                    .done(function (data) {
+                        preencherDatalist(data);
+                    })
+                    .fail(function () {
+                        preencherDatalist([]);
+                    });
+            }
+
+            /*
+             * Quando o usuário escolhe uma sugestão:
+             *
+             * Exibido:
+             * Mercado BH (Alimentação -> Supermercado)
+             *
+             * Após selecionar:
+             * Descrição = Mercado BH
+             * Categoria = Alimentação -> Supermercado
+             */
+            function aplicarSugestaoSelecionada() {
+                const valorDigitado = ($('#Descricao').val() || '').trim();
+
+                const item = sugestoesDespesa.find((s) => s.sugestao === valorDigitado);
+
+                if (!item) {
+                    return;
+                }
+
+                /*
+                 * Remove a categoria do campo descrição.
+                 */
+                $('#Descricao').val(item.descricao);
+
+                /*
+                 * Seleciona automaticamente a categoria correspondente.
+                 */
+                if (item.id_categoria) {
+                    if ($.fn.selectpicker) {
+                        $('#Categoria').selectpicker('val', String(item.id_categoria));
+                        $('#Categoria').selectpicker('refresh');
+                    } else {
+                        $('#Categoria').val(item.id_categoria);
+                    }
+
+                    $('#Categoria').trigger('change');
+                }
+            }
+
+            /*
+             * Ao digitar na descrição.
+             */
+            $('#Descricao').on('input', function () {
+                const q = ($(this).val() || '').trim();
+
+                /*
+                 * Se o usuário acabou de selecionar exatamente uma sugestão do datalist,
+                 * aplicamos imediatamente.
+                 */
+                aplicarSugestaoSelecionada();
+
+                clearTimeout(debounceTimer);
+
+                debounceTimer = setTimeout(function () {
+                    const textoAtual = ($('#Descricao').val() || '').trim();
+
+                    if (textoAtual.length < 2) {
+                        preencherDatalist([]);
+                        return;
+                    }
+
+                    buscarDescricoes(textoAtual);
+                }, 250);
+            });
+
+            /*
+             * Alguns navegadores só aplicam o datalist no change ou no blur.
+             */
+            $('#Descricao').on('change blur', function () {
+                aplicarSugestaoSelecionada();
+            });
+
+            /*
+             * Ao focar no campo vazio, carrega as descrições mais usadas.
+             */
+            $('#Descricao').on('focus', function () {
+                const q = ($(this).val() || '').trim();
+                const datalist = document.getElementById('despesa_descricoes');
+
+                if (q.length === 0 && datalist.children.length === 0) {
+                    buscarDescricoes('');
+                }
+            });
+
+            /*
+             * Garantia final:
+             * se o usuário enviar logo após selecionar uma sugestão,
+             * limpamos a descrição antes do submit.
+             */
+            $('#cadastro').on('submit', function () {
+                aplicarSugestaoSelecionada();
+            });
+
         });
     </script>
 @stop
