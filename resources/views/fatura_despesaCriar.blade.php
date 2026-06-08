@@ -308,46 +308,89 @@
             normalizarAnoMes();
         });
     </script>
+
     <script>
         $(document).ready(function () {
 
-            /**
-             * Endpoint que criamos no CartaoController
-             * (rota nomeada => sem hardcode de URL).
+            /*
+             * Endpoint do autocomplete de despesas de cartão.
              */
             const urlDescricoesCartao = "{{ route('cartoes.despesaDescricoes') }}";
 
-            // Debounce: reduz número de requisições enquanto o usuário digita
+            /*
+             * Debounce para evitar muitas requisições enquanto o usuário digita.
+             */
             let debounceTimer = null;
 
-            /**
-             * Pega o ID do cartão selecionado no <select>.
-             * IMPORTANTE:
-             * - Garanta que o <select> do cartão tenha id="ID_Cartao"
-             *   (no seu form ele já usa name="ID_Cartao"; manter id igual facilita).
+            /*
+             * Aqui guardamos as sugestões retornadas pelo backend.
+             *
+             * Agora o backend retorna objetos assim:
+             *
+             * {
+             *   descricao: "Uber",
+             *   id_categoria: 5,
+             *   categoria: "Transporte -> Aplicativo",
+             *   sugestao: "Uber (Transporte -> Aplicativo)",
+             *   total: 3
+             * }
+             */
+            let sugestoesDespesaCartao = [];
+
+            /*
+             * Pega o ID do cartão selecionado.
+             *
+             * No seu formulário o select do cartão já está assim:
+             *
+             * <select name="ID_Cartao" id="ID_Cartao" ...>
              */
             function getIdCartaoSelecionado() {
                 const val = $('#ID_Cartao').val();
                 return val ? val : '';
             }
 
-            /**
-             * Preenche o datalist usando DOM API (mais seguro do que montar HTML na mão).
+            /*
+             * Preenche o datalist com as sugestões.
+             *
+             * O usuário verá:
+             *
+             * Uber (Transporte -> Aplicativo)
+             *
+             * Mas o sistema ainda guarda separadamente:
+             * - descrição limpa;
+             * - ID da categoria;
+             * - nome da categoria.
              */
             function preencherDatalist(lista) {
                 const datalist = document.getElementById('cartao_despesa_descricoes');
                 datalist.innerHTML = '';
 
-                (lista || []).forEach((texto) => {
+                sugestoesDespesaCartao = lista || [];
+
+                sugestoesDespesaCartao.forEach((item) => {
                     const opt = document.createElement('option');
-                    opt.value = texto;
+
+                    /*
+                     * Este é o texto que aparece no autocomplete.
+                     */
+                    opt.value = item.sugestao;
+
+                    /*
+                     * Dados extras guardados no option.
+                     */
+                    opt.setAttribute('data-descricao', item.descricao);
+                    opt.setAttribute('data-id-categoria', item.id_categoria || '');
+                    opt.setAttribute('data-categoria', item.categoria || '');
+
                     datalist.appendChild(opt);
                 });
             }
 
-            /**
+            /*
              * Faz a busca no backend.
-             * Mandamos também o ID_Cartao para filtrar descrições daquele cartão (melhor UX).
+             *
+             * Enviamos também o ID_Cartao para que as sugestões sejam
+             * mais relevantes ao cartão selecionado.
              */
             function buscarDescricoes(q) {
                 $.getJSON(urlDescricoesCartao, {
@@ -363,51 +406,124 @@
                     });
             }
 
-            /**
-             * Ao digitar: a partir de 2 caracteres buscamos no backend.
+            /*
+             * Aplica uma sugestão selecionada pelo usuário.
+             *
+             * Exemplo exibido:
+             *
+             * Uber (Transporte -> Aplicativo)
+             *
+             * Depois de selecionar, o campo Descrição fica apenas:
+             *
+             * Uber
+             *
+             * E o campo Categoria é preenchido automaticamente.
+             */
+            function aplicarSugestaoSelecionada() {
+                const valorDigitado = ($('#Descricao').val() || '').trim();
+
+                const item = sugestoesDespesaCartao.find((s) => s.sugestao === valorDigitado);
+
+                if (!item) {
+                    return;
+                }
+
+                /*
+                 * Limpa o campo descrição, removendo a categoria entre parênteses.
+                 */
+                $('#Descricao').val(item.descricao);
+
+                /*
+                 * Seleciona a categoria correspondente.
+                 */
+                if (item.id_categoria) {
+
+                    /*
+                     * Como o campo Categoria usa bootstrap-select,
+                     * o ideal é usar selectpicker('val').
+                     */
+                    if ($.fn.selectpicker) {
+                        $('#Categoria').selectpicker('val', String(item.id_categoria));
+                        $('#Categoria').selectpicker('refresh');
+                    } else {
+                        $('#Categoria').val(item.id_categoria);
+                    }
+
+                    /*
+                     * Dispara change para manter compatibilidade com validações
+                     * e outras regras que você possa ter no formulário.
+                     */
+                    $('#Categoria').trigger('change');
+                }
+            }
+
+            /*
+             * Ao digitar no campo descrição.
              */
             $('#Descricao').on('input', function () {
                 const q = ($(this).val() || '').trim();
 
+                /*
+                 * Se o usuário escolheu exatamente uma opção do datalist,
+                 * aplicamos a sugestão imediatamente.
+                 */
+                aplicarSugestaoSelecionada();
+
                 clearTimeout(debounceTimer);
 
                 debounceTimer = setTimeout(function () {
-                    if (q.length < 2) {
+                    const textoAtual = ($('#Descricao').val() || '').trim();
+
+                    if (textoAtual.length < 2) {
                         preencherDatalist([]);
                         return;
                     }
-                    buscarDescricoes(q);
+
+                    buscarDescricoes(textoAtual);
                 }, 250);
             });
 
-            /**
-             * UX: ao focar no campo vazio, carrega as “mais comuns”.
+            /*
+             * Alguns navegadores aplicam a seleção do datalist no change ou no blur,
+             * por isso mantemos também esses eventos.
+             */
+            $('#Descricao').on('change blur', function () {
+                aplicarSugestaoSelecionada();
+            });
+
+            /*
+             * Quando o campo recebe foco vazio, carrega as descrições mais usadas.
              */
             $('#Descricao').on('focus', function () {
                 const q = ($(this).val() || '').trim();
                 const datalist = document.getElementById('cartao_despesa_descricoes');
 
-                // Se está vazio e ainda não carregou nada, traz “top 15”
                 if (q.length === 0 && datalist.children.length === 0) {
                     buscarDescricoes('');
                 }
             });
 
-            /**
-             * Se o usuário trocar o cartão, faz sentido resetar as sugestões,
-             * porque o conjunto “mais relevante” muda.
-             *
-             * Observação: como você usa bootstrap-select, alguns casos disparam
-             * o evento 'changed.bs.select' em vez de 'change'. Vamos cobrir os dois.
+            /*
+             * Se o usuário trocar o cartão, limpamos as sugestões,
+             * pois as sugestões mais relevantes podem mudar.
              */
             $('#ID_Cartao').on('change changed.bs.select', function () {
                 preencherDatalist([]);
 
-                // Se o usuário já está com algo digitado, podemos refazer a busca
                 const q = ($('#Descricao').val() || '').trim();
+
                 if (q.length >= 2) {
                     buscarDescricoes(q);
                 }
+            });
+
+            /*
+             * Garantia final:
+             * se o usuário submeter logo após escolher uma sugestão,
+             * limpamos a descrição e selecionamos a categoria antes do envio.
+             */
+            $('#cadastro').on('submit', function () {
+                aplicarSugestaoSelecionada();
             });
 
         });

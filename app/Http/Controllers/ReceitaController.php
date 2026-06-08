@@ -87,32 +87,77 @@ class ReceitaController extends Controller
      */
     public function descricoes(Request $request)
     {
-        // Termo digitado no input (ex.: "sal")
+        // Termo digitado pelo usuário no campo Descrição
         $q = trim((string) $request->query('q', ''));
 
-        // Limite “defensivo” (evita retorno exagerado)
+        // Limite defensivo para evitar retorno muito grande
         $limit = (int) $request->query('limit', 15);
         $limit = max($limit, 1);
         $limit = min($limit, 50);
 
+        /*
+         * Agora buscamos a descrição da receita junto com a categoria.
+         *
+         * A tabela receita possui ID_Categoria.
+         * A tabela categoria possui Nome e, quando houver, ID_Categoria_Pai.
+         *
+         * Assim conseguimos montar algo como:
+         *
+         * Salário (Renda)
+         * Reembolso (Trabalho -> Reembolsos)
+         */
         $descricoes = \App\Models\Receita::query()
-            // Seleciona a descrição “limpa” + total (para ordenar)
-            ->selectRaw('TRIM(Descricao) as Descricao, COUNT(*) as total')
-            ->whereNotNull('Descricao')
-            // Ignora strings vazias/espaços
-            ->whereRaw("TRIM(Descricao) <> ''")
-            // Se veio termo, filtra por LIKE
+            ->from('receita')
+            ->leftJoin('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->selectRaw("TRIM(receita.Descricao) as descricao")
+            ->selectRaw("receita.ID_Categoria as id_categoria")
+            ->selectRaw("
+            COALESCE(
+                CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome),
+                categoria.Nome,
+                'Sem categoria'
+            ) as categoria
+        ")
+            ->selectRaw('COUNT(*) as total')
+            ->whereNotNull('receita.Descricao')
+            ->whereRaw("TRIM(receita.Descricao) <> ''")
             ->when($q !== '', function ($query) use ($q) {
-                $query->where('Descricao', 'like', '%' . $q . '%');
+                $query->where('receita.Descricao', 'like', '%' . $q . '%');
             })
-            // Únicas (por TRIM)
-            ->groupBy(DB::raw('TRIM(Descricao)'))
-            // Mais usadas primeiro
+
+            /*
+             * Aqui está a mudança principal:
+             *
+             * Antes o sistema agrupava apenas pela descrição.
+             * Agora ele agrupa por descrição + categoria.
+             *
+             * Assim, se existir:
+             *
+             * Reembolso - Trabalho
+             * Reembolso - Outros
+             *
+             * as duas sugestões aparecerão separadamente.
+             */
+            ->groupByRaw("
+            TRIM(receita.Descricao),
+            receita.ID_Categoria,
+            categoria.Nome,
+            categoria_pai.Nome
+        ")
             ->orderByDesc('total')
-            // Limita
+            ->orderBy('descricao')
             ->limit($limit)
-            // Retorna array simples só com a coluna Descricao
-            ->pluck('Descricao');
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'descricao' => $item->descricao,
+                    'id_categoria' => $item->id_categoria,
+                    'categoria' => $item->categoria,
+                    'sugestao' => $item->descricao . ' (' . $item->categoria . ')',
+                    'total' => $item->total,
+                ];
+            });
 
         return response()->json($descricoes);
     }

@@ -31,40 +31,86 @@ class CartaoController extends Controller
      */
     public function despesaDescricoes(Request $request)
     {
-        // Termo digitado pelo usuário (ex.: "uber")
+        // Termo digitado pelo usuário no campo Descrição
         $q = trim((string) $request->query('q', ''));
 
-        // ID do cartão selecionado no formulário (opcional, mas melhora MUITO a relevância)
+        // ID do cartão selecionado no formulário
         $idCartao = $request->query('ID_Cartao');
 
-        // Limite defensivo para não retornar “um caminhão” de dados
+        // Limite defensivo para evitar retorno muito grande
         $limit = (int) $request->query('limit', 15);
         $limit = max($limit, 1);
         $limit = min($limit, 50);
 
-        // Query base: só despesas que estão ligadas na fatura (cartão)
+        /*
+         * Query base:
+         *
+         * - despesa: onde está a descrição e a categoria
+         * - fatura: garante que estamos olhando despesas de cartão
+         * - categoria: busca o nome da categoria da despesa
+         * - categoria_pai: busca a categoria pai, quando existir
+         */
         $query = DB::table('despesa')
             ->join('fatura', 'fatura.ID_Despesa', '=', 'despesa.ID_Despesa')
-            ->selectRaw('TRIM(despesa.Descricao) as Descricao, COUNT(*) as total')
+            ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->selectRaw("TRIM(despesa.Descricao) as descricao")
+            ->selectRaw("despesa.ID_Categoria as id_categoria")
+            ->selectRaw("
+            COALESCE(
+                CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome),
+                categoria.Nome,
+                'Sem categoria'
+            ) as categoria
+        ")
+            ->selectRaw("COUNT(*) as total")
             ->whereNotNull('despesa.Descricao')
             ->whereRaw("TRIM(despesa.Descricao) <> ''");
 
-        // Se o usuário selecionou um cartão, filtramos por ele
+        /*
+         * Se o usuário selecionou um cartão, filtramos as sugestões
+         * apenas por despesas já lançadas naquele cartão.
+         */
         if (!empty($idCartao)) {
             $query->where('fatura.ID_Cartao', (int) $idCartao);
         }
 
-        // Se veio termo, aplica LIKE
+        /*
+         * Se o usuário digitou alguma coisa, filtra pela descrição.
+         */
         if ($q !== '') {
             $query->where('despesa.Descricao', 'like', '%' . $q . '%');
         }
 
-        // Agrupa por descrição “limpa”, ordena por mais frequentes, limita e retorna só as descrições
+        /*
+         * Mudança principal:
+         *
+         * Antes agrupava apenas pela descrição.
+         * Agora agrupa por descrição + categoria.
+         *
+         * Assim, se existir a mesma descrição em categorias diferentes,
+         * todas aparecerão no autocomplete.
+         */
         $descricoes = $query
-            ->groupBy(DB::raw('TRIM(despesa.Descricao)'))
+            ->groupByRaw("
+            TRIM(despesa.Descricao),
+            despesa.ID_Categoria,
+            categoria.Nome,
+            categoria_pai.Nome
+        ")
             ->orderByDesc('total')
+            ->orderBy('descricao')
             ->limit($limit)
-            ->pluck('Descricao');
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'descricao' => $item->descricao,
+                    'id_categoria' => $item->id_categoria,
+                    'categoria' => $item->categoria,
+                    'sugestao' => $item->descricao . ' (' . $item->categoria . ')',
+                    'total' => $item->total,
+                ];
+            });
 
         return response()->json($descricoes);
     }

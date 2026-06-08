@@ -82,33 +82,65 @@ class DespesaController extends Controller
      */
     public function descricoes(Request $request)
     {
-        // Termo digitado pelo usuário (ex: "alug")
+        // Termo digitado pelo usuário no campo Descrição
         $q = trim((string) $request->query('q', ''));
 
-        // Limite defensivo (evita retorno absurdo)
+        // Limite defensivo para evitar retorno muito grande
         $limit = (int) $request->query('limit', 15);
         $limit = max($limit, 1);
         $limit = min($limit, 50);
 
         $descricoes = \App\Models\Despesa::query()
-            // Seleciona a descrição "limpa" + total de ocorrências (para ordenar)
-            ->selectRaw('TRIM(Descricao) as Descricao, COUNT(*) as total')
-            ->whereNotNull('Descricao')
-            // Ignora strings vazias (ou só espaços)
-            ->whereRaw("TRIM(Descricao) <> ''")
-            // Se veio termo, filtra por LIKE
+            ->from('despesa')
+            ->leftJoin('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->selectRaw("TRIM(despesa.Descricao) as descricao")
+            ->selectRaw("despesa.ID_Categoria as id_categoria")
+            ->selectRaw("
+            COALESCE(
+                CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome),
+                categoria.Nome,
+                'Sem categoria'
+            ) as categoria
+        ")
+            ->selectRaw('COUNT(*) as total')
+            ->whereNotNull('despesa.Descricao')
+            ->whereRaw("TRIM(despesa.Descricao) <> ''")
             ->when($q !== '', function ($query) use ($q) {
-                // LIKE com %termo% para combinar no meio também
-                $query->where('Descricao', 'like', '%' . $q . '%');
+                $query->where('despesa.Descricao', 'like', '%' . $q . '%');
             })
-            // Agrupa por descrição (única)
-            ->groupBy(DB::raw('TRIM(Descricao)'))
-            // Ordena: mais usadas primeiro
+
+            /*
+             * Aqui está a mudança principal:
+             * antes agrupava só pela descrição.
+             * agora agrupa por descrição + categoria.
+             *
+             * Assim, se existir:
+             *
+             * Uber - Transporte
+             * Uber - Lazer
+             *
+             * as duas sugestões aparecerão.
+             */
+            ->groupByRaw("
+            TRIM(despesa.Descricao),
+            despesa.ID_Categoria,
+            categoria.Nome,
+            categoria_pai.Nome
+        ")
             ->orderByDesc('total')
-            // Tira variações e limita
+            ->orderBy('descricao')
             ->limit($limit)
-            // Retorna apenas a coluna Descricao (array simples)
-            ->pluck('Descricao');
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'descricao' => $item->descricao,
+                    'id_categoria' => $item->id_categoria,
+                    'categoria' => $item->categoria,
+                    'sugestao' => $item->descricao . ' (' . $item->categoria . ')',
+                    'total' => $item->total,
+                ];
+            });
 
         return response()->json($descricoes);
     }

@@ -301,80 +301,165 @@
             });
         });
     </script>
+
     <script>
         $(document).ready(function () {
 
-            /**
-             * URL do endpoint que criamos no web.php
-             * (rota nomeada é melhor do que “hardcode”).
-             */
             const urlDescricoes = "{{ route('despesas.descricoes') }}";
 
-            // Controle simples de “debounce” (evita bater no servidor a cada tecla)
             let debounceTimer = null;
 
-            /**
-             * Preenche o <datalist> com as descrições vindas do backend.
-             * Usamos DOM API (createElement) para evitar qualquer risco de injeção em HTML.
+            /*
+             * Aqui guardamos as sugestões retornadas pelo backend.
+             * Antes o backend retornava apenas textos.
+             * Agora retorna objetos com descrição, categoria e ID da categoria.
+             */
+            let sugestoesDespesa = [];
+
+            /*
+             * O backend agora retorna objetos assim:
+             *
+             * {
+             *   descricao: "Mercado BH",
+             *   id_categoria: 5,
+             *   categoria: "Alimentação -> Supermercado",
+             *   sugestao: "Mercado BH (Alimentação -> Supermercado)",
+             *   total: 3
+             * }
              */
             function preencherDatalist(lista) {
                 const datalist = document.getElementById('despesa_descricoes');
-                datalist.innerHTML = ''; // limpa sugestões anteriores
+                datalist.innerHTML = '';
 
-                (lista || []).forEach((texto) => {
+                sugestoesDespesa = lista || [];
+
+                sugestoesDespesa.forEach((item) => {
                     const opt = document.createElement('option');
-                    opt.value = texto; // o browser usa o value como sugestão
+
+                    /*
+                     * Este é o texto que aparece na lista do autocomplete.
+                     * Por isso usamos a versão com a categoria entre parênteses.
+                     */
+                    opt.value = item.sugestao;
+
+                    /*
+                     * Guardamos os dados separados no option.
+                     * Isso não é obrigatório para exibir, mas ajuda a manter os dados limpos.
+                     */
+                    opt.setAttribute('data-descricao', item.descricao);
+                    opt.setAttribute('data-id-categoria', item.id_categoria || '');
+                    opt.setAttribute('data-categoria', item.categoria || '');
+
                     datalist.appendChild(opt);
                 });
             }
 
-            /**
-             * Faz GET no backend e atualiza o datalist.
-             */
             function buscarDescricoes(q) {
                 $.getJSON(urlDescricoes, { q: q, limit: 15 })
                     .done(function (data) {
                         preencherDatalist(data);
                     })
                     .fail(function () {
-                        // Se falhar, só não mostra sugestão (sem travar o formulário).
                         preencherDatalist([]);
                     });
             }
 
-            /**
-             * Ao digitar:
-             * - com 0/1 caractere: não busca (ou você pode buscar “top 15” se quiser)
-             * - com 2+: busca sugestões no backend
+            /*
+             * Quando o usuário escolhe uma sugestão da lista:
+             *
+             * Exemplo exibido:
+             * Mercado BH (Alimentação -> Supermercado)
+             *
+             * O que ficará salvo no campo Descrição:
+             * Mercado BH
+             *
+             * E a categoria será selecionada automaticamente.
              */
+            function aplicarSugestaoSelecionada() {
+                const valorDigitado = ($('#Descricao').val() || '').trim();
+
+                const item = sugestoesDespesa.find((s) => s.sugestao === valorDigitado);
+
+                if (!item) {
+                    return;
+                }
+
+                /*
+                 * Remove a categoria do texto da descrição.
+                 */
+                $('#Descricao').val(item.descricao);
+
+                /*
+                 * Seleciona automaticamente a categoria correspondente.
+                 */
+                if (item.id_categoria) {
+                    $('#Categoria').val(item.id_categoria);
+
+                    /*
+                     * Como o campo Categoria usa bootstrap-select,
+                     * precisamos atualizar visualmente o select.
+                     */
+                    if ($.fn.selectpicker) {
+                        $('#Categoria').selectpicker('refresh');
+                    }
+
+                    /*
+                     * Dispara o evento change para validações e regras já existentes.
+                     */
+                    $('#Categoria').trigger('change');
+                }
+            }
+
             $('#Descricao').on('input', function () {
                 const q = ($(this).val() || '').trim();
+
+                /*
+                 * Se o usuário selecionou uma sugestão exatamente igual à lista,
+                 * aplica imediatamente.
+                 */
+                aplicarSugestaoSelecionada();
 
                 clearTimeout(debounceTimer);
 
                 debounceTimer = setTimeout(function () {
-                    if (q.length < 2) {
-                        // Opcional: se quiser, pode mostrar as “mais comuns” mesmo sem termo:
-                        // buscarDescricoes('');
+                    const textoAtual = ($('#Descricao').val() || '').trim();
+
+                    if (textoAtual.length < 2) {
                         preencherDatalist([]);
                         return;
                     }
 
-                    buscarDescricoes(q);
+                    buscarDescricoes(textoAtual);
                 }, 250);
             });
 
-            /**
-             * Opcional (UX): quando o usuário focar no campo vazio,
-             * carregar as descrições mais comuns.
+            /*
+             * Alguns navegadores aplicam a seleção do datalist no change ou no blur,
+             * então mantemos esta chamada também.
+             */
+            $('#Descricao').on('change blur', function () {
+                aplicarSugestaoSelecionada();
+            });
+
+            /*
+             * Quando o campo recebe foco vazio, carrega as descrições mais usadas.
              */
             $('#Descricao').on('focus', function () {
                 const q = ($(this).val() || '').trim();
                 const datalist = document.getElementById('despesa_descricoes');
 
                 if (q.length === 0 && datalist.children.length === 0) {
-                    buscarDescricoes(''); // retorna as mais usadas (limit 15)
+                    buscarDescricoes('');
                 }
+            });
+
+            /*
+             * Garantia final:
+             * se por algum motivo o usuário submeter com
+             * "Descrição (Categoria)" no campo, limpamos antes de enviar.
+             */
+            $('#cadastro').on('submit', function () {
+                aplicarSugestaoSelecionada();
             });
 
         });

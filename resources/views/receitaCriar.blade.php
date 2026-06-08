@@ -255,78 +255,192 @@
             });
         });
     </script>
+
     <script>
-    /**
-    * URL do endpoint que criamos (rota nomeada).
-    * Evita “hardcode” de URL e facilita manutenção.
-    */
-    const urlDescricoesReceita = "{{ route('receitas.descricoes') }}";
+        /**
+         * Endpoint do autocomplete de receitas.
+         */
+        const urlDescricoesReceita = "{{ route('receitas.descricoes') }}";
 
-    // “Debounce”: evita bater no servidor a cada tecla digitada
-    let debounceReceita = null;
+        /*
+         * Debounce para evitar muitas chamadas ao servidor enquanto o usuário digita.
+         */
+        let debounceReceita = null;
 
-    /**
-    * Preenche o <datalist> com segurança usando DOM API.
-        * (evita montar HTML na mão e previne injeções acidentais)
-        */
+        /*
+         * Aqui guardamos as sugestões retornadas pelo backend.
+         *
+         * Antes o backend retornava apenas textos.
+         * Agora retorna objetos assim:
+         *
+         * {
+         *   descricao: "Salário",
+         *   id_categoria: 10,
+         *   categoria: "Renda -> Salário",
+         *   sugestao: "Salário (Renda -> Salário)",
+         *   total: 3
+         * }
+         */
+        let sugestoesReceita = [];
+
+        /*
+         * Preenche o datalist com as sugestões.
+         *
+         * O usuário verá algo como:
+         *
+         * Salário (Renda -> Salário)
+         *
+         * Mas o sistema continua sabendo separadamente:
+         * - descrição limpa;
+         * - ID da categoria;
+         * - nome da categoria.
+         */
         function preencherDatalistReceita(lista) {
-        const datalist = document.getElementById('receita_descricoes');
-        datalist.innerHTML = '';
+            const datalist = document.getElementById('receita_descricoes');
+            datalist.innerHTML = '';
 
-        (lista || []).forEach((texto) => {
-        const opt = document.createElement('option');
-        opt.value = texto;
-        datalist.appendChild(opt);
-        });
+            sugestoesReceita = lista || [];
+
+            sugestoesReceita.forEach((item) => {
+                const opt = document.createElement('option');
+
+                /*
+                 * Este é o texto exibido no autocomplete.
+                 */
+                opt.value = item.sugestao;
+
+                /*
+                 * Dados extras guardados no option.
+                 */
+                opt.setAttribute('data-descricao', item.descricao);
+                opt.setAttribute('data-id-categoria', item.id_categoria || '');
+                opt.setAttribute('data-categoria', item.categoria || '');
+
+                datalist.appendChild(opt);
+            });
         }
 
-        /**
-        * Busca no backend (GET JSON) e atualiza o datalist.
-        */
+        /*
+         * Busca as descrições no backend.
+         */
         function buscarDescricoesReceita(q) {
-        $.getJSON(urlDescricoesReceita, { q: q, limit: 15 })
-        .done(function (data) {
-        preencherDatalistReceita(data);
-        })
-        .fail(function () {
-        // Falhou? Só zera as sugestões e segue a vida.
-        preencherDatalistReceita([]);
-        });
+            $.getJSON(urlDescricoesReceita, {
+                q: q,
+                limit: 15
+            })
+                .done(function (data) {
+                    preencherDatalistReceita(data);
+                })
+                .fail(function () {
+                    preencherDatalistReceita([]);
+                });
         }
 
-        /**
-        * Ao digitar:
-        * - com menos de 2 chars, não busca (reduz chamadas)
-        * - com 2+, busca no backend
-        */
+        /*
+         * Aplica uma sugestão escolhida pelo usuário.
+         *
+         * Exemplo exibido no autocomplete:
+         *
+         * Salário (Renda -> Salário)
+         *
+         * Depois da seleção, o campo Descrição fica apenas:
+         *
+         * Salário
+         *
+         * E o campo Categoria é preenchido automaticamente.
+         */
+        function aplicarSugestaoReceitaSelecionada() {
+            const valorDigitado = ($('#Descricao').val() || '').trim();
+
+            const item = sugestoesReceita.find((s) => s.sugestao === valorDigitado);
+
+            if (!item) {
+                return;
+            }
+
+            /*
+             * Remove a categoria do campo Descrição.
+             */
+            $('#Descricao').val(item.descricao);
+
+            /*
+             * Seleciona automaticamente a categoria correspondente.
+             */
+            if (item.id_categoria) {
+
+                /*
+                 * Como o campo Categoria usa bootstrap-select,
+                 * o ideal é usar selectpicker('val').
+                 */
+                if ($.fn.selectpicker) {
+                    $('#Categoria').selectpicker('val', String(item.id_categoria));
+                    $('#Categoria').selectpicker('refresh');
+                } else {
+                    $('#Categoria').val(item.id_categoria);
+                }
+
+                /*
+                 * Dispara change para manter compatibilidade com validações
+                 * e outras regras existentes.
+                 */
+                $('#Categoria').trigger('change');
+            }
+        }
+
+        /*
+         * Ao digitar no campo descrição.
+         */
         $('#Descricao').on('input', function () {
-        const q = ($(this).val() || '').trim();
+            const q = ($(this).val() || '').trim();
 
-        clearTimeout(debounceReceita);
+            /*
+             * Se o usuário selecionou exatamente uma opção do datalist,
+             * aplicamos imediatamente.
+             */
+            aplicarSugestaoReceitaSelecionada();
 
-        debounceReceita = setTimeout(function () {
-        if (q.length < 2) {
-        preencherDatalistReceita([]);
-        return;
-        }
+            clearTimeout(debounceReceita);
 
-        buscarDescricoesReceita(q);
-        }, 250);
+            debounceReceita = setTimeout(function () {
+                const textoAtual = ($('#Descricao').val() || '').trim();
+
+                if (textoAtual.length < 2) {
+                    preencherDatalistReceita([]);
+                    return;
+                }
+
+                buscarDescricoesReceita(textoAtual);
+            }, 250);
         });
 
-        /**
-        * UX opcional:
-        * ao focar no campo vazio, carrega as mais comuns (sem termo).
-        */
+        /*
+         * Alguns navegadores aplicam a seleção do datalist no change ou no blur,
+         * então mantemos esses eventos também.
+         */
+        $('#Descricao').on('change blur', function () {
+            aplicarSugestaoReceitaSelecionada();
+        });
+
+        /*
+         * Ao focar no campo vazio, carrega as descrições mais comuns.
+         */
         $('#Descricao').on('focus', function () {
-        const q = ($(this).val() || '').trim();
-        const datalist = document.getElementById('receita_descricoes');
+            const q = ($(this).val() || '').trim();
+            const datalist = document.getElementById('receita_descricoes');
 
-        if (q.length === 0 && datalist.children.length === 0) {
-        buscarDescricoesReceita('');
-        }
+            if (q.length === 0 && datalist.children.length === 0) {
+                buscarDescricoesReceita('');
+            }
         });
 
+        /*
+         * Garantia final:
+         * se o usuário submeter logo após selecionar uma sugestão,
+         * limpamos a descrição e selecionamos a categoria antes do envio.
+         */
+        $('#cadastro').on('submit', function () {
+            aplicarSugestaoReceitaSelecionada();
+        });
     </script>
 
 @stop
