@@ -21,31 +21,42 @@ class Receita extends Model
         return $this->hasOne(Conta::class, 'ID_Conta', 'ID_Conta');
     }
 
-    public function filter($categoria, $conta, $texto, $start_date, $end_date){
+    public function filter($categoria, $conta, $texto, $start_date, $end_date)
+    {
         $filtros = DB::table('receita')
-            ->select('receita.*', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+            ->select(
+                'receita.ID_Receita',
+                'receita.Efetivada',
+                'receita.Data',
+                'receita.Descricao',
+                'receita.Valor',
+                DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
+                'icone.Link as Icone',
+                'conta.Banco',
+                'categoria.Cor'
+            )
             ->join('conta', 'receita.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->orderBy('Data','DESC');
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+            ->orderBy('Data', 'DESC');
 
-
-        if (!is_null($categoria) ){
-            $filtros = $filtros->where("receita.ID_Categoria", "=", $categoria);
+        if (!is_null($categoria)) {
+            $filtros = $filtros->where('receita.ID_Categoria', '=', $categoria);
         }
 
-        if (!is_null($conta) ){
-            $filtros = $filtros->where("receita.ID_Conta", "=", $conta);
+        if (!is_null($conta)) {
+            $filtros = $filtros->where('receita.ID_Conta', '=', $conta);
         }
 
-        if (!is_null($texto) ){
-            $filtros = $filtros->where("receita.Descricao", "LIKE", "%" . $texto . "%");
+        if (!is_null($texto)) {
+            $filtros = $filtros->where('receita.Descricao', 'LIKE', '%' . $texto . '%');
         }
 
-        if ($start_date != '0001-01-01'){
-            $filtros = $filtros->whereBetween('Data',[$start_date,$end_date]);
+        if ($start_date != '0001-01-01') {
+            $filtros = $filtros->whereBetween('Data', [$start_date, $end_date]);
         }
-        //dd($filtros);
-        //dd($filtros->toSql());
+
         return $filtros->get();
     }
 

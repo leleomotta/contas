@@ -22,35 +22,48 @@ class Despesa extends Model
         return $this->hasOne(Conta::class, 'ID_Conta', 'ID_Conta');
     }
 
-    public function filter($categoria, $conta, $texto, $start_date, $end_date){
-         $filtros = DB::table('despesa')
-            ->select('despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data',
-                'despesa.Efetivada', 'categoria.Nome as NomeCategoria', 'conta.Banco' )
+    public function filter($categoria, $conta, $texto, $start_date, $end_date)
+    {
+        $filtros = DB::table('despesa')
+            ->select(
+                'despesa.ID_Despesa',
+                'despesa.Descricao',
+                'despesa.Valor',
+                'despesa.Data',
+                'despesa.Efetivada',
+                DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
+                'icone.Link as Icone',
+                'conta.Banco',
+                'categoria.Cor'
+            )
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
-            ->whereNotExists(function($query)
-            {
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
+            ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('fatura')
                     ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
             })
-            ->orderBy('Data','DESC');
-        if (!is_null($categoria) ){
-            $filtros = $filtros->where("despesa.ID_Categoria", "=", $categoria);
+            ->orderBy('Data', 'DESC');
+
+        if (!is_null($categoria)) {
+            $filtros = $filtros->where('despesa.ID_Categoria', '=', $categoria);
         }
 
-        if (!is_null($conta) ){
-            $filtros = $filtros->where("despesa.ID_Conta", "=", $conta);
+        if (!is_null($conta)) {
+            $filtros = $filtros->where('despesa.ID_Conta', '=', $conta);
         }
 
-        if (!is_null($texto) ){
-            $filtros = $filtros->where("despesa.Descricao", "LIKE", "%" . $texto . "%");
+        if (!is_null($texto)) {
+            $filtros = $filtros->where('despesa.Descricao', 'LIKE', '%' . $texto . '%');
+
         }
 
-        if ($start_date != '0001-01-01'){
-            $filtros = $filtros->whereBetween('Data',[$start_date,$end_date]);
+        if ($start_date != '0001-01-01') {
+            $filtros = $filtros->whereBetween('Data', [$start_date, $end_date]);
         }
-        //dd($filtros->toSql());
+
         return $filtros->get();
     }
 

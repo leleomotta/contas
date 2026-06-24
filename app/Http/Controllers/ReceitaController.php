@@ -272,35 +272,51 @@ class ReceitaController extends Controller
      */
     public function filter(Request $request)
     {
-        $start_date = implode("-", array_reverse(explode("/", substr($request->datas, 0, 10))));
-        $end_date = implode("-", array_reverse(explode("/", substr($request->datas, 13, 10))));
+        $chkCategoria = $request->has('chkCategoria');
+        $chkConta = $request->has('chkConta');
+        $chkTexto = $request->has('chkTexto');
+        $chkDatas = $request->has('chkDatas');
 
-        $request["chkCategoria"] = (isset($request["chkCategoria"])) ? 1 : 0;
-        $request["chkConta"] = (isset($request["chkConta"])) ? 1 : 0;
-        $request["chkTexto"] = (isset($request["chkTexto"])) ? 1 : 0;
-        $request["chkDatas"] = (isset($request["chkDatas"])) ? 1 : 0;
+        $categoria = ($chkCategoria && is_numeric($request->input('categoria')))
+            ? (int) $request->input('categoria')
+            : null;
 
-        $categoria = $request["chkCategoria"] ? $request->categoria : null;
-        $conta = $request["chkConta"] ? $request->conta : null;
-        $texto = $request["chkTexto"] ? $request->texto : null;
+        $conta = ($chkConta && is_numeric($request->input('conta')))
+            ? (int) $request->input('conta')
+            : null;
 
-        if (!$request["chkDatas"]) {
-            $start_date = '0001-01-01';
-            $end_date = '9999-12-31';
+        $texto = ($chkTexto && trim((string) $request->input('texto')) !== '')
+            ? trim((string) $request->input('texto'))
+            : null;
+
+        $start_date = '0001-01-01';
+        $end_date = '9999-12-31';
+
+        if ($chkDatas && $request->filled('datas')) {
+            $datas = (string) $request->input('datas');
+            $inicio = trim(substr($datas, 0, 10));
+            $fim = trim(substr($datas, 13, 10));
+
+            try {
+                $start_date = Carbon::createFromFormat('d/m/Y', $inicio)->format('Y-m-d');
+                $end_date = Carbon::createFromFormat('d/m/Y', $fim)->format('Y-m-d');
+            } catch (\Exception $e) {
+                $start_date = '0001-01-01';
+                $end_date = '9999-12-31';
+            }
         }
 
         $contas = (new \App\Models\Conta)->showAll();
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo','=','R');
+        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo', '=', 'R');
         $receitas = new Receita();
 
-        return view('receitaListar',
-            [
-                'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
-                'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
-                'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
-                'categorias' => $categorias,
-                'contas' => $contas,
-            ]);
+        return view('receitaListar', [
+            'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
+            'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
+            'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
+            'categorias' => $categorias,
+            'contas' => $contas,
+        ]);
     }
 
     /**
