@@ -266,9 +266,23 @@ class DespesaController extends Controller
             }
         }
 
+        /*
+         * No filtro, o padrão será NÃO agrupar.
+         * Se o usuário marcar manualmente o checkbox, aí agrupa.
+         */
+        $agruparCartao = $request->boolean('agruparCartao');
+
         $contas = (new Conta)->showAll();
         $categorias = (new Categoria)->showAll()->where('Tipo', '=', 'D');
-        $despesas = (new Despesa)->filter($categoria, $conta, $texto, $start_date, $end_date);
+
+        $despesas = (new Despesa)->filter(
+            $categoria,
+            $conta,
+            $texto,
+            $start_date,
+            $end_date,
+            $agruparCartao
+        );
 
         return view('despesaListar', [
             'despesas' => $despesas,
@@ -276,6 +290,7 @@ class DespesaController extends Controller
             'pago' => $despesas->where('Efetivada', '=', 1)->sum('Valor'),
             'categorias' => $categorias,
             'contas' => $contas,
+            'agruparCartao' => $agruparCartao,
         ]);
     }
 
@@ -314,26 +329,45 @@ class DespesaController extends Controller
     public function showAll(Request $request)
     {
         $contas = (new Conta)->showAll();
-        $categorias = (new Categoria)->showAll()->where('Tipo','=','D');
+        $categorias = (new Categoria)->showAll()->where('Tipo', '=', 'D');
+
         $dateFilter = $request->date_filter;
 
         if (is_null($dateFilter)) {
             $dateFilter = Carbon::now()->isoFormat('Y') . '-' . Carbon::now()->isoFormat('MM');
         }
+
         $dt = Carbon::now();
         $dt->setDateFrom($dateFilter . '-15');
+
         $start_date = Carbon::createFromDate($dt->firstOfMonth())->toDateString();
         $end_date = Carbon::createFromDate($dt->lastOfMonth())->toDateString();
 
-        //$despesas = (new Despesa)->show($start_date, $end_date);
-        $despesas = (new Despesa)->showAgrupado($start_date, $end_date);
+        /*
+         * Na listagem normal, o padrão é agrupar.
+         * Só desagrupa se vier explicitamente:
+         *
+         * ?agruparCartao=0
+         */
+        $agruparCartao = $request->has('agruparCartao')
+            ? $request->boolean('agruparCartao')
+            : true;
+
+        $despesaModel = new Despesa();
+
+        if ($agruparCartao) {
+            $despesas = $despesaModel->showAgrupado($start_date, $end_date);
+        } else {
+            $despesas = $despesaModel->show($start_date, $end_date);
+        }
 
         return view('despesaListar', [
             'despesas' => $despesas,
-            'pendente' => $despesas->where('Efetivada','=',0)->sum('Valor'),
-            'pago' => $despesas->where('Efetivada','=',1)->sum('Valor'),
+            'pendente' => $despesas->where('Efetivada', '=', 0)->sum('Valor'),
+            'pago' => $despesas->where('Efetivada', '=', 1)->sum('Valor'),
             'contas' => $contas,
-            'categorias' => $categorias
+            'categorias' => $categorias,
+            'agruparCartao' => $agruparCartao,
         ]);
     }
 

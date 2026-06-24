@@ -306,14 +306,23 @@ class ReceitaController extends Controller
             }
         }
 
-        $contas = (new \App\Models\Conta)->showAll();
-        $categorias = (new \App\Models\Categoria)->showAll()->where('Tipo', '=', 'R');
-        $receitas = new Receita();
+        $contas = (new Conta)->showAll();
+        $categorias = (new Categoria)->showAll()->where('Tipo', '=', 'R');
+
+        $receitaModel = new Receita();
+
+        $receitas = $receitaModel->filter(
+            $categoria,
+            $conta,
+            $texto,
+            $start_date,
+            $end_date
+        );
 
         return view('receitaListar', [
-            'receitas' => $receitas->filter($categoria, $conta, $texto, $start_date, $end_date),
-            'pendente' => $receitas->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
-            'recebido' => $receitas->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
+            'receitas' => $receitas,
+            'pendente' => $receitaModel->receitasPendente($categoria, $conta, $texto, $start_date, $end_date),
+            'recebido' => $receitaModel->receitasRecebido($categoria, $conta, $texto, $start_date, $end_date),
             'categorias' => $categorias,
             'contas' => $contas,
         ]);

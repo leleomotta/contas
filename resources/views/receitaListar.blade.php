@@ -34,7 +34,9 @@
             <div class="card-header">
                 <h3 class="card-title">Filtro&nbsp;&nbsp;</h3>
                 <div class="card-tools">
-                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-plus"></i></button>
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                        <i class="fas fa-plus"></i>
+                    </button>
                 </div>
             </div>
 
@@ -48,79 +50,114 @@
                                 <div class="form-row align-items-center">
                                     <div class="col-auto">
                                         <div class="icheck-primary d-inline">
-                                            <input type="checkbox" name="chkCategoria" id="chkCategoria" onclick="habilitaCampos()">
+                                            <input type="checkbox"
+                                                   name="chkCategoria"
+                                                   id="chkCategoria"
+                                                   onclick="habilitaCampos()">
                                             <label for="chkCategoria"> </label>
                                         </div>
                                     </div>
+
                                     <div class="col-5">
                                         <select class="form-control" id="categoria" name="categoria" disabled>
                                             <option selected data-default>- Selecione uma categoria -</option>
                                             @foreach($categorias as $categoria)
-                                                <option value="{{ $categoria->ID_Categoria }}"> {{ $categoria->Nome  }} </option>
+                                                <option value="{{ $categoria->ID_Categoria }}">
+                                                    {{ $categoria->Nome }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
 
                                     <div class="col-auto">
                                         <div class="icheck-primary d-inline">
-                                            <input type="checkbox" name="chkConta" id="chkConta" onclick="habilitaCampos()">
+                                            <input type="checkbox"
+                                                   name="chkConta"
+                                                   id="chkConta"
+                                                   onclick="habilitaCampos()">
                                             <label for="chkConta"> </label>
                                         </div>
                                     </div>
+
                                     <div class="col-5">
                                         <select class="form-control" id="conta" name="conta" disabled>
                                             <option selected data-default>- Selecione uma conta -</option>
                                             @foreach($contas as $conta)
-                                                <option value="{{ $conta->ID_Conta  }}"> {{ $conta->Banco  }} </option>
+                                                <option value="{{ $conta->ID_Conta }}">
+                                                    {{ $conta->Banco }}
+                                                </option>
                                             @endforeach
                                         </select>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--Contas e categorias-->
+                        <!--/Contas e categorias-->
 
-                         <!--Texto e Datas-->
+                        <!--Texto e Datas-->
                         <div class="form-group">
                             <div class="row">
                                 <div class="form-row align-items-center">
                                     <div class="col-auto">
                                         <div class="icheck-primary d-inline">
-                                            <input type="checkbox" name="chkTexto" id="chkTexto" onclick="habilitaCampos()">
+                                            <input type="checkbox"
+                                                   name="chkTexto"
+                                                   id="chkTexto"
+                                                   onclick="habilitaCampos()">
                                             <label for="chkTexto"> </label>
                                         </div>
                                     </div>
+
                                     <div class="col-5">
-                                        <input type="text" class="form-control" id="texto" name="texto" placeholder="Digite a texto a ser buscado" disabled/>
+                                        <input type="text"
+                                               class="form-control"
+                                               id="texto"
+                                               name="texto"
+                                               placeholder="Digite o texto a ser buscado"
+                                               disabled />
                                     </div>
 
                                     <div class="col-auto">
                                         <div class="icheck-primary d-inline">
-                                            <input type="checkbox" name="chkDatas" id="chkDatas" onclick="habilitaCampos()">
+                                            <input type="checkbox"
+                                                   name="chkDatas"
+                                                   id="chkDatas"
+                                                   onclick="habilitaCampos()">
                                             <label for="chkDatas"> </label>
                                         </div>
                                     </div>
-                                    <div class="col-5">
 
+                                    <div class="col-5">
                                         <div class="input-group">
                                             <div class="input-group-prepend">
-                                                <span class="input-group-text">
-                                                    <i class="far fa-calendar-alt"></i>
-                                                </span>
+                                            <span class="input-group-text">
+                                                <i class="far fa-calendar-alt"></i>
+                                            </span>
                                             </div>
-                                            <input type="text" class="form-control float-right" id="datas" name="datas" disabled />
+                                            <input type="text"
+                                                   class="form-control float-right"
+                                                   id="datas"
+                                                   name="datas"
+                                                   disabled />
                                         </div>
-
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <!--Datas-->
-
+                        <!--/Texto e Datas-->
                     </div>
                 </div>
-                <div class="col-2">
-                    <button type="submit" class="btn btn-success btn-sm">Aplicar Filtro</button>
+
+                <div class="row align-items-center mt-2">
+                    <div class="col-md-8 col-sm-12">
+                        &nbsp;
+                    </div>
+
+                    <div class="col-md-4 col-sm-12 d-flex justify-content-start justify-content-md-end mt-2 mt-md-0">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            Aplicar Filtro
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>

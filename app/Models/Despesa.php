@@ -22,9 +22,12 @@ class Despesa extends Model
         return $this->hasOne(Conta::class, 'ID_Conta', 'ID_Conta');
     }
 
-    public function filter($categoria, $conta, $texto, $start_date, $end_date)
+    public function filter($categoria, $conta, $texto, $start_date, $end_date, $agruparCartao = false)
     {
-        $filtros = DB::table('despesa')
+        /*
+         * 1. Despesas normais, fora de cartão.
+         */
+        $despesasSemCartao = DB::table('despesa')
             ->select(
                 'despesa.ID_Despesa',
                 'despesa.Descricao',
@@ -34,7 +37,8 @@ class Despesa extends Model
                 DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
                 'icone.Link as Icone',
                 'conta.Banco',
-                'categoria.Cor'
+                'categoria.Cor',
+                DB::raw("'despesa' as Origem")
             )
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
@@ -44,27 +48,112 @@ class Despesa extends Model
                 $query->select(DB::raw(1))
                     ->from('fatura')
                     ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
-            })
-            ->orderBy('Data', 'DESC');
+            });
 
         if (!is_null($categoria)) {
-            $filtros = $filtros->where('despesa.ID_Categoria', '=', $categoria);
+            $despesasSemCartao->where('despesa.ID_Categoria', '=', $categoria);
         }
 
         if (!is_null($conta)) {
-            $filtros = $filtros->where('despesa.ID_Conta', '=', $conta);
+            $despesasSemCartao->where('despesa.ID_Conta', '=', $conta);
         }
 
         if (!is_null($texto)) {
-            $filtros = $filtros->where('despesa.Descricao', 'LIKE', '%' . $texto . '%');
-
+            $despesasSemCartao->where('despesa.Descricao', 'LIKE', '%' . $texto . '%');
         }
 
         if ($start_date != '0001-01-01') {
-            $filtros = $filtros->whereBetween('Data', [$start_date, $end_date]);
+            $despesasSemCartao->whereBetween('despesa.Data', [$start_date, $end_date]);
         }
 
-        return $filtros->get();
+        /*
+         * 2. Despesas de cartão.
+         *
+         * Quando NÃO estiver agrupado, cada despesa aparece individualmente.
+         * A descrição recebe o nome do cartão:
+         *
+         * "Galaxy M62 (Inter Black)"
+         */
+        $despesasCartao = DB::table('fatura')
+            ->join('despesa', 'despesa.ID_Despesa', '=', 'fatura.ID_Despesa')
+            ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
+            ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
+            ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
+            ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
+            ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone');
+
+        if ($agruparCartao) {
+            $despesasCartao->select(
+                DB::raw('MIN(despesa.ID_Despesa) as ID_Despesa'),
+                DB::raw("CONCAT('Cartão (', cartao.Nome, ')') as Descricao"),
+                DB::raw('SUM(despesa.Valor) as Valor'),
+                DB::raw("COALESCE(MAX(fatura.Data_fechamento), STR_TO_DATE(CONCAT(fatura.Ano_Mes, '-01'), '%Y-%m-%d')) as Data"),
+                'fatura.Fechada as Efetivada',
+                'cartao.Nome as NomeCategoria',
+                'icone.Link as Icone',
+                'conta.Banco',
+                DB::raw("'#C8C8C8' as Cor"),
+                DB::raw("'cartao_agrupado' as Origem")
+            )
+                ->groupBy(
+                    'cartao.ID_Cartao',
+                    'cartao.Nome',
+                    'fatura.Ano_Mes',
+                    'fatura.Fechada',
+                    'icone.Link',
+                    'conta.Banco'
+                );
+        } else {
+            $despesasCartao->select(
+                'despesa.ID_Despesa',
+                DB::raw("CONCAT(despesa.Descricao, ' (', cartao.Nome, ')') as Descricao"),
+                'despesa.Valor',
+                DB::raw("COALESCE(fatura.Data_fechamento, despesa.Data) as Data"),
+                'fatura.Fechada as Efetivada',
+                DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
+                'icone.Link as Icone',
+                'conta.Banco',
+                'categoria.Cor',
+                DB::raw("'cartao' as Origem")
+            );
+        }
+
+        if (!is_null($categoria)) {
+            $despesasCartao->where('despesa.ID_Categoria', '=', $categoria);
+        }
+
+        if (!is_null($conta)) {
+            $despesasCartao->where(function ($query) use ($conta) {
+                $query->where('despesa.ID_Conta', '=', $conta)
+                    ->orWhere('fatura.Conta_fechamento', '=', $conta);
+            });
+        }
+
+        if (!is_null($texto)) {
+            $despesasCartao->where(function ($query) use ($texto) {
+                $query->where('despesa.Descricao', 'LIKE', '%' . $texto . '%')
+                    ->orWhere('cartao.Nome', 'LIKE', '%' . $texto . '%');
+            });
+        }
+
+        if ($start_date != '0001-01-01') {
+            $startAnoMes = Carbon::parse($start_date)->format('Y-m');
+            $endAnoMes = Carbon::parse($end_date)->format('Y-m');
+
+            $despesasCartao->where(function ($query) use ($start_date, $end_date, $startAnoMes, $endAnoMes) {
+                $query->whereBetween('fatura.Data_fechamento', [$start_date, $end_date])
+                    ->orWhere(function ($subQuery) use ($startAnoMes, $endAnoMes) {
+                        $subQuery->whereNull('fatura.Data_fechamento')
+                            ->whereBetween('fatura.Ano_Mes', [$startAnoMes, $endAnoMes]);
+                    });
+            });
+        }
+
+        return $despesasSemCartao
+            ->get()
+            ->merge($despesasCartao->get())
+            ->sortByDesc('Data')
+            ->values();
     }
 
     public function show($start_date, $end_date){
@@ -106,7 +195,7 @@ class Despesa extends Model
         $despesasSemCartao = DB::table(DB::raw('/* FUNÇÃO: despesasSemCartao */ despesa'))
             ->select( 'despesa.ID_Despesa', 'despesa.Descricao', 'despesa.Valor', 'despesa.Data', 'despesa.Efetivada',
                 DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
-                'icone.Link as Icone', 'conta.Banco', 'categoria.Cor')
+                'icone.Link as Icone', 'conta.Banco', 'categoria.Cor', DB::raw("'despesa' as Origem"))
             ->join('conta', 'despesa.ID_Conta', '=', 'conta.ID_Conta')
             ->join('categoria', 'despesa.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
@@ -189,14 +278,15 @@ class Despesa extends Model
         $cartaoPago = DB::table(DB::raw('/* FUNÇÃO: cartaoPago */ fatura'))
             ->select(
                 'despesa.ID_Despesa',
-                'despesa.Descricao',
+                DB::raw("CONCAT(despesa.Descricao, ' (', cartao.Nome, ')') as Descricao"),
                 'despesa.Valor',
                 'fatura.Data_fechamento as Data',
                 'fatura.Fechada as Efetivada',
                 DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
                 'icone.Link as Icone',
                 'conta.Banco',
-                'categoria.Cor'
+                'categoria.Cor',
+                DB::raw("'cartao' as Origem")
             )
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
             ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
@@ -228,14 +318,15 @@ class Despesa extends Model
         $cartaoAberto = DB::table(DB::raw('/* FUNÇÃO: cartaoAberto */ fatura'))
             ->select(
                 'despesa.ID_Despesa',
-                'despesa.Descricao',
+                DB::raw("CONCAT(despesa.Descricao, ' (', cartao.Nome, ')') as Descricao"),
                 'despesa.Valor',
                 'fatura.Data_fechamento as Data',
                 'fatura.Fechada as Efetivada',
                 DB::raw("COALESCE(CONCAT(categoria_pai.Nome, ' -> ', categoria.Nome), categoria.Nome) AS NomeCategoria"),
                 'icone.Link as Icone',
                 'conta.Banco',
-                'categoria.Cor'
+                'categoria.Cor',
+                DB::raw("'cartao' as Origem")
             )
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
             ->leftJoin('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')
@@ -253,10 +344,10 @@ class Despesa extends Model
 
     public function cartaoPagoAgrupado($start_date, $end_date, $conta){
         $cartaoPago =DB::table('fatura')
-            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+            ->select('despesa.ID_Despesa', DB::raw("CONCAT('Cartão (', cartao.Nome, ')') as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 //DB::raw("'1900-01-01' as Data"), 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'conta.Banco' )
                 'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
-                DB::raw("'#C8C8C8' as Cor"))
+                DB::raw("'#C8C8C8' as Cor"), DB::raw("'cartao_agrupado' as Origem") )
 
             ->leftJoin('icone', 'icone.ID_Icone', '=', DB::raw('0'))
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
@@ -283,9 +374,9 @@ class Despesa extends Model
 
     public function cartaoAbertoAgrupado($Ano_Mes){
         $cartaoAberto =DB::table('fatura')
-            ->select('despesa.ID_Despesa', DB::raw("'Cartão' as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
+            ->select('despesa.ID_Despesa', DB::raw("CONCAT('Cartão (', cartao.Nome, ')') as Descricao"), DB::raw('sum(despesa.Valor) as Valor'),
                 'fatura.Data_fechamento as Data', 'fatura.Fechada as Efetivada', 'cartao.Nome as NomeCategoria', 'icone.Link as Icone', 'conta.Banco',
-                DB::raw("'#C8C8C8' as Cor"))
+                DB::raw("'#C8C8C8' as Cor"), DB::raw("'cartao_agrupado' as Origem"))
             ->leftJoin('icone', 'icone.ID_Icone', '=', DB::raw('0'))
             ->join('cartao', 'fatura.ID_Cartao', '=', 'cartao.ID_Cartao')
             //->join('conta', 'fatura.Conta_fechamento', '=', 'conta.ID_Conta')

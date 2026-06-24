@@ -118,8 +118,26 @@
 
                     </div>
                 </div>
-                <div class="col-2">
-                    <button type="submit" class="btn btn-success btn-sm">Aplicar Filtro</button>
+
+                <div class="row align-items-center mt-2">
+                    <div class="col-md-8 col-sm-12">
+                        <div class="icheck-primary d-inline">
+                            <input type="checkbox"
+                                   name="agruparCartao"
+                                   id="agruparCartao"
+                                   value="1"
+                                {{ ($agruparCartao ?? true) ? 'checked' : '' }}>
+                            <label for="agruparCartao" class="mb-0">
+                                Agrupar despesas de cartão
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 col-sm-12 d-flex justify-content-start justify-content-md-end mt-2 mt-md-0">
+                        <button type="submit" class="btn btn-success btn-sm">
+                            Aplicar Filtro
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -193,7 +211,7 @@
 
                                 <td class="text-center">
                                     <div class="d-flex justify-content-center align-items-center gap-2 flex-nowrap">
-                                        @unless ($despesa->Descricao == "Cartão")
+                                        @if (($despesa->Origem ?? 'despesa') == 'despesa')
                                             <form action="{{ route('despesas.efetiva', ['ID_Despesa' => $despesa->ID_Despesa]) }}" method="GET" class="m-0 p-0">
                                                 <button type="submit"
                                                         class="btn btn-sm btn-{{ $despesa->Efetivada ? 'danger' : 'success' }}"
@@ -219,7 +237,7 @@
                                                     <i class="fa fa-trash"></i>
                                                 </button>
                                             </form>
-                                        @endunless
+                                        @endif
                                     </div>
                                 </td>
 
@@ -398,6 +416,16 @@
             document.getElementById("conta").disabled = !document.getElementById("chkConta").checked;
             document.getElementById("datas").disabled = !document.getElementById("chkDatas").checked;
             document.getElementById("texto").disabled = !document.getElementById("chkTexto").checked;
+
+            const algumFiltroMarcado =
+                document.getElementById("chkCategoria").checked ||
+                document.getElementById("chkConta").checked ||
+                document.getElementById("chkDatas").checked ||
+                document.getElementById("chkTexto").checked;
+
+            if (algumFiltroMarcado) {
+                document.getElementById("agruparCartao").checked = false;
+            }
         }
 
         window.onload = function() {
