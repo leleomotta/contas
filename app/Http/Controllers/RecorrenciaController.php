@@ -47,14 +47,18 @@ class RecorrenciaController extends Controller
         $start_date = $dt->copy()->startOfMonth()->toDateString();
         $end_date = $dt->copy()->endOfMonth()->toDateString();
 
-        //$recorrencias = Recorrencia::with('categoria')
-        //$recorrencias = Recorrencia::with('categoria.icone') // Alterado para carregar o ícone
+
+        /*
         $recorrencias = Recorrencia::with('categoria.icone', 'conta', 'cartao')
             ->where(function ($query) use ($start_date, $end_date) {
                 $query->whereNull('Data_fim')
                     ->orWhereBetween('Data_fim', [$start_date, $end_date]);
             })
             ->orderByDesc('ID_Recorrencia')
+            ->get();
+        */
+        $recorrencias = Recorrencia::with('categoria.icone', 'conta', 'cartao')
+            ->orderBy('descricao')
             ->get();
 
         return view('recorrenciaListar', [
