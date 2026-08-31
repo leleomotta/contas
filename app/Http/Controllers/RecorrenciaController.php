@@ -29,44 +29,159 @@ class RecorrenciaController extends Controller
         return view('recorrenciaCriar', compact('categorias', 'contas', 'cartoes'));
     }
 
-    // Exibe a lista de recorrências cadastradas
+    /**
+     * Exibe a listagem de recorrências.
+     *
+     * A tela possui duas abas:
+     *
+     * - despesas => recorrências com Tipo = 'D'
+     * - receitas => recorrências com Tipo = 'R'
+     *
+     * A aba selecionada é controlada pelo parâmetro "tab" da URL.
+     *
+     * Exemplos:
+     *
+     * /recorrencias?tab=despesas
+     * /recorrencias?tab=receitas
+     */
     public function showAll(Request $request)
     {
+        /*
+         * Busca as contas utilizadas pela tela.
+         *
+         * Mantive a mesma lógica que já existia no projeto.
+         */
         $contas = (new Conta)->showAll();
-        //$categorias = (new Categoria)->showAll()->where('Tipo','=','D');
-        // (use o método que sua Model Categoria usa para pegar todas)
-        $categorias = (new \App\Models\Categoria)->showAll();
+
+        /*
+         * Busca todas as categorias.
+         *
+         * As recorrências podem ser tanto de receita quanto de despesa,
+         * portanto precisamos manter todas as categorias disponíveis.
+         */
+        $categorias = (new Categoria)->showAll();
 
 
+        /*
+         * ================================================================
+         * ABA ATUAL
+         * ================================================================
+         *
+         * O parâmetro "tab" virá pela URL.
+         *
+         * Exemplos:
+         *
+         * ?tab=despesas
+         * ?tab=receitas
+         *
+         * Caso não seja informado, abrimos a aba "despesas".
+         */
+        $tab = $request->get('tab', 'despesas');
+
+
+        /*
+         * Segurança adicional:
+         *
+         * Aceitamos somente os dois valores conhecidos.
+         * Isso evita que qualquer outro valor passado pela URL interfira
+         * na consulta.
+         */
+        if (!in_array($tab, ['despesas', 'receitas'], true)) {
+            $tab = 'despesas';
+        }
+
+
+        /*
+         * ================================================================
+         * CONVERTE A ABA PARA O TIPO DA RECORRÊNCIA
+         * ================================================================
+         *
+         * No banco:
+         *
+         * D = Despesa
+         * R = Receita
+         */
+        $tipo = ($tab === 'receitas') ? 'R' : 'D';
+
+
+        /*
+         * ================================================================
+         * FILTRO DE DATA
+         * ================================================================
+         *
+         * Mantemos a lógica que já existia no controller.
+         */
         $dateFilter = $request->date_filter;
+
         if (is_null($dateFilter)) {
             $dateFilter = Carbon::now()->format('Y-m');
         }
 
+
+        /*
+         * Calcula o primeiro e o último dia do mês utilizado no filtro.
+         */
         $dt = Carbon::parse($dateFilter . '-15');
+
         $start_date = $dt->copy()->startOfMonth()->toDateString();
         $end_date = $dt->copy()->endOfMonth()->toDateString();
 
 
         /*
-        $recorrencias = Recorrencia::with('categoria.icone', 'conta', 'cartao')
+         * ================================================================
+         * BUSCA DAS RECORRÊNCIAS
+         * ================================================================
+         *
+         * Além do filtro de período que já existia, agora adicionamos:
+         *
+         * ->where('Tipo', $tipo)
+         *
+         * Dessa forma somente as recorrências correspondentes à aba
+         * selecionada serão trazidas do MySQL.
+         */
+        /*
+        $recorrencias = Recorrencia::with([
+            'categoria.icone',
+            'conta',
+            'cartao'
+        ])
+            ->where('Tipo', $tipo)
             ->where(function ($query) use ($start_date, $end_date) {
+
                 $query->whereNull('Data_fim')
                     ->orWhereBetween('Data_fim', [$start_date, $end_date]);
+
             })
             ->orderByDesc('ID_Recorrencia')
             ->get();
         */
-        $recorrencias = Recorrencia::with('categoria.icone', 'conta', 'cartao')
-            ->orderBy('descricao')
-            ->get();
+        $recorrencias = Recorrencia::with([
+        'categoria.icone',
+        'conta',
+        'cartao'
+    ])
+        ->where('Tipo', $tipo)
+        ->orderBy('Descricao')
+        ->get();
 
+        /*
+         * Envia os dados para a view.
+         *
+         * Agora também enviamos:
+         *
+         * $tab
+         * $dateFilter
+         *
+         * para que a Blade consiga destacar corretamente a aba selecionada.
+         */
         return view('recorrenciaListar', [
             'recorrencias' => $recorrencias,
             'pendente' => 0,
             'pago' => 0,
             'contas' => $contas,
-            'categorias' => $categorias
+            'categorias' => $categorias,
+            'tab' => $tab,
+            'dateFilter' => $dateFilter,
         ]);
     }
 
@@ -116,7 +231,18 @@ class RecorrenciaController extends Controller
         $recorrencia->Ativa = isset($request->Ativa) ? 1 : 0;
         $recorrencia->save();
 
-        return Redirect::to('/recorrencias');
+        //return Redirect::to('/recorrencias');
+        /*
+         * Após cadastrar uma nova recorrência,
+         * redireciona diretamente para a aba correspondente.
+         */
+        $tab = ($recorrencia->Tipo === 'R')
+            ? 'receitas'
+            : 'despesas';
+
+        return redirect()->route('recorrencias.showAll', [
+            'tab' => $tab
+        ]);
     }
 
     /**
@@ -387,26 +513,75 @@ class RecorrenciaController extends Controller
 
         $recorrencia->save();
 
-        return redirect()->route('recorrencias.showAll');
+        //return redirect()->route('recorrencias.showAll');
+        /*
+         * Mantém o usuário na aba correspondente ao tipo
+         * da recorrência que acabou de ser alterada.
+         */
+        $tab = ($recorrencia->Tipo === 'R')
+            ? 'receitas'
+            : 'despesas';
+
+        return redirect()->route('recorrencias.showAll', [
+            'tab' => $tab
+        ]);
     }
 
     public function destroy(int $ID_Recorrencia)
     {
+        /*
+         * Localiza a recorrência que será excluída.
+         */
         $recorrencia = Recorrencia::find($ID_Recorrencia);
 
+        /*
+         * Caso não exista, retorna para a tela anterior.
+         */
+        if (!$recorrencia) {
+            return back()->with(
+                'error',
+                'Recorrência não encontrada.'
+            );
+        }
+
+        /*
+         * Guarda a aba ANTES de excluir o registro.
+         *
+         * Depois do delete não queremos depender do objeto
+         * para descobrir se era receita ou despesa.
+         */
+        $tab = ($recorrencia->Tipo === 'R')
+            ? 'receitas'
+            : 'despesas';
+
         try {
+
             DB::beginTransaction();
 
+            /*
+             * Exclui a recorrência.
+             */
             $recorrencia->delete();
 
             DB::commit();
 
-            $url = '/recorrencias?date_filter=' . \Carbon\Carbon::now()->format('Y-m');
-            return redirect($url);
+
+            /*
+             * Retorna para a mesma aba da recorrência excluída.
+             */
+            return redirect()->route('recorrencias.showAll', [
+                'tab' => $tab,
+                'date_filter' => Carbon::now()->format('Y-m'),
+            ]);
 
         } catch (\Exception $e) {
+
             DB::rollBack();
-            return back()->with('error', 'Erro ao excluir recorrência.');
+
+            return back()->with(
+                'error',
+                'Erro ao excluir recorrência.'
+            );
         }
     }
 

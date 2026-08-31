@@ -3,18 +3,100 @@
 @section('title', 'Recorrência - Listar')
 
 @section('content_header')
+
     <div class="row mb-2">
+
+        {{-- ========================================================= --}}
+        {{-- TÍTULO DA TELA --}}
+        {{-- ========================================================= --}}
         <div class="col-sm-6">
+
             <h1>Recorrências</h1>
+
         </div>
+
+
+        {{-- ========================================================= --}}
+        {{-- ABAS + BOTÃO GERAR RECORRÊNCIAS --}}
+        {{-- ========================================================= --}}
         <div class="col-sm-6">
-            <ol class="breadcrumb float-sm-right">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalGerarRecorrencias">
-                    <i class="fas fa-plus"></i> Gerar Recorrências
+
+            <div class="float-sm-right d-flex align-items-center">
+
+                {{-- ================================================= --}}
+                {{-- ABAS --}}
+                {{-- ================================================= --}}
+                <div class="btn-group mr-2"
+                     role="group"
+                     aria-label="Tipo de recorrência">
+
+
+                    {{-- ============================================= --}}
+                    {{-- ABA DESPESAS --}}
+                    {{-- ============================================= --}}
+                    <a
+                        href="{{ route('recorrencias.showAll', [
+                            'tab' => 'despesas',
+                            'date_filter' => $dateFilter
+                        ]) }}"
+
+                        class="btn {{ $tab === 'despesas'
+                            ? 'btn-danger active'
+                            : 'btn-outline-danger' }}"
+                    >
+
+                        <i class="fas fa-arrow-down mr-1"></i>
+
+                        Despesas
+
+                    </a>
+
+
+                    {{-- ============================================= --}}
+                    {{-- ABA RECEITAS --}}
+                    {{-- ============================================= --}}
+                    <a
+                        href="{{ route('recorrencias.showAll', [
+                            'tab' => 'receitas',
+                            'date_filter' => $dateFilter
+                        ]) }}"
+
+                        class="btn {{ $tab === 'receitas'
+                            ? 'btn-success active'
+                            : 'btn-outline-success' }}"
+                    >
+
+                        <i class="fas fa-arrow-up mr-1"></i>
+
+                        Receitas
+
+                    </a>
+
+                </div>
+
+
+                {{-- ================================================= --}}
+                {{-- BOTÃO GERAR RECORRÊNCIAS --}}
+                {{-- ================================================= --}}
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    data-toggle="modal"
+                    data-target="#modalGerarRecorrencias"
+                >
+
+                    <i class="fas fa-plus"></i>
+
+                    Gerar Recorrências
+
                 </button>
-            </ol>
+
+            </div>
+
         </div>
+
     </div>
+
 @stop
 
 @section('content')
