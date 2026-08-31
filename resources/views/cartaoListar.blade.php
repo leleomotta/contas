@@ -2,6 +2,34 @@
 
 @section('title', 'Cartão - Listar')
 
+@section('css')
+    <style>
+        /*
+         * Ajustes específicos da tela de listagem de cartões.
+         *
+         * A classe ".cartao-widget" foi criada para não afetar
+         * outros widgets do AdminLTE em outras telas do sistema.
+         */
+        .cartao-widget .card-footer {
+            /*
+             * Reduz o espaço superior do rodapé.
+             *
+             * O AdminLTE deixa uma área maior por causa da imagem
+             * central flutuante do widget-user.
+             */
+            padding-top: 1.5rem !important;
+        }
+
+        .cartao-widget .info-cartao-datas {
+            /*
+             * Sobe levemente a linha "Fecha dia / Vence dia"
+             * para aproximá-la da parte superior do card.
+             */
+            margin-top: -6px;
+        }
+    </style>
+@stop
+
 @section('content_header')
     @php
         /**
@@ -46,7 +74,7 @@
             @foreach($chunk as $cartao)
                 <div class="col-md-4">
                     <!-- Widget: user widget style 1 -->
-                    <div class="card card-widget widget-user">
+                    <div class="card card-widget widget-user cartao-widget">
 
                         {{-- Cabeçalho do cartão --}}
                         <div class="widget-user-header text-white"
@@ -63,8 +91,69 @@
                         </div>
 
                         {{-- Rodapé --}}
+                        {{-- Rodapé --}}
                         <div class="card-footer">
+
+                            {{-- ============================================================= --}}
+                            {{-- DADOS DE FECHAMENTO E VENCIMENTO DO CARTÃO                    --}}
+                            {{--                                                               --}}
+                            {{-- Essas informações são características do cartão e ficam       --}}
+                            {{-- separadas dos dados da fatura atual (Ano/Mês e Valor).         --}}
+                            {{--                                                               --}}
+                            {{-- O "flex-wrap" permite que as informações quebrem de linha      --}}
+                            {{-- automaticamente caso o card fique estreito em telas menores.   --}}
+                            {{-- ============================================================= --}}
+                            <div class="info-cartao-datas d-flex justify-content-center flex-wrap text-muted small mb-2">
+
+                                {{-- ========================================================= --}}
+                                {{-- DIA DE FECHAMENTO DA FATURA                              --}}
+                                {{-- ========================================================= --}}
+                                <span class="mr-3 mb-1">
+
+            {{-- Ícone de cadeado para representar o fechamento --}}
+            <i class="fas fa-lock mr-1"></i>
+
+            Fecha dia
+
+            <strong class="text-dark">
+
+                {{ !empty($cartao->Dia_Fechamento_Fatura)
+                    ? str_pad((string) $cartao->Dia_Fechamento_Fatura, 2, '0', STR_PAD_LEFT)
+                    : '-' }}
+
+            </strong>
+
+        </span>
+
+
+                                {{-- ========================================================= --}}
+                                {{-- DIA DE VENCIMENTO DA FATURA                              --}}
+                                {{-- ========================================================= --}}
+                                <span class="mb-1">
+
+            {{-- Ícone de calendário para representar o vencimento --}}
+            <i class="far fa-calendar-alt mr-1"></i>
+
+            Vence dia
+
+            <strong class="text-dark">
+
+                {{ !empty($cartao->Dia_Vencimento)
+                    ? str_pad((string) $cartao->Dia_Vencimento, 2, '0', STR_PAD_LEFT)
+                    : '-' }}
+
+            </strong>
+
+        </span>
+
+                            </div>
+
+
+                            {{-- ============================================================= --}}
+                            {{-- DADOS DA FATURA ATUAL                                         --}}
+                            {{-- ============================================================= --}}
                             <div class="row">
+
 
                                 {{-- Ano/Mês --}}
                                 <div class="col-sm-4 border-right">
