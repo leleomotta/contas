@@ -37,7 +37,9 @@ class Receita extends Model
             ->join('categoria', 'receita.ID_Categoria', '=', 'categoria.ID_Categoria')
             ->leftJoin('categoria as categoria_pai', 'categoria.ID_Categoria_Pai', '=', 'categoria_pai.ID_Categoria')
             ->leftJoin('icone', 'icone.ID_Icone', '=', 'categoria.ID_Icone')
-            ->orderBy('receita.Data', 'DESC');
+            ->orderBy('receita.Data', 'DESC')
+            ->orderBy('receita.Descricao', 'ASC');
+
 
         if (!is_null($categoria)) {
             $filtros = $filtros->where('receita.ID_Categoria', '=', $categoria);
@@ -95,6 +97,7 @@ class Receita extends Model
         }
 
         $receitas->orderBy('receita.Data', 'DESC');
+        $receitas->orderBy('receita.Descricao', 'ASC');
 
         return $receitas->get();
     }

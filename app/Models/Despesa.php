@@ -152,7 +152,11 @@ class Despesa extends Model
         return $despesasSemCartao
             ->get()
             ->merge($despesasCartao->get())
-            ->sortByDesc('Data')
+            //->sortByDesc('Data')
+            ->sortBy([
+                ['Data', 'desc'],
+                ['Descricao', 'asc'],
+            ])
             ->values();
     }
 
@@ -169,8 +173,30 @@ class Despesa extends Model
         $despesas = $despesas->merge($this->cartaoPago($start_date, $end_date, null));
 
         //dd($despesas);
-        //leonardo motta
-        return $despesas;
+        /*
+         * A Collection neste ponto já contém:
+         *
+         * - despesas normais;
+         * - despesas de cartão abertas;
+         * - despesas de cartão fechadas.
+         *
+         * Por isso aplicamos a ordenação somente depois
+         * que todas elas foram reunidas.
+         */
+        return $despesas
+            ->sortBy([
+                /*
+                 * Data mais recente primeiro.
+                 */
+                ['Data', 'desc'],
+
+                /*
+                 * Quando a data for igual,
+                 * descrição em ordem alfabética.
+                 */
+                ['Descricao', 'asc'],
+            ])
+            ->values();
     }
 
     public function showAgrupado($start_date, $end_date){
@@ -186,8 +212,17 @@ class Despesa extends Model
         $despesas = $despesas->merge($this->cartaoPagoAgrupado($start_date, $end_date, null));
 
         //dd($despesas);
-        //leonardo motta
-        return $despesas;
+
+        /*
+         * Ordena o resultado final depois de juntar
+         * despesas normais e cartões agrupados.
+         */
+        return $despesas
+            ->sortBy([
+                ['Data', 'desc'],
+                ['Descricao', 'asc'],
+            ])
+            ->values();
     }
 
     public function despesasSemCartao($start_date, $end_date, $conta){
@@ -217,7 +252,8 @@ class Despesa extends Model
                 ->from('fatura')
                 ->whereRaw('despesa.ID_Despesa = fatura.ID_Despesa');
         })
-            ->orderBy('Data','DESC');
+            ->orderBy('Data','DESC')
+            ->orderBy('Descricao', 'ASC');
         //dd($despesasSemCartao->toSql());
 
         return $despesasSemCartao->get();
