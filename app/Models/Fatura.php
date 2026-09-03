@@ -17,6 +17,235 @@ class Fatura extends Model
     protected $primaryKey = 'ID_Despesa'; //-> no sistema de questão eu tive que desativar isso
     //protected $primaryKey = ['ID_Cartao', 'Ano_Mes'];
 
+    /**
+     * Descobre qual fatura está atualmente aberta para um cartão,
+     * considerando a data de referência e o dia de fechamento.
+     *
+     * IMPORTANTE:
+     *
+     * No sistema, o Ano_Mes da fatura representa o ciclo que começou
+     * no mês anterior ao fechamento.
+     *
+     * Exemplo para um cartão que fecha dia 15:
+     *
+     * 01/09/2026 até 14/09/2026 -> fatura 2026-08
+     * 15/09/2026 até 14/10/2026 -> fatura 2026-09
+     * 15/10/2026 em diante       -> fatura 2026-10
+     *
+     * Portanto:
+     *
+     * - ANTES do dia de fechamento:
+     *      utiliza o mês anterior.
+     *
+     * - NO DIA do fechamento ou DEPOIS:
+     *      utiliza o próprio mês.
+     *
+     * Depois disso, verificamos se a fatura calculada já foi
+     * fechada manualmente. Se estiver fechada, procuramos a
+     * próxima fatura aberta.
+     *
+     * O parâmetro $cartao é "object" porque este método pode receber:
+     *
+     * - um Model Eloquent Cartao;
+     * - um stdClass retornado pelo Query Builder.
+     */
+    public static function anoMesFaturaAberta(
+        object $cartao,
+               $dataReferencia = null
+    ): string {
+
+        /*
+         * =============================================================
+         * DEFINE A DATA DE REFERÊNCIA
+         * =============================================================
+         *
+         * No cadastro da despesa:
+         * será a data da compra.
+         *
+         * Na tela de cartões:
+         * será a data atual.
+         */
+        if ($dataReferencia instanceof Carbon) {
+
+            $data = $dataReferencia->copy();
+
+        } elseif (!empty($dataReferencia)) {
+
+            $data = Carbon::parse($dataReferencia);
+
+        } else {
+
+            $data = Carbon::today();
+
+        }
+
+
+        /*
+         * =============================================================
+         * DIA DE FECHAMENTO DO CARTÃO
+         * =============================================================
+         */
+        $diaFechamento = (int) $cartao->Dia_Fechamento_Fatura;
+
+
+        /*
+         * Começamos considerando o próprio mês da data.
+         *
+         * Exemplo:
+         *
+         * Data = 03/09/2026
+         *
+         * inicialmente:
+         *
+         * $mesFatura = setembro/2026
+         */
+        $mesFatura = $data->copy()->startOfMonth();
+
+
+        /*
+         * Só aplicamos a regra automática quando o cartão
+         * possui um dia de fechamento configurado.
+         */
+        if ($diaFechamento > 0) {
+
+            /*
+             * Proteção para meses que possuem menos dias.
+             *
+             * Exemplo:
+             *
+             * cartão fecha dia 31
+             * fevereiro possui somente 28 dias
+             *
+             * nesse caso consideramos o último dia de fevereiro.
+             */
+            $diaFechamentoEfetivo = min(
+                $diaFechamento,
+                $data->daysInMonth
+            );
+
+
+            /*
+             * =========================================================
+             * REGRA PRINCIPAL
+             * =========================================================
+             *
+             * Se AINDA NÃO CHEGOU o dia do fechamento,
+             * a fatura aberta pertence ao mês anterior.
+             *
+             * Exemplo:
+             *
+             * Hoje:       03/09/2026
+             * Fechamento: dia 15
+             *
+             * 03 < 15
+             *
+             * Portanto:
+             *
+             * fatura aberta = 2026-08
+             */
+            if ($data->day < $diaFechamentoEfetivo) {
+
+                $mesFatura->subMonth();
+
+            }
+
+            /*
+             * Se chegou ao dia do fechamento ou passou dele,
+             * NÃO fazemos nenhuma alteração.
+             *
+             * Exemplo:
+             *
+             * Data:       15/09/2026
+             * Fechamento: dia 15
+             *
+             * resultado:
+             *
+             * 2026-09
+             */
+        }
+
+
+        /*
+         * =============================================================
+         * GARANTE QUE A FATURA ESTEJA ABERTA
+         * =============================================================
+         *
+         * Exemplo:
+         *
+         * calculamos 2026-08,
+         * mas 2026-08 já foi fechada manualmente.
+         *
+         * O método abaixo procurará 2026-09.
+         */
+        return self::proximoAnoMesAberto(
+            $cartao,
+            $mesFatura
+        );
+    }
+
+
+    /**
+     * A partir de determinado mês, procura a primeira
+     * fatura que ainda esteja aberta.
+     *
+     * Isso também cobre o caso em que uma fatura tenha
+     * sido fechada manualmente antes da data prevista.
+     *
+     * @param Cartao $cartao
+     * @param Carbon $mesReferencia
+     * @return string
+     */
+    public static function proximoAnoMesAberto(
+        object $cartao,
+        Carbon $mesReferencia
+    ): string {
+
+        /*
+         * Sempre trabalha no primeiro dia do mês,
+         * porque aqui só nos interessa Ano/Mês.
+         */
+        $mes = $mesReferencia->copy()->startOfMonth();
+
+
+        /*
+         * Continua avançando enquanto encontrar
+         * uma fatura marcada como fechada.
+         */
+        while (true) {
+
+            $anoMes = $mes->format('Y-m');
+
+
+            /*
+             * Como sua tabela "fatura" possui uma linha
+             * para cada despesa da fatura, verificamos
+             * se existe alguma linha daquele cartão/mês
+             * marcada como fechada.
+             */
+            $fechada = self::where('ID_Cartao', $cartao->ID_Cartao)
+                ->where('Ano_Mes', $anoMes)
+                ->where('Fechada', 1)
+                ->exists();
+
+
+            /*
+             * Se não estiver fechada, encontramos
+             * a fatura que deve ser utilizada.
+             */
+            if (!$fechada) {
+
+                return $anoMes;
+
+            }
+
+
+            /*
+             * Se estiver fechada, tenta o mês seguinte.
+             */
+            $mes->addMonth();
+        }
+    }
+
     public function show($Ano_Mes, $ID_Cartao)
     {
         //Log::info("Fatura Ano_Mes: " . $Ano_Mes);
@@ -35,6 +264,7 @@ class Fatura extends Model
             ->where('fatura.Ano_Mes', $Ano_Mes)
             ->where('fatura.ID_Cartao', $ID_Cartao)
             ->orderBy('despesa.Data', 'DESC')
+            ->orderBy('despesa.Descricao', 'ASC')
             ->get();
         return $retorno;
     }

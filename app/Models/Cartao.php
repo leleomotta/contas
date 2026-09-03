@@ -15,7 +15,8 @@ class Cartao extends Model
 
     protected $primaryKey = 'ID_Cartao';
 
-    public function show($Ano_Mes)
+    //public function show($Ano_Mes)
+    public function show($Ano_Mes = null)
     {
         $cartoes = DB::table('cartao')
             ->select(
@@ -55,17 +56,32 @@ class Cartao extends Model
              * (mantive exatamente a ideia: achar o mês atual aberto etc.)
              */
 
-            $Ano_Mes_local = $Ano_Mes;
+            /*
+             * =============================================================
+             * DEFINE QUAL FATURA DEVE SER EXIBIDA NO CARD
+             * =============================================================
+             *
+             * Se foi informado explicitamente um Ano_Mes,
+             * respeitamos esse valor.
+             *
+             * Caso contrário, estamos pedindo a "fatura atual",
+             * portanto usamos a regra centralizada:
+             *
+             * - antes do fechamento = mês atual;
+             * - no fechamento/depois = próximo mês;
+             * - se estiver fechada = próxima aberta.
+             */
+            if (!empty($Ano_Mes)) {
 
-            // Busca a fatura do mês
-            $faturaPrimeiro = Fatura::where('ID_Cartao', $cartao->ID_Cartao)
-                ->where('Ano_Mes', $Ano_Mes_local)
-                ->first();
+                $Ano_Mes_local = $Ano_Mes;
 
-            // Se a fatura estiver fechada, pula para o próximo mês (mantive seu comportamento)
-            if ($faturaPrimeiro && $faturaPrimeiro->Fechada == 1) {
-                $data = Carbon::createFromFormat('Y-m', $Ano_Mes_local)->addMonth();
-                $Ano_Mes_local = $data->format('Y-m');
+            } else {
+
+                $Ano_Mes_local = Fatura::anoMesFaturaAberta(
+                    $cartao,
+                    Carbon::today()
+                );
+
             }
 
             $cartao->Ano_Mes = $Ano_Mes_local;

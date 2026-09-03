@@ -128,10 +128,29 @@
                         <select name="ID_Cartao" id="ID_Cartao" class="form-control selectpicker" data-live-search="true" required>
                             <option disabled selected>- Selecione um cartão -</option>
                             @foreach($cartoes as $cartao)
-                                <option value="{{ $cartao->ID_Cartao }}"
-                                    {{ old('ID_Cartao', Session::get('ID_Cartao')) == $cartao->ID_Cartao ? 'selected' : '' }}>
-                                    {{ $cartao->ID_Cartao }} - {{ $cartao->Nome }} ({{ $cartao->Bandeira }})
+
+                                <option
+                                    value="{{ $cartao->ID_Cartao }}"
+
+                                    {{-- ===================================================== --}}
+                                    {{-- FATURA ABERTA DESTE CARTÃO                            --}}
+                                    {{--                                                       --}}
+                                    {{-- Esses dois atributos serão lidos pelo JavaScript      --}}
+                                    {{-- quando o cartão for selecionado.                      --}}
+                                    {{-- ===================================================== --}}
+                                    data-ano-fatura="{{ $cartao->Ano_Fatura_Aberta }}"
+                                    data-mes-fatura="{{ $cartao->Mes_Fatura_Aberta }}"
+
+                                    {{ old('ID_Cartao', Session::get('ID_Cartao')) == $cartao->ID_Cartao ? 'selected' : '' }}
+                                >
+
+                                    {{ $cartao->ID_Cartao }}
+                                    -
+                                    {{ $cartao->Nome }}
+                                    ({{ $cartao->Bandeira }})
+
                                 </option>
+
                             @endforeach
                         </select>
                     </div>
@@ -149,14 +168,16 @@
                                id="Ano" name="Ano"
                                min="1900" max="2500"
                                class="form-control form-control-sm fatura-ano"
-                               value="{{ old('Ano', \Carbon\Carbon::now()->format('Y')) }}">
+                               {{-- Ano da fatura aberta calculada pelo controller --}}
+                               value="{{ old('Ano', $anoFaturaPadrao) }}">
 
                         {{-- MÊS: permitimos 0 e 13 para o spinner “passar do limite” e o JS normalizar --}}
                         <input type="number"
                                id="Mes" name="Mes"
                                min="0" max="13" step="1"
                                class="form-control form-control-sm fatura-mes"
-                               value="{{ old('Mes', \Carbon\Carbon::now()->format('m')) }}">
+                               {{-- Mês da fatura aberta calculada pelo controller --}}
+                               value="{{ old('Mes', $mesFaturaPadrao) }}">
                     </div>
 
                 </div>
@@ -525,6 +546,109 @@
             $('#cadastro').on('submit', function () {
                 aplicarSugestaoSelecionada();
             });
+
+        });
+    </script>
+
+    <script>
+        $(document).ready(function () {
+
+            /*
+             * =============================================================
+             * PREENCHE A FATURA CONFORME O CARTÃO SELECIONADO
+             * =============================================================
+             *
+             * O controller já calculou previamente qual é a fatura
+             * aberta de cada cartão.
+             *
+             * Aqui apenas copiamos esses valores para os campos Ano/Mês.
+             */
+            function atualizarFaturaDoCartao() {
+
+                /*
+                 * Obtém a option atualmente selecionada.
+                 */
+                const optionSelecionada =
+                    $('#ID_Cartao option:selected');
+
+
+                /*
+                 * Se ainda estiver em:
+                 *
+                 * "- Selecione um cartão -"
+                 *
+                 * não fazemos nada.
+                 */
+                if (
+                    !optionSelecionada.length
+                    ||
+                    !optionSelecionada.val()
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Recupera os valores calculados pelo backend.
+                 *
+                 * Exemplo:
+                 *
+                 * data-ano-fatura="2026"
+                 * data-mes-fatura="8"
+                 */
+                const ano =
+                    optionSelecionada.data('ano-fatura');
+
+                const mes =
+                    optionSelecionada.data('mes-fatura');
+
+
+                /*
+                 * Só altera quando realmente recebeu os dois valores.
+                 */
+                if (ano && mes) {
+
+                    $('#Ano').val(ano);
+
+                    $('#Mes').val(mes);
+                }
+            }
+
+
+            /*
+             * =============================================================
+             * QUANDO TROCAR O CARTÃO
+             * =============================================================
+             *
+             * Como o seu select utiliza bootstrap-select,
+             * mantemos os dois eventos.
+             */
+            $('#ID_Cartao').on(
+                'change changed.bs.select',
+                function () {
+
+                    atualizarFaturaDoCartao();
+
+                }
+            );
+
+
+            /*
+             * =============================================================
+             * QUANDO A TELA ABRIR
+             * =============================================================
+             *
+             * Se já houver cartão selecionado pela Session/old(),
+             * preenche imediatamente a fatura dele.
+             *
+             * Porém, se houve erro de validação e existem valores old()
+             * para Ano/Mês, preservamos aquilo que o usuário digitou.
+             */
+            @if(old('Ano') === null && old('Mes') === null)
+
+            atualizarFaturaDoCartao();
+
+            @endif
 
         });
     </script>

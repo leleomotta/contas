@@ -197,7 +197,51 @@ class CartaoController extends Controller
         }
 
         // 3) Se não vier Ano_Mes, evita tela “em branco” e usa o mês atual.
-        $Ano_Mes = $request->Ano_Mes ?: Carbon::now()->format('Y-m');
+        //$Ano_Mes = $request->Ano_Mes ?: Carbon::now()->format('Y-m');
+        /*
+         * Busca o cartão completo porque precisamos
+         * do Dia_Fechamento_Fatura.
+         */
+        $cartaoModel = Cartao::findOrFail($ID_Cartao);
+
+
+        /*
+         * Se Ano_Mes vier explicitamente na URL,
+         * respeitamos o mês solicitado.
+         *
+         * Isso é MUITO IMPORTANTE para permitir navegar
+         * por faturas antigas e futuras.
+         *
+         * Exemplo:
+         *
+         * /cartoes/fatura?ID_Cartao=1&Ano_Mes=2026-07
+         *
+         * deverá continuar abrindo julho.
+         */
+        if ($request->filled('Ano_Mes')) {
+
+            $Ano_Mes = $request->Ano_Mes;
+
+        } else {
+
+            /*
+             * Se não foi informado nenhum mês,
+             * significa que queremos a FATURA ATUAL.
+             *
+             * Aplicamos então a mesma regra usada no cadastro.
+             */
+            $Ano_Mes = Fatura::anoMesFaturaAberta(
+                $cartaoModel,
+                Carbon::today()
+            );
+
+        }
+
+
+        /*
+         * Nome do cartão para a view.
+         */
+        $cartao = $cartaoModel->Nome;
 
         // Busca o status de fechamento da fatura
         $faturaPrimeiro = Fatura::where('ID_Cartao', $ID_Cartao)->where('Ano_Mes', $Ano_Mes)->first();
@@ -284,18 +328,220 @@ class CartaoController extends Controller
     }
 
     /**
-     * Exibe o formulário para criar uma nova despesa de fatura.
+     * Exibe o formulário para criar uma nova despesa de cartão.
+     *
+     * Para cada cartão, calculamos antecipadamente qual é a sua
+     * fatura atualmente aberta.
+     *
+     * Esses valores serão utilizados pelo Blade para preencher
+     * automaticamente os campos Ano e Mês quando o usuário
+     * selecionar um cartão.
      */
-    public function new_despesa()
+    public function new_despesa(Request $request)
     {
+        /*
+         * Dados normais da tela.
+         */
         $contas = (new \App\Models\Conta)->showAll();
+
         $cartoes = Cartao::all();
+
         $categorias = (new \App\Models\Categoria)->show('D');
 
+
+        /*
+         * =============================================================
+         * CALCULA A FATURA ABERTA DE CADA CARTÃO
+         * =============================================================
+         *
+         * Exemplo hoje, 03/09/2026:
+         *
+         * Inter Black
+         * fechamento = dia 15
+         *
+         * resultado:
+         *
+         * Ano_Fatura_Aberta = 2026
+         * Mes_Fatura_Aberta = 8
+         */
+        foreach ($cartoes as $cartao) {
+
+            /*
+             * Utiliza exatamente a regra centralizada que já testamos
+             * anteriormente e que retornou corretamente 2026-08.
+             */
+            $anoMesAberto = Fatura::anoMesFaturaAberta(
+                $cartao,
+                Carbon::today()
+            );
+
+
+            /*
+             * Divide:
+             *
+             * 2026-08
+             *
+             * em:
+             *
+             * 2026
+             * 08
+             */
+            [$ano, $mes] = explode('-', $anoMesAberto);
+
+
+            /*
+             * Criamos propriedades temporárias somente para
+             * utilizar na view.
+             *
+             * Não são gravadas no banco.
+             */
+            $cartao->Ano_Fatura_Aberta = (int) $ano;
+
+            $cartao->Mes_Fatura_Aberta = (int) $mes;
+        }
+
+
+        /*
+         * =============================================================
+         * FATURA PADRÃO DA TELA
+         * =============================================================
+         *
+         * Neste ponto já calculamos acima a fatura aberta de CADA cartão.
+         *
+         * Como a rota:
+         *
+         * /fatura/despesa/novo
+         *
+         * pode ser acessada sem nenhum cartão selecionado, precisamos
+         * escolher um valor inicial para Ano/Mês.
+         *
+         * Utilizamos o mês aberto mais antigo entre os cartões.
+         *
+         * Exemplo hoje, 03/09/2026:
+         *
+         * Inter  -> 2026-08
+         * Nubank -> 2026-09
+         *
+         * A tela abrirá inicialmente em:
+         *
+         * 2026-08
+         *
+         * Quando o usuário escolher um cartão, o JavaScript já existente
+         * trocará Ano/Mês para a fatura específica daquele cartão.
+         */
+        $anoMesFaturaPadrao = $cartoes
+            ->map(function ($cartao) {
+
+                /*
+                 * Monta novamente o formato YYYY-MM.
+                 *
+                 * Exemplo:
+                 *
+                 * Ano_Fatura_Aberta = 2026
+                 * Mes_Fatura_Aberta = 8
+                 *
+                 * resultado:
+                 *
+                 * 2026-08
+                 */
+                return sprintf(
+                    '%04d-%02d',
+                    $cartao->Ano_Fatura_Aberta,
+                    $cartao->Mes_Fatura_Aberta
+                );
+
+            })
+
+            /*
+             * Coloca o mês mais antigo primeiro.
+             *
+             * Exemplo:
+             *
+             * 2026-08
+             * 2026-09
+             */
+            ->sort()
+
+            /*
+             * Pega o primeiro mês aberto.
+             */
+            ->first();
+
+
+        /*
+         * Caso não exista nenhum cartão cadastrado,
+         * usamos o mês atual apenas como fallback.
+         */
+        if (!$anoMesFaturaPadrao) {
+
+            $anoMesFaturaPadrao = Carbon::today()->format('Y-m');
+
+        }
+
+
+        /*
+         * Separa:
+         *
+         * 2026-08
+         *
+         * em:
+         *
+         * 2026
+         * 8
+         */
+        [$anoFaturaPadrao, $mesFaturaPadrao] =
+            array_map(
+                'intval',
+                explode('-', $anoMesFaturaPadrao)
+            );
+
+
+        /*
+         * Se já existir um cartão selecionado na sessão,
+         * podemos abrir a tela diretamente com a fatura dele.
+         */
+        $ID_Cartao = old(
+            'ID_Cartao',
+            $request->session()->get('ID_Cartao')
+        );
+
+
+        if ($ID_Cartao) {
+
+            /*
+             * Procura o cartão dentro da Collection que já carregamos.
+             */
+            $cartaoSelecionado = $cartoes->firstWhere(
+                'ID_Cartao',
+                (int) $ID_Cartao
+            );
+
+
+            if ($cartaoSelecionado) {
+
+                $anoFaturaPadrao =
+                    $cartaoSelecionado->Ano_Fatura_Aberta;
+
+                $mesFaturaPadrao =
+                    $cartaoSelecionado->Mes_Fatura_Aberta;
+            }
+        }
+
+
         return view('fatura_despesaCriar', [
+
             'categorias' => $categorias,
+
             'contas' => $contas,
+
             'cartoes' => $cartoes,
+
+            /*
+             * Valores utilizados nos inputs Ano/Mês.
+             */
+            'anoFaturaPadrao' => $anoFaturaPadrao,
+
+            'mesFaturaPadrao' => $mesFaturaPadrao,
         ]);
     }
 
@@ -339,7 +585,16 @@ class CartaoController extends Controller
 
         // Usa sua query atual (provavelmente já calcula Ano_Mes, Valor, N_Despesas...)
         $cartoesModel = new Cartao();
-        $cartoes = collect($cartoesModel->show($Ano_Mes));
+        //$cartoes = collect($cartoesModel->show($Ano_Mes));
+        /*
+         * Não informamos Ano_Mes.
+         *
+         * Dessa forma cada cartão calcula sua própria
+         * fatura atual conforme seu dia de fechamento.
+         */
+        $cartoes = collect(
+            $cartoesModel->show()
+        );
 
 
         /**
@@ -387,93 +642,335 @@ class CartaoController extends Controller
     }
 
     /**
-     * Salva uma nova despesa parcelada ou não para uma fatura.
+     * Salva uma nova despesa de cartão.
+     *
+     * A fatura é escolhida AUTOMATICAMENTE utilizando:
+     *
+     * - Data da compra;
+     * - Dia de fechamento do cartão;
+     * - Status aberto/fechado da fatura.
+     *
+     * Para despesas parceladas, a primeira parcela utiliza
+     * a fatura calculada pela data da compra e as demais
+     * seguem para as próximas faturas abertas.
      */
     public function store_despesa(Request $request)
     {
-        // ADICIONE ESTA VALIDAÇÃO:
+        /*
+         * =============================================================
+         * VALIDAÇÃO
+         * =============================================================
+         */
         $request->validate([
             'Data'      => 'required',
             'Descricao' => 'required',
             'Valor'     => 'required',
             'Categoria' => 'required',
-            'ID_Cartao' => 'required',
+            'ID_Cartao' => 'required|integer',
         ], [
-            // Mensagens personalizadas
             'Data.required'      => 'Por favor, informe a data da despesa.',
             'Descricao.required' => 'A descrição da despesa é obrigatória.',
             'Valor.required'     => 'O valor da despesa não pode ficar vazio.',
             'Categoria.required' => 'Selecione uma categoria para organizar seus gastos.',
             'ID_Cartao.required' => 'É necessário selecionar um cartão para esta despesa.',
         ]);
-        $Ano = $request->Ano;
-        $Mes = str_pad($request->Mes, 2 , '0' , STR_PAD_LEFT);
-        $Ano_Mes = $Ano . '-' . $Mes;
 
-        $faturaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
-            ->where('Ano_Mes', $Ano_Mes)
-            ->first();
 
-        if ($faturaExistente && $faturaExistente->Fechada) {
-            return redirect()->back()
-                ->withInput()
-                ->withErrors(['Fatura ' . $Ano_Mes . ' já está finalizada. Não é possível adicionar novas despesas.']);
-        }
+        /*
+         * =============================================================
+         * CARTÃO
+         * =============================================================
+         *
+         * Precisamos do cartão para saber:
+         *
+         * - ID_Conta;
+         * - Dia_Fechamento_Fatura.
+         */
+        $cartao = Cartao::findOrFail($request->ID_Cartao);
 
-        $cartao = Cartao::find($request->ID_Cartao);
-        $descricaoOriginal = $request->Descricao;
+
+        /*
+         * =============================================================
+         * DATA REAL DA COMPRA
+         * =============================================================
+         *
+         * O formulário envia:
+         *
+         * 31/08/2026
+         *
+         * Transformamos em um objeto Carbon.
+         */
+        $dataCompra = Carbon::createFromFormat(
+            'd/m/Y',
+            $request->Data
+        );
+
+
+        /*
+         * =============================================================
+         * CALCULA A PRIMEIRA FATURA
+         * =============================================================
+         *
+         * Essa é agora a única regra usada para descobrir
+         * em qual fatura a compra deverá entrar.
+         *
+         * Exemplo:
+         *
+         * cartão fecha dia 15
+         * compra = 31/08/2026
+         *
+         * resultado:
+         *
+         * 2026-09
+         */
+        $Ano_Mes = Fatura::anoMesFaturaAberta(
+            $cartao,
+            $dataCompra
+        );
+
+
+
+        /*
+         * =============================================================
+         * VALOR DA COMPRA
+         * =============================================================
+         *
+         * Converte:
+         *
+         * R$ 1.234,56
+         *
+         * para:
+         *
+         * 1234.56
+         */
         $valorStr = $request->Valor;
-        $valorTotal = floatval(str_replace(",", ".", str_replace(".", "", str_replace("R$ ", "", $valorStr))));
-        $data = implode("-", array_reverse(explode("/", $request->Data)));
+
+        $valorTotal = floatval(
+            str_replace(
+                ",",
+                ".",
+                str_replace(
+                    ".",
+                    "",
+                    str_replace("R$ ", "", $valorStr)
+                )
+            )
+        );
+
+
+        /*
+         * Descrição original.
+         */
+        $descricaoOriginal = $request->Descricao;
+
+
+        /*
+         * Verifica se a compra foi parcelada.
+         */
         $parcelada = $request->Parcelada === 'sim';
-        $numParcelas = $parcelada ? max((int) $request->NumeroParcelas, 1) : 1;
 
-        $valorBase = floor(($valorTotal / $numParcelas) * 100) / 100;
-        $diferenca = round($valorTotal - ($valorBase * $numParcelas), 2);
 
-        $dataBaseParcela = Carbon::createFromDate((int) $request->Ano, (int) $request->Mes, 1);
+        /*
+         * Quantidade de parcelas.
+         *
+         * Compra não parcelada sempre terá 1 parcela.
+         */
+        $numParcelas = $parcelada
+            ? max((int) $request->NumeroParcelas, 1)
+            : 1;
 
-        for ($i = 1; $i <= $numParcelas; $i++) {
-            $valorParcela = $valorBase;
-            if ($i <= $diferenca * 100) {
-                $valorParcela += 0.01;
+
+        /*
+         * =============================================================
+         * DIVISÃO DO VALOR
+         * =============================================================
+         *
+         * Mantém sua regra atual para distribuir corretamente
+         * os centavos entre as parcelas.
+         */
+        $valorBase = floor(
+                ($valorTotal / $numParcelas) * 100
+            ) / 100;
+
+        $diferenca = round(
+            $valorTotal - ($valorBase * $numParcelas),
+            2
+        );
+
+
+        /*
+         * Mês da primeira parcela.
+         *
+         * Exemplo:
+         *
+         * $Ano_Mes = 2026-09
+         *
+         * vira:
+         *
+         * 01/09/2026
+         *
+         * Internamente usamos somente para controlar
+         * o avanço das faturas.
+         */
+        $mesParcela = Carbon::createFromFormat(
+            'Y-m-d',
+            $Ano_Mes . '-01'
+        );
+
+
+        /*
+         * =============================================================
+         * TRANSAÇÃO
+         * =============================================================
+         *
+         * Se acontecer qualquer erro durante o parcelamento,
+         * nenhuma parcela fica salva pela metade.
+         */
+        DB::transaction(function () use (
+            $request,
+            $cartao,
+            $dataCompra,
+            $descricaoOriginal,
+            $valorTotal,
+            $valorBase,
+            $diferenca,
+            $parcelada,
+            $numParcelas,
+            $mesParcela
+        ) {
+
+            for ($i = 1; $i <= $numParcelas; $i++) {
+
+                /*
+                 * =============================================================
+                 * DEFINE A FATURA DA PARCELA
+                 * =============================================================
+                 *
+                 * Para a PRIMEIRA parcela utilizamos exatamente a fatura
+                 * já calculada com base na data da compra e no fechamento.
+                 *
+                 * Exemplo:
+                 *
+                 * Compra:       03/09/2026
+                 * Fecha:        dia 15
+                 * $Ano_Mes:     2026-08
+                 *
+                 * Portanto:
+                 *
+                 * primeira parcela -> 2026-08
+                 */
+                if ($i === 1) {
+
+                    $anoMesParcela = $Ano_Mes;
+
+                } else {
+
+                    /*
+                     * A partir da segunda parcela avançamos um mês.
+                     *
+                     * Exemplo:
+                     *
+                     * parcela 1 -> 2026-08
+                     * parcela 2 -> 2026-09
+                     * parcela 3 -> 2026-10
+                     */
+                    $mesParcela->addMonth();
+
+
+                    /*
+                     * Verifica se a fatura daquele próximo mês está aberta.
+                     *
+                     * Se já estiver fechada, procura a próxima disponível.
+                     */
+                    $anoMesParcela = Fatura::proximoAnoMesAberto(
+                        $cartao,
+                        $mesParcela
+                    );
+                }
+
+
+                /*
+                 * Atualiza o objeto Carbon para o mês que realmente
+                 * será usado pela parcela.
+                 */
+                $mesParcela = Carbon::createFromFormat(
+                    'Y-m-d',
+                    $anoMesParcela . '-01'
+                );
+
+
+                /*
+                 * =============================================================
+                 * Daqui para baixo continua seu código normalmente.
+                 * =============================================================
+                 */
+
+                $valorParcela = $valorBase;
+
+                if ($i <= $diferenca * 100) {
+                    $valorParcela += 0.01;
+                }
+
+                $despesa = new Despesa();
+
+                $despesa->Descricao = $parcelada
+                    ? "{$descricaoOriginal} ({$i}/{$numParcelas})"
+                    : $descricaoOriginal;
+
+                $despesa->Valor = $valorParcela;
+
+                $despesa->ValorTotal = $valorTotal;
+
+                $despesa->Parcela = $parcelada
+                    ? $i
+                    : null;
+
+                $despesa->TotalParcelas = $parcelada
+                    ? $numParcelas
+                    : null;
+
+                /*
+                 * A data continua sendo a data real da compra.
+                 */
+                $despesa->Data = $dataCompra->format('Y-m-d');
+
+                $despesa->ID_Conta = $cartao->ID_Conta;
+
+                $despesa->ID_Categoria = $request->Categoria;
+
+                $despesa->Efetivada = 0;
+
+                $despesa->save();
+
+
+                /*
+                 * Cria o relacionamento da despesa com a fatura.
+                 */
+                $fatura = new Fatura();
+
+                $fatura->ID_Cartao = $cartao->ID_Cartao;
+
+                $fatura->ID_Despesa = $despesa->ID_Despesa;
+
+                $fatura->Fechada = 0;
+
+                /*
+                 * ESTA é a informação que determina em qual
+                 * fatura a despesa aparece.
+                 */
+                $fatura->Ano_Mes = $anoMesParcela;
+
+                $fatura->save();
             }
+        });
 
-            $dataParcela = $dataBaseParcela->copy()->addMonths($i - 1);
-            $anoMesParcela = $dataParcela->format('Y-m');
 
-            $faturaParcelaExistente = Fatura::where('ID_Cartao', $request->ID_Cartao)
-                ->where('Ano_Mes', $anoMesParcela)
-                ->first();
-
-            if ($faturaParcelaExistente && $faturaParcelaExistente->Fechada) {
-                return redirect()->back()
-                    ->withInput()
-                    ->withErrors(['Fatura ' . $anoMesParcela . ' já está finalizada. Não é possível adicionar novas despesas.']);
-            }
-
-            $despesa = new Despesa();
-            $despesa->Descricao = $parcelada ? "{$descricaoOriginal} ({$i}/{$numParcelas})" : $descricaoOriginal;
-            $despesa->Valor = $valorParcela;
-            $despesa->ValorTotal = $valorTotal;
-            $despesa->Parcela = $parcelada ? $i : null;
-            $despesa->TotalParcelas = $parcelada ? $numParcelas : null;
-            $despesa->Data = $data;
-            $despesa->ID_Conta = $cartao->ID_Conta;
-            $despesa->ID_Categoria = $request->Categoria;
-            $despesa->Efetivada = 0;
-            $despesa->save();
-
-            $fatura = new Fatura();
-            $fatura->ID_Cartao = $request->ID_Cartao;
-            $fatura->ID_Despesa = $despesa->ID_Despesa;
-            $fatura->Fechada = 0;
-            $fatura->Ano_Mes = $anoMesParcela;
-            $fatura->save();
-        }
-
+        /*
+         * Depois do cadastro abrimos exatamente
+         * a fatura onde entrou a primeira parcela.
+         */
         return redirect()->route('cartoes.fatura', [
-            'ID_Cartao' => $request->ID_Cartao,
+            'ID_Cartao' => $cartao->ID_Cartao,
             'Ano_Mes'   => $Ano_Mes,
         ]);
     }
