@@ -667,12 +667,29 @@ class CartaoController extends Controller
             'Valor'     => 'required',
             'Categoria' => 'required',
             'ID_Cartao' => 'required|integer',
+
+            /*
+             * A fatura é selecionável pelo usuário na tela.
+             * Portanto, Ano e Mês também precisam ser validados
+             * pelo servidor.
+             */
+            'Ano'       => 'required|integer|min:1900|max:2500',
+            'Mes'       => 'required|integer|min:1|max:12',
+
         ], [
             'Data.required'      => 'Por favor, informe a data da despesa.',
             'Descricao.required' => 'A descrição da despesa é obrigatória.',
             'Valor.required'     => 'O valor da despesa não pode ficar vazio.',
             'Categoria.required' => 'Selecione uma categoria para organizar seus gastos.',
             'ID_Cartao.required' => 'É necessário selecionar um cartão para esta despesa.',
+
+            'Ano.required'       => 'Informe o ano da fatura.',
+            'Ano.integer'        => 'O ano da fatura deve ser um número válido.',
+
+            'Mes.required'       => 'Informe o mês da fatura.',
+            'Mes.integer'        => 'O mês da fatura deve ser um número válido.',
+            'Mes.min'            => 'O mês da fatura deve estar entre 1 e 12.',
+            'Mes.max'            => 'O mês da fatura deve estar entre 1 e 12.',
         ]);
 
 
@@ -708,25 +725,81 @@ class CartaoController extends Controller
 
         /*
          * =============================================================
-         * CALCULA A PRIMEIRA FATURA
+         * FATURA ESCOLHIDA PELO USUÁRIO
          * =============================================================
          *
-         * Essa é agora a única regra usada para descobrir
-         * em qual fatura a compra deverá entrar.
+         * A tela já sugere automaticamente a fatura apropriada quando
+         * é aberta ou quando o usuário seleciona outro cartão.
          *
-         * Exemplo:
+         * Entretanto, os campos Ano e Mês são editáveis justamente para
+         * permitir que o usuário escolha outra fatura.
          *
-         * cartão fecha dia 15
-         * compra = 31/08/2026
+         * Por isso, no momento do cadastro devemos RESPEITAR os valores
+         * enviados pelo formulário, em vez de recalcular a fatura com
+         * base na data da compra.
          *
-         * resultado:
+         * Exemplos:
+         *
+         * Ano = 2026
+         * Mes = 9
+         *
+         * Resultado:
          *
          * 2026-09
+         *
+         * Ano = 2026
+         * Mes = 12
+         *
+         * Resultado:
+         *
+         * 2026-12
          */
-        $Ano_Mes = Fatura::anoMesFaturaAberta(
-            $cartao,
-            $dataCompra
+        $Ano_Mes = sprintf(
+            '%04d-%02d',
+            (int) $request->Ano,
+            (int) $request->Mes
         );
+
+        /*
+ * =============================================================
+ * VERIFICA SE A FATURA ESCOLHIDA JÁ ESTÁ FECHADA
+ * =============================================================
+ *
+ * Como a tabela fatura possui uma linha para cada despesa,
+ * basta verificar se existe alguma despesa daquele cartão/mês
+ * cuja fatura esteja marcada como fechada.
+ */
+        $faturaFechada = Fatura::where(
+            'ID_Cartao',
+            $cartao->ID_Cartao
+        )
+            ->where(
+                'Ano_Mes',
+                $Ano_Mes
+            )
+            ->where(
+                'Fechada',
+                1
+            )
+            ->exists();
+
+
+        /*
+         * Se a fatura estiver fechada, não permitimos adicionar
+         * uma nova despesa nela.
+         */
+        if ($faturaFechada) {
+
+            return redirect()
+                ->back()
+                ->withInput()
+                ->withErrors([
+                    'Mes' =>
+                        'A fatura de ' .
+                        $Ano_Mes .
+                        ' já está fechada. Escolha uma fatura em aberto.'
+                ]);
+        }
 
 
 
@@ -836,7 +909,8 @@ class CartaoController extends Controller
             $diferenca,
             $parcelada,
             $numParcelas,
-            $mesParcela
+            $mesParcela,
+            $Ano_Mes
         ) {
 
             for ($i = 1; $i <= $numParcelas; $i++) {
